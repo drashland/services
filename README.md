@@ -116,7 +116,11 @@ switch (true) {
 ## Bump Versions
 
 ```typescript
+// `deno run -A file.ts --version=release-v1.9.9`
 import { bumpVersions } from "https://raw.githubusercontent.com/drashland/services/master/console/bump_versions.ts";
+
+const branch: string = Deno.args[0].split("=")[1]; // ["--version", "release-vX.X.X"]
+const version = branch.substring(branch.indexOf("v") + 1); // 1.0.5
 
 bumpVersions([
   {
