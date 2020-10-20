@@ -52,7 +52,7 @@ export function createHelpMenu(data: IHelpMenuData): string {
         for (const option in data[key]![command]) {
           output += (`        ${option}\n`);
           output +=
-            (`${wordWrap(`            ${data[key][command][option]}`, 12)}\n`);
+            (`${wordWrap(`            ${data[key]![command][option]}`, 12)}\n`);
         }
       }
     }
