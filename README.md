@@ -6,6 +6,7 @@ A service to help build CLIs.
 - [Help Menu](#help-menu)
 - [Logging](#logging)
 - [Commands](#commands)
+- [Bump Versions](#bump-versions)
 
 ## Help Menu
 
@@ -110,4 +111,19 @@ switch (true) {
       // ...
       bbreak
 }
+```
+
+## Bump Versions
+
+```typescript
+import { bumpVersions } from "https://raw.githubusercontent.com/drashland/services/master/console/bump_versions.ts";
+
+bumpVersions([
+  {
+    filename: "./egg.json",
+    replaceTheRegex: /hello world/,
+    replaceWith: "goodbye"
+  },
+  ...
+])
 ```
