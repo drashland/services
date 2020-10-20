@@ -47,9 +47,9 @@ export function createHelpMenu(data: IHelpMenuData): string {
 
     if (key == "options") {
       output += `\n\nOPTIONS\n\n    Options are categorized by command.\n`;
-      for (const command in data[key]) {
+      for (const command in data[key]!) {
         output += (`\n    ${command}\n`);
-        for (const option in data[key][command]) {
+        for (const option in data[key]![command]) {
           output += (`        ${option}\n`);
           output +=
             (`${wordWrap(`            ${data[key][command][option]}`, 12)}\n`);
