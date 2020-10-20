@@ -1,4 +1,4 @@
-import { logError } from "../../test_runner.ts";
+import { logError } from "./logger_service.ts";
 
 export function commandRequiresArgs(command: string, args: string[]): void {
   if (args.length == 1) {
