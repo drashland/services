@@ -2,7 +2,7 @@ interface IHelpMenuData {
   commands: { [key: string]: string };
   description: string;
   example_usage: IExampleUsageData[];
-  options: {
+  options?: {
     [key: string]: {
       [key: string]: string;
     };
