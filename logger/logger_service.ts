@@ -6,7 +6,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public logDebug(message: string): void {
+  public static logDebug(message: string): void {
     console.log(colors.green("DEBUG") + " " + message);
   }
 
@@ -15,7 +15,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public logError(message: string): void {
+  public static logError(message: string): void {
     console.log(colors.red("ERROR") + " " + message);
   }
 
@@ -24,7 +24,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public logInfo(message: string): void {
+  public static logInfo(message: string): void {
     console.log(colors.blue("INFO") + " " + message);
   }
 }

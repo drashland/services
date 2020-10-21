@@ -42,11 +42,6 @@ export class CliService {
   protected commands: { [key: string]: ICommand } = {};
 
   /**
-   * A property to hold the logger. This class logs when errors occur.
-   */
-  protected logger: LoggerService;
-
-  /**
    * A list of recognized commands. If any command is not recognized, this class
    * will display an error.
    */
@@ -65,8 +60,6 @@ export class CliService {
     // Make a clone of the array in case it's readonly. We want this to be
     // mutable.
     this.args = args.slice();
-
-    this.logger = new LoggerService();
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -111,7 +104,7 @@ export class CliService {
     this.args.shift();
 
     if (this.commands[command].options.requires_args && this.args.length <= 0) {
-      this.logger.logError(`Command \`${command}\` requires arguments.`);
+      LoggerService.logError(`Command \`${command}\` requires arguments.`);
       Deno.exit();
     }
 
@@ -190,7 +183,7 @@ export class CliService {
    */
   protected commandExists(command: string): void {
     if (this.recognized_commands.indexOf(command) === -1) {
-      this.logger.logError(`Command \`${command}\` not recognized.`);
+      LoggerService.logError(`Command \`${command}\` not recognized.`);
       Deno.exit();
     }
   }
