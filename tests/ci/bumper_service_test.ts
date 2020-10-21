@@ -85,9 +85,9 @@ Rhum.testPlan(async () => {
     const files = await c.bump([
       {
         filename: "./tests/data/README.md",
-        replaceTheRegex: /import \{ Rhum \} from "https\:\/\/deno.land\/x\/rhum\@v[0-0]\.[0-9]\.[0-9]\/mod.ts"/g,
+        replaceTheRegex: /rhum\@v.+mod.ts"/g,
         replaceWith:
-          `import { Rhum } from "https://deno.land/x/rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
+          `rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
       },
       {
         filename: "./tests/data/egg.json",
