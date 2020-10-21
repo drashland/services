@@ -7,6 +7,7 @@ A service to help build CLIs.
 - [Logging](#logging)
 - [Commands](#commands)
 - [Bump Versions](#bump-versions)
+- [Bumper](#bumper)
 
 ## Help Menu
 
@@ -115,6 +116,8 @@ switch (true) {
 
 ## Bump Versions
 
+Used to bump the module version ready for a release
+
 ```typescript
 // file.ts
 // `deno run -A file.ts --version=release-v1.9.9`
@@ -129,3 +132,9 @@ bumpVersions(Deno.args, [
   ...
 ])
 ```
+
+## Bumper
+
+Used to update std, deno or dependency version strings following the bumper CI
+
+See [here](./console/bumper.ts)
