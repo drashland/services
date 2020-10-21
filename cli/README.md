@@ -46,8 +46,8 @@ export const help = CliService.createHelpMenu({
     ],
     commands: {
       "do-something": "Do something.",
-      "help, --help": "Show the help menu.",
-      "version, --version": "Show Rhum version.",
+      "help, --help": "Display the help menu.",
+      "version, --version": "Display the version.",
     },
     options: {
       "do-something": {
@@ -92,10 +92,10 @@ COMMANDS
         Do something.
 
     help, --help
-        Show the help menu.
+        Display the help menu.
 
     version, --version
-        Show Rhum version.
+        Display the version.
 
 
 OPTIONS
