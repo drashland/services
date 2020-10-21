@@ -4,7 +4,7 @@ import { BumperService } from "../../ci/bumper_service.ts";
 const b = new BumperService("rhum", []);
 const c = new BumperService("rhum", ["--version=v1.2.3"]);
 
-Rhum.testPlan(() => {
+Rhum.testPlan(async () => {
   Rhum.testSuite("constructor()", () => {
     Rhum.testCase("sets module_name", () => {
       Rhum.asserts.assertEquals(
@@ -47,7 +47,7 @@ Rhum.testPlan(() => {
     });
   });
 
-  Rhum.testSuite("bump() (with is_for_pre_release = false)", async () => {
+  await Rhum.testSuite("bump", async () => {
     const files = await b.bump([
       {
         filename: "./tests/data/master.yml",
@@ -81,7 +81,7 @@ Rhum.testPlan(() => {
     });
   });
 
-  Rhum.testSuite("bump (with is_for_pre_release = true)", async () => {
+  await Rhum.testSuite("bump for pre-release", async () => {
     const files = await c.bump([
       {
         filename: "./tests/data/README.md",

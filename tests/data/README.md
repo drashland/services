@@ -1,7 +1,7 @@
 ## Importing
 
 ```
-import { Rhum } from "https://deno.land/x/rhum@v0.0.0/mod.ts";
+import { Rhum } from "https://deno.land/x/rhum@v1.2.3/mod.ts";
 ```
 
 ## Quick Start
@@ -9,7 +9,7 @@ import { Rhum } from "https://deno.land/x/rhum@v0.0.0/mod.ts";
 ```typescript
 // File: app_test.ts
 
-import { Rhum } from "https://deno.land/x/rhum@v0.0.0/mod.ts";
+import { Rhum } from "https://deno.land/x/rhum@v1.2.3/mod.ts";
 
 let value = false;
 

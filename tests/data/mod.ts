@@ -8,7 +8,7 @@ import type { Constructor, Stubbed } from "./src/types.ts";
 import { MockBuilder } from "./src/mock_builder.ts";
 import { green, red, yellow } from "https://deno.land/std@0.74.0/fmt/colors.ts";
 
-export const version = "v0.0.0";
+export const version = "v1.2.3";
 
 const encoder = new TextEncoder();
 
