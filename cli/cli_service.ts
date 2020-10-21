@@ -1,23 +1,111 @@
 import { LoggerService } from "../logger/logger_service.ts";
 
+/**
+ * requires_args
+ *     Set this to true if the command requires args. If args aren't passed to
+ *     the command's handler, then an error will be throw -- stating the command
+ *     requires args.
+ */
 interface ICommandOptions {
   requires_args: boolean;
 }
 
+/**
+ * handler
+ *     The commands handler. That is, the function to execute when the command
+ *     runs.
+ *
+ * options
+ *     The commands options. See ICommandOptions.
+ */
 interface ICommand {
   handler: (args: string[]) => void;
   options: ICommandOptions;
 }
 
-interface IExampleUsageData {
+/**
+ * description
+ *     The description of the example being given.
+ *
+ * examples
+ *     An array of examples showing how to use a command.
+ *
+ * @example
+ *   {
+ *     description: "Run the help command."
+ *     examples: [
+ *       "my-cli help",
+ *       "my-cli --help",
+ *     ]
+ *   }
+ */
+interface IExample {
   description: string;
   examples: string[];
 }
 
+/**
+ * commands
+ *     The commands this CLI has where the key is the command and the value is
+ *     the command's description.
+ *
+ * description
+ *     The description of this CLI.
+ *
+ * example_usage
+ *     An array of examples that show how to use the command. See IExample for
+ *     more information on how to structure examples.
+ *
+ * options
+ *     A key-value pair object showing what options are available for what
+ *     commands. The key is the command and the value is a key-value pair object
+ *     where the key is the option and the value is the description of the
+ *     option.
+ *
+ * usage
+ *     An array of strings showing how to use the command.
+ *
+ * @example
+ *   {
+ *       description: `MyCli v1.2.3 - My cool CLI.`,
+ *       usage: [
+ *         "my-cli [command]",
+ *       ],
+ *       commands: {
+ *         "do-something": "Do something.",
+ *         "help, --help": "Display the help menu.",
+ *         "version, --version": "Display the version.",
+ *       },
+ *       options: {
+ *         "do-something": {
+ *           "--some-option":
+ *             "Execute some option.",
+ *         },
+ *       },
+ *       example_usage: [
+ *         {
+ *           description:
+ *             "Do something and pass in an option.",
+ *           examples: [
+ *             `my-cli do-something --some-option`,
+ *           ],
+ *         },
+ *         {
+ *           description:
+ *             "Display the help menu.",
+ *           examples: [
+ *             `my-cli help`,
+ *             `my-cli --help`,
+ *           ],
+ *         },
+ *       ],
+ *     });
+ *   }
+ */
 interface IHelpMenuData {
   commands: { [key: string]: string };
   description: string;
-  example_usage: IExampleUsageData[];
+  example_usage: IExample[];
   options?: {
     [key: string]: {
       [key: string]: string;
@@ -42,9 +130,9 @@ export class CliService {
   protected commands: { [key: string]: ICommand } = {};
 
   /**
-   * A property to hold the logger. This class logs when errors occur.
+   * A property that tells this class if a command was passed in or not.
    */
-  protected logger: LoggerService;
+  protected has_command: boolean;
 
   /**
    * A list of recognized commands. If any command is not recognized, this class
@@ -65,8 +153,7 @@ export class CliService {
     // Make a clone of the array in case it's readonly. We want this to be
     // mutable.
     this.args = args.slice();
-
-    this.logger = new LoggerService();
+    this.has_command = this.args.length <= 0;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -77,12 +164,20 @@ export class CliService {
    * Add a command to the CLI that is being built with this class.
    */
   public addCommand(
-    command: string,
+    command: string | string[],
     handler: (args: string[]) => void,
     options: ICommandOptions = {
       requires_args: false,
     },
   ): this {
+    if (Array.isArray(command)) {
+      command.forEach((command: string) => {
+        this.addCommand(command, handler);
+      });
+
+      return this;
+    }
+
     // Track that this is a recognized command
     this.recognized_commands.push(command);
 
@@ -93,6 +188,15 @@ export class CliService {
     };
 
     return this;
+  }
+
+  /**
+   * Does the instance of this class have a command passed in?
+   *
+   * @returns True if a comand was passed in; false if not.
+   */
+  public hasCommand(): boolean {
+    return this.has_command;
   }
 
   /**
@@ -111,7 +215,7 @@ export class CliService {
     this.args.shift();
 
     if (this.commands[command].options.requires_args && this.args.length <= 0) {
-      this.logger.logError(`Command \`${command}\` requires arguments.`);
+      LoggerService.logError(`Command \`${command}\` requires arguments.`);
       Deno.exit();
     }
 
@@ -165,7 +269,7 @@ export class CliService {
 
       if (key == "example_usage") {
         output += `\n\nEXAMPLE USAGE\n`;
-        data[key].forEach((exampleUsageData: IExampleUsageData) => {
+        data[key].forEach((exampleUsageData: IExample) => {
           output +=
             (`\n    ${this.wordWrap(exampleUsageData.description, 4)}\n`);
           exampleUsageData.examples.forEach((example: string) => {
@@ -190,7 +294,7 @@ export class CliService {
    */
   protected commandExists(command: string): void {
     if (this.recognized_commands.indexOf(command) === -1) {
-      this.logger.logError(`Command \`${command}\` not recognized.`);
+      LoggerService.logError(`Command \`${command}\` not recognized.`);
       Deno.exit();
     }
   }
