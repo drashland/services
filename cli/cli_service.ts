@@ -76,12 +76,20 @@ export class CliService {
    * Add a command to the CLI that is being built with this class.
    */
   public addCommand(
-    command: string,
+    command: string | string[],
     handler: (args: string[]) => void,
     options: ICommandOptions = {
       requires_args: false,
     },
   ): this {
+    if (Array.isArray(command)) {
+      command.forEach((command: string) => {
+        this.addCommand(command, handler);
+      });
+
+      return this;
+    }
+
     // Track that this is a recognized command
     this.recognized_commands.push(command);
 
