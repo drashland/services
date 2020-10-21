@@ -84,8 +84,8 @@ export class Bumper {
   public bump(files: File[]): void {
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
-        "{{ latestDrashVersion }}",
-        this.getLatestVersion("drash"),
+        "{{ thisModulesLatestVersion }}",
+        this.getLatestVersion(this.module_name),
       );
       file.replaceWith = file.replaceWith.replace(
         "{{ latestStdVersion }}",
