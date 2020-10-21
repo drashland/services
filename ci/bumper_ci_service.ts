@@ -10,7 +10,7 @@ interface Versions {
 
 interface File {
   filename: string;
-  replaceTheRegex: RegExp | string;
+  replaceTheRegex: RegExp;
   replaceWith: string;
 }
 
