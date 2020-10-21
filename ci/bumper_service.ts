@@ -23,17 +23,16 @@ interface Versions {
  * Deno, Deno Std, and Drash Land module version are released.
  */
 export class BumperService {
+  /**
+   * A property to hold Deno.args.
+   */
+  protected args: string[];
 
   /**
    * A property to determine whether or not the .bump() method should bump for
    * pre-release.
    */
-  public is_for_pre_release = false;
-
-  /**
-   * A property to hold Deno.args.
-   */
-  protected args: string[];
+  protected is_for_pre_release = false;
 
   /**
    * A list of latest versions. This object should contain (at the very least):
@@ -76,11 +75,6 @@ export class BumperService {
     if (this.parsed_args.branch) {
       this.is_for_pre_release = true;
     }
-
-    // Set all of the latest versions that we care about
-    this.latest_versions[moduleName] = this.getLatestVersion(moduleName);
-    this.latest_versions["deno"] = this.getLatestVersion("deno");
-    this.latest_versions["deno_std"] = this.getLatestVersion("std");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +101,9 @@ export class BumperService {
    *
    * @param files - Files to replace content in and re-write to fs
    */
-  public bump(files: File[]): void {
+  public async bump(files: File[]): Promise<void> {
+    const latestVersions = await this.getLatestVersions();
+
     if (this.is_for_pre_release) {
       return this.bumpForPreRelease(files);
     }
@@ -115,12 +111,12 @@ export class BumperService {
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
         "{{ latestDenoVersion }}",
-        this.latest_versions.deno,
+        latestVersions.deno,
       );
 
       file.replaceWith = file.replaceWith.replace(
         "{{ latestStdVersion }}",
-        this.latest_versions.deno_std,
+        latestVersions.deno_std,
       );
 
       this.writeFile(file);
@@ -158,9 +154,37 @@ export class BumperService {
     });
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
+  /**
+   * Is this bumper service being used for pre-release pruposes?
+   *
+   * @returns True if for pre-release purposes; false if not.
+   */
+  public isForPreRelease(): boolean {
+    return this.is_for_pre_release;
+  }
+
+  /**
+   * Get the latest versions for this module, deno, and deno std.
+   *
+   * @returns An object of key-value pairs where the key is the module in
+   * question and the value is the module's latest version.
+   */
+  public async getLatestVersions(): Promise<{ [key: string]: string }> {
+    return {
+      [this.module_name]: await this.getModulesLatestVersion(this.module_name),
+      deno: await this.getModulesLatestVersion("deno"),
+      deno_std: await this.getModulesLatestVersion("std"),
+    };
+  }
+
+  /**
+   * Get the name of the module using this service.
+   *
+   * @returns The name of the module using this service.
+   */
+  public getModuleName(): string {
+    return this.module_name;
+  }
 
   /**
    * Get the latest version of the module using this class from Deno's CDN.
@@ -185,7 +209,7 @@ export class BumperService {
    *
    * @param moduleName - The name of the module to get the latest version from.
    */
-  protected async getLatestVersion(moduleName: string): string {
+  public async getModulesLatestVersion(moduleName: string): Promise<string> {
     const res = await fetch(
       `https://cdn.deno.land/${moduleName}/meta/versions.json`,
     );
@@ -200,7 +224,7 @@ export class BumperService {
    * the arg value. For example, if --version=v1.2.3, then the key would be
    * version and the value would be v1.2.3.
    */
-  protected getParsedArgs(): ParsedArgs {
+  public getParsedArgs(): ParsedArgs {
     let args: ParsedArgs = {};
 
     this.args.forEach((arg: string) => {
@@ -211,6 +235,10 @@ export class BumperService {
 
     return args;
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
   /**
    * Write the file in question to the filesystem.

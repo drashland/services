@@ -26,4 +26,3 @@ export function logError(message: string): void {
 export function logInfo(message: string): void {
   console.log(colors.blue("INFO") + " " + message);
 }
-
