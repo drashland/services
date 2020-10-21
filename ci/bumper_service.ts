@@ -108,7 +108,7 @@ export class BumperService {
     const ret: string[] = [];
 
     if (this.is_for_pre_release) {
-      return this.bumpForPreRelease(files);
+      return this.bumpForPreRelease(files, write);
     }
 
     files.forEach((file) => {
