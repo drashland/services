@@ -42,6 +42,11 @@ export class CliService {
   protected commands: { [key: string]: ICommand } = {};
 
   /**
+   * A property that tells this class if a command was passed in or not.
+   */
+  protected has_command: boolean;
+
+  /**
    * A list of recognized commands. If any command is not recognized, this class
    * will display an error.
    */
@@ -60,6 +65,7 @@ export class CliService {
     // Make a clone of the array in case it's readonly. We want this to be
     // mutable.
     this.args = args.slice();
+    this.has_command = this.args.length <= 0;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -86,6 +92,15 @@ export class CliService {
     };
 
     return this;
+  }
+
+  /**
+   * Does the instance of this class have a command passed in?
+   *
+   * @returns True if a comand was passed in; false if not.
+   */
+  public hasCommand(): boolean {
+    return this.has_command;
   }
 
   /**
