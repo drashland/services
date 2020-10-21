@@ -50,7 +50,6 @@ export function bumper (files: File[]) {
     file.replaceWith = file.replaceWith.replace("{{ latestStdVersion }}", latestStdVersion)
     file.replaceWith = file.replaceWith.replace("{{ latestDenoVersion }}", latestDenoVersion)
 
-    console.log(file)
     let fileContent = decoder.decode(Deno.readFileSync(file.filename))
     fileContent = fileContent.replace(file.replaceTheRegex, file.replaceWith)
     Deno.writeFileSync(file.filename, encoder.encode(fileContent))
