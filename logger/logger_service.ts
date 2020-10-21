@@ -27,4 +27,13 @@ export class LoggerService {
   public static logInfo(message: string): void {
     console.log(colors.blue("INFO") + " " + message);
   }
+
+  /**
+   * Log an warning message.
+   *
+   * @param message The message to log.
+   */
+  public static logWarn(message: string): void {
+    console.log(colors.yellow("WARN") + " " + message);
+  }
 }
