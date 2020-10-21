@@ -1,4 +1,4 @@
-import { logError, logInfo } from "../cli/logger_service.ts";
+import { LoggerService} from "../logger/logger_service.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -221,7 +221,9 @@ export class BumperService {
     const res = await fetch(
       `https://cdn.deno.land/${moduleName}/meta/versions.json`,
     );
+
     const version: Versions = await res.json();
+
     return version.latest.replace("v", "");
   }
 
@@ -256,7 +258,7 @@ export class BumperService {
   protected writeFile(file: File, write: boolean = true): string {
     try {
       if (write) {
-        logInfo(`Writing file: ${file.filename}`);
+        LoggerService.logInfo(`Writing file: ${file.filename}`);
       }
       let fileContent = decoder.decode(Deno.readFileSync(file.filename));
       fileContent = fileContent.replace(file.replaceTheRegex, file.replaceWith);
@@ -265,7 +267,7 @@ export class BumperService {
       }
       return fileContent;
     } catch (error) {
-      logError(error.stack);
+      LoggerService.logError(error.stack);
     }
 
     return "";
