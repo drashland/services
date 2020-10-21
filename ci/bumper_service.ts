@@ -100,9 +100,12 @@ export class BumperService {
    * All versions do not have the `v`, so add them yourself
    *
    * @param files - Files to replace content in and re-write to fs
+   * @param write - Should this method write to the filesystem? Defaults to
+   * true.
    */
-  public async bump(files: File[]): Promise<void> {
+  public async bump(files: File[], write: boolean = true): Promise<string[]> {
     const latestVersions = await this.getLatestVersions();
+    const ret: string[] = [];
 
     if (this.is_for_pre_release) {
       return this.bumpForPreRelease(files);
@@ -119,8 +122,10 @@ export class BumperService {
         latestVersions.deno_std,
       );
 
-      this.writeFile(file);
+      ret.push(this.writeFile(file, write));
     });
+
+    return ret;
   }
 
   /**
@@ -128,17 +133,18 @@ export class BumperService {
    * method should bump all files that has this module's version. For example,
    * this should bump eggs.json, README.md, etc.
    *
-   * @param args - Deno.args. For example, say you have a file `a.ts`, you do
-   * `deno run -A a.ts --version=release-v1.2.3 --some-other-arg=hello`. The
-   * args would be `--version=release-v1.2.3` and `--some-other-arg=hello`.
    * @param files - List of files to update with the version strings.
+   * @param write - Should this method write to the filesystem? Defaults to
+   * true.
    */
-  public bumpForPreRelease(files: File[]): void {
+  public bumpForPreRelease(files: File[], write: boolean = true): string[] {
     if (!this.parsed_args.branch) {
       throw new Error(
         "Tried bumping for pre-release, but a release branch was not specified.",
       );
     }
+
+    const ret: string[] = [];
 
     const version = this.parsed_args.branch.substring(
       this.parsed_args.branch.indexOf("v") + 1,
@@ -150,8 +156,10 @@ export class BumperService {
         version,
       );
 
-      this.writeFile(file);
+      ret.push(this.writeFile(file, write));
     });
+
+    return ret;
   }
 
   /**
@@ -245,14 +253,21 @@ export class BumperService {
    *
    * @param file - The file to write to the filesystem.
    */
-  protected writeFile(file: File) {
+  protected writeFile(file: File, write: boolean = true): string {
     try {
-      logInfo(`Writing file: ${file.filename}`);
+      if (write) {
+        logInfo(`Writing file: ${file.filename}`);
+      }
       let fileContent = decoder.decode(Deno.readFileSync(file.filename));
       fileContent = fileContent.replace(file.replaceTheRegex, file.replaceWith);
-      Deno.writeFileSync(file.filename, encoder.encode(fileContent));
+      if (write) {
+        Deno.writeFileSync(file.filename, encoder.encode(fileContent));
+      }
+      return fileContent;
     } catch (error) {
       logError(error.stack);
     }
+
+    return "";
   }
 }

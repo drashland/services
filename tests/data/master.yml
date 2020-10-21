@@ -1,0 +1,73 @@
+name: master
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        deno: ["0.0.0"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Deno v${{ matrix.deno }}
+        uses: denolib/setup-deno@master
+        with:
+          deno-version: ${{ matrix.deno }}
+
+      - name: Install Rhum
+        run: deno install -A ./cli.ts
+
+      - name: Run Unit Tests
+        if: matrix.os != 'windows-latest'
+        run: |
+          export PATH="~/.deno/bin:$PATH"
+          rhum tests/unit
+
+      - name: Run Integration Tests
+        if: matrix.os != 'windows-latest'
+        run: |
+          export PATH="~/.deno/bin:$PATH"
+          rhum tests/integration
+
+      - name: Run Unit Tests (windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          $env:Path += ";C:\Users\runneradmin\.deno\bin"
+          rhum tests/unit
+
+      - name: Run Integration Tests (windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          $env:Path += ";C:\Users\runneradmin\.deno\bin"
+          rhum tests/integration
+
+  linter:
+    strategy:
+      matrix:
+        deno: ["0.0.0"]
+    # Only one OS is required since fmt is cross platform
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Deno v${{ matrix.deno }}
+        uses: denolib/setup-deno@master
+        with:
+          deno-version: ${{ matrix.deno }}
+
+      - name: Lint
+        run: deno lint --unstable
+
+      - name: Formatter
+        run: deno fmt --check
