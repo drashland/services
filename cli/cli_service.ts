@@ -1,5 +1,11 @@
 import { LoggerService } from "../logger/logger_service.ts";
 
+/**
+ * requires_args
+ *     Set this to true if the command requires args. If args aren't passed to
+ *     the command's handler, then an error will be throw -- stating the command
+ *     requires args.
+ */
 interface ICommandOptions {
   requires_args: boolean;
 }
