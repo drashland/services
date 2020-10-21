@@ -10,20 +10,102 @@ interface ICommandOptions {
   requires_args: boolean;
 }
 
+/**
+ * handler
+ *     The commands handler. That is, the function to execute when the command
+ *     runs.
+ *
+ * options
+ *     The commands options. See ICommandOptions.
+ */
 interface ICommand {
   handler: (args: string[]) => void;
   options: ICommandOptions;
 }
 
-interface IExampleUsageData {
+/**
+ * description
+ *     The description of the example being given.
+ *
+ * examples
+ *     An array of examples showing how to use a command.
+ *
+ * @example
+ *   {
+ *     description: "Run the help command."
+ *     examples: [
+ *       "my-cli help",
+ *       "my-cli --help",
+ *     ]
+ *   }
+ */
+interface IExample {
   description: string;
   examples: string[];
 }
 
+/**
+ * commands
+ *     The commands this CLI has where the key is the command and the value is
+ *     the command's description.
+ *
+ * description
+ *     The description of this CLI.
+ *
+ * example_usage
+ *     An array of examples that show how to use the command. See IExample for
+ *     more information on how to structure examples.
+ *
+ * options
+ *     A key-value pair object showing what options are available for what
+ *     commands. The key is the command and the value is a key-value pair object
+ *     where the key is the option and the value is the description of the
+ *     option.
+ *
+ * usage
+ *     An array of strings showing how to use the command.
+ *
+ * @example
+ *   {
+ *       description: `MyCli v1.2.3 - My cool CLI.`,
+ *       usage: [
+ *         "my-cli [command]",
+ *       ],
+ *       commands: {
+ *         "do-something": "Do something.",
+ *         "help, --help": "Display the help menu.",
+ *         "version, --version": "Display the version.",
+ *       },
+ *       options: {
+ *         "do-something": {
+ *           "--some-option":
+ *             "Execute some option.",
+ *         },
+ *       },
+ *       example_usage: [
+ *         {
+ *           description:
+ *             "Do something and pass in an option.",
+ *           examples: [
+ *             `my-cli do-something --some-option`,
+ *           ],
+ *         },
+ *         {
+ *           description:
+ *             "Display the help menu.",
+ *           examples: [
+ *             `my-cli help`,
+ *             `my-cli --help`,
+ *           ],
+ *         },
+ *       ],
+ *     });
+ *   }
+ */
 interface IHelpMenuData {
   commands: { [key: string]: string };
   description: string;
-  example_usage: IExampleUsageData[];
+  example_usage: IExample[];
   options?: {
     [key: string]: {
       [key: string]: string;
@@ -187,7 +269,7 @@ export class CliService {
 
       if (key == "example_usage") {
         output += `\n\nEXAMPLE USAGE\n`;
-        data[key].forEach((exampleUsageData: IExampleUsageData) => {
+        data[key].forEach((exampleUsageData: IExample) => {
           output +=
             (`\n    ${this.wordWrap(exampleUsageData.description, 4)}\n`);
           exampleUsageData.examples.forEach((example: string) => {
