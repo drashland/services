@@ -1,6 +1,6 @@
 # CI
 
-A group of service classes to help with your CI processes.
+A group of service classes to help with CI processes.
 
 ## Table of Contents
 
