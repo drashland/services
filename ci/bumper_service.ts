@@ -122,6 +122,11 @@ export class BumperService {
         latestVersions.deno_std,
       );
 
+      file.replaceWith = file.replaceWith.replace(
+        "{{ latestDrashVersion }}",
+        latestVersions.drash,
+      );
+
       ret.push(this.writeFile(file, write));
     });
 

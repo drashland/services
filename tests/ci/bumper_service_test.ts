@@ -96,7 +96,7 @@ Rhum.testPlan(async () => {
       },
       {
         filename: "./tests/data/mod.ts",
-        replaceTheRegex: /version = ".+"/,
+        replaceTheRegex: /version = ".+"/g,
         replaceWith: `version = "v{{ thisModulesLatestVersion }}"`,
       },
     ], false);
