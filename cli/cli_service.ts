@@ -2,25 +2,25 @@ import { LoggerService } from "../logger/logger_service.ts";
 
 /**
  * requires_args
- *     Set this to true if the command requires args. If args aren't passed to
- *     the command's handler, then an error will be throw -- stating the command
- *     requires args.
+ *     Set this to true if the subcommand requires args. If args aren't passed
+ *     to the subcommand's handler, then an error will be throw -- stating the
+ *     subcommand requires args.
  */
-interface ICommandOptions {
+interface ISubcommandOptions {
   requires_args: boolean;
 }
 
 /**
  * handler
- *     The commands handler. That is, the function to execute when the command
- *     runs.
+ *     The subcommand's handler. That is, the function to execute when the
+ *     subcommand runs.
  *
  * options
- *     The commands options. See ICommandOptions.
+ *     The subcommand's options. See ISubcommandOptions.
  */
-interface ICommand {
+interface ISubcommand {
   handler: (args: string[]) => void;
-  options: ICommandOptions;
+  options: ISubcommandOptions;
 }
 
 /**
@@ -28,11 +28,11 @@ interface ICommand {
  *     The description of the example being given.
  *
  * examples
- *     An array of examples showing how to use a command.
+ *     An array of examples showing how to use a subcommand.
  *
  * @example
  *   {
- *     description: "Run the help command."
+ *     description: "Run the help subcommand."
  *     examples: [
  *       "my-cli help",
  *       "my-cli --help",
@@ -45,33 +45,33 @@ interface IExample {
 }
 
 /**
- * commands
- *     The commands this CLI has where the key is the command and the value is
- *     the command's description.
+ * subcommands
+ *     The subcommands this CLI has where the key is the subcommand and the
+ *     value is the subcommand's description.
  *
  * description
  *     The description of this CLI.
  *
  * example_usage
- *     An array of examples that show how to use the command. See IExample for
- *     more information on how to structure examples.
+ *     An array of examples that show how to use the subcommand. See IExample
+ *     for more information on how to structure examples.
  *
  * options
  *     A key-value pair object showing what options are available for what
- *     commands. The key is the command and the value is a key-value pair object
- *     where the key is the option and the value is the description of the
- *     option.
+ *     subcommands. The key is the subcommand and the value is a key-value pair
+ *     object where the key is the option and the value is the description of
+ *     the option.
  *
  * usage
- *     An array of strings showing how to use the command.
+ *     An array of strings showing how to use the subcommand.
  *
  * @example
  *   {
  *       description: `MyCli v1.2.3 - My cool CLI.`,
  *       usage: [
- *         "my-cli [command]",
+ *         "my-cli [subcommand]",
  *       ],
- *       commands: {
+ *       subcommands: {
  *         "do-something": "Do something.",
  *         "help, --help": "Display the help menu.",
  *         "version, --version": "Display the version.",
@@ -103,7 +103,7 @@ interface IExample {
  *   }
  */
 interface IHelpMenuData {
-  commands: { [key: string]: string };
+  subcommands: { [key: string]: string };
   description: string;
   example_usage: IExample[];
   options?: {
@@ -124,20 +124,20 @@ export class CliService {
   protected args: string[];
 
   /**
-   * A property to hold all available commands.
+   * A property to hold all available subcommand.
    */
-  protected commands: { [key: string]: ICommand } = {};
+  protected subcommands: { [key: string]: ISubcommand } = {};
 
   /**
-   * A property that tells this class if a command was passed in or not.
+   * A property that tells this class if a subcommand was passed in or not.
    */
-  protected has_command: boolean;
+  protected has_subcommand: boolean;
 
   /**
-   * A list of recognized commands. If any command is not recognized, this class
-   * will display an error.
+   * A list of recognized subcommand. If any subcommand is not recognized, this
+   * class will display an error.
    */
-  protected recognized_commands: string[] = [];
+  protected recognized_subcommands: string[] = [];
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
@@ -152,7 +152,7 @@ export class CliService {
     // Make a clone of the array in case it's readonly. We want this to be
     // mutable.
     this.args = args.slice();
-    this.has_command = this.args.length <= 0;
+    this.has_subcommand = this.args.length <= 0;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -160,28 +160,28 @@ export class CliService {
   //////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Add a command to the CLI that is being built with this class.
+   * Add a subcommand to the CLI that is being built with this class.
    */
-  public addCommand(
-    command: string | string[],
+  public addSubcommand(
+    subcommand: string | string[],
     handler: (args: string[]) => void,
-    options: ICommandOptions = {
+    options: ISubcommandOptions = {
       requires_args: false,
     },
   ): this {
-    if (Array.isArray(command)) {
-      command.forEach((command: string) => {
-        this.addCommand(command, handler);
+    if (Array.isArray(subcommand)) {
+      subcommand.forEach((subcommand: string) => {
+        this.addSubcommand(subcommand, handler);
       });
 
       return this;
     }
 
-    // Track that this is a recognized command
-    this.recognized_commands.push(command);
+    // Track that this is a recognized subcommand
+    this.recognized_subcommands.push(subcommand);
 
-    // Add the command to the list of commands
-    this.commands[command] = {
+    // Add the subcommand to the list of subcommands
+    this.subcommands[subcommand] = {
       handler,
       options,
     };
@@ -190,12 +190,12 @@ export class CliService {
   }
 
   /**
-   * Does the instance of this class have a command passed in?
+   * Does the instance of this class have a subcommand passed in?
    *
    * @returns True if a comand was passed in; false if not.
    */
-  public hasCommand(): boolean {
-    return this.has_command;
+  public hasSubcommand(): boolean {
+    return this.has_subcommand;
   }
 
   /**
@@ -203,23 +203,23 @@ export class CliService {
    */
   public run() {
     if (this.args.length <= 0) {
-      this.commands["help"].handler(this.args);
+      this.subcommands["help"].handler(this.args);
       Deno.exit();
     }
 
-    const command = this.args[0];
-    this.commandExists(command);
+    const subcommand = this.args[0];
+    this.subcommandExists(subcommand);
 
-    // Take off the first argument, which would be the command
+    // Take off the first argument, which would be the subcommand
     this.args.shift();
 
-    if (this.commands[command].options.requires_args && this.args.length <= 0) {
-      LoggerService.logError(`Command \`${command}\` requires arguments.`);
+    if (this.subcommands[subcommand].options.requires_args && this.args.length <= 0) {
+      LoggerService.logError(`Subcommand \`${subcommand}\` requires arguments.`);
       Deno.exit();
     }
 
-    // Execute the command
-    this.commands[command].handler(this.args);
+    // Execute the subcommand
+    this.subcommands[subcommand].handler(this.args);
   }
 
   /**
@@ -244,23 +244,23 @@ export class CliService {
         });
       }
 
-      if (key == "commands" || key == "subcommands") {
+      if (key == "subcommands") {
         output += `\n\SUBCOMMANDS\n`;
-        for (const command in data[key]) {
-          output += (`\n    ${command}\n`);
-          output += (`        ${this.wordWrap(`${data[key][command]}`, 8)}\n`);
+        for (const subcommand in data[key]) {
+          output += (`\n    ${subcommand}\n`);
+          output += (`        ${this.wordWrap(`${data[key][subcommand]}`, 8)}\n`);
         }
       }
 
       if (key == "options") {
         output += `\n\nOPTIONS\n\n    Options are categorized by subcommand.\n`;
-        for (const command in data[key]!) {
-          output += (`\n    ${command}\n`);
-          for (const option in data[key]![command]) {
+        for (const subcommand in data[key]!) {
+          output += (`\n    ${subcommand}\n`);
+          for (const option in data[key]![subcommand]) {
             output += (`        ${option}\n`);
             output +=
               (`${
-                this.wordWrap(`            ${data[key]![command][option]}`, 12)
+                this.wordWrap(`            ${data[key]![subcommand][option]}`, 12)
               }\n`);
           }
         }
@@ -286,14 +286,14 @@ export class CliService {
   //////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Does the command that was passed in exist? That is, is it in the list of
-   * recongized commands?
+   * Does the subcommand that was passed in exist? That is, is it in the list of
+   * recongized subcommands?
    *
-   * @param command - The command in question.
+   * @param subcommand - The subcommand in question.
    */
-  protected commandExists(command: string): void {
-    if (this.recognized_commands.indexOf(command) === -1) {
-      LoggerService.logError(`Command \`${command}\` not recognized.`);
+  protected subcommandExists(subcommand: string): void {
+    if (this.recognized_subcommands.indexOf(subcommand) === -1) {
+      LoggerService.logError(`Subcommand \`${subcommand}\` not recognized.`);
       Deno.exit();
     }
   }
