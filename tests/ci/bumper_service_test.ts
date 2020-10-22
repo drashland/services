@@ -1,9 +1,9 @@
 import { Rhum } from "https://raw.githubusercontent.com/drashland/rhum/rhum-cli/mod.ts";
 import { BumperService } from "../../ci/bumper_service.ts";
 
-const b = new BumperService("rhum", []);
+const b = new BumperService("rhum");
 const c = new BumperService("rhum", ["--version=v1.2.3"]);
-const d = new BumperService("my-cool-module-dude-omg-yea", []);
+const d = new BumperService("my-cool-module-dude-omg-yea");
 
 Rhum.testPlan(async () => {
   Rhum.testSuite("constructor()", () => {
