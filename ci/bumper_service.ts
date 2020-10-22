@@ -104,7 +104,7 @@ export class BumperService {
    * true.
    */
   public async bump(files: File[], write: boolean = true): Promise<string[]> {
-    const latestVersions = await this.getLatestVersions();
+    this.latest_versions = await this.getLatestVersions();
     const ret: string[] = [];
 
     if (this.is_for_pre_release) {
@@ -114,17 +114,17 @@ export class BumperService {
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
         "{{ latestDenoVersion }}",
-        latestVersions.deno,
+        this.latest_versions.deno,
       );
 
       file.replaceWith = file.replaceWith.replace(
         "{{ latestStdVersion }}",
-        latestVersions.deno_std,
+        this.latest_versions.deno_std,
       );
 
       file.replaceWith = file.replaceWith.replace(
         "{{ latestDrashVersion }}",
-        latestVersions.drash,
+        this.latest_versions.drash,
       );
 
       ret.push(this.writeFile(file, write));
@@ -158,7 +158,7 @@ export class BumperService {
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
         "{{ thisModulesLatestVersion }}",
-        version,
+        version ? version : this.latest_versions[this.module_name],
       );
 
       ret.push(this.writeFile(file, write));

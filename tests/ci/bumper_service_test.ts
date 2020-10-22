@@ -39,6 +39,7 @@ Rhum.testPlan(async () => {
         rhum: await c.getModulesLatestVersion("rhum"),
         deno: await c.getModulesLatestVersion("deno"),
         deno_std: await c.getModulesLatestVersion("std"),
+        drash: await c.getModulesLatestVersion("drash")
       };
       Rhum.asserts.assertEquals(
         await c.getLatestVersions(),
