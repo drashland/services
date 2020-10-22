@@ -14,4 +14,3 @@ const encoder = new TextEncoder();
 
 export type { Constructor, Stubbed } from "./src/types.ts";
 export { MockBuilder } from "./src/mock_builder.ts";
-

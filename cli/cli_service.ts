@@ -118,7 +118,6 @@ interface IHelpMenuData {
  * A class to help build CLIs.
  */
 export class CliService {
-
   /**
    * A porperty to hold Deno.args.
    */
@@ -298,7 +297,6 @@ export class CliService {
       Deno.exit();
     }
   }
-
 
   /**
    * Word wrap a string. Thanks

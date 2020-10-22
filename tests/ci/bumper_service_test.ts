@@ -3,6 +3,7 @@ import { BumperService } from "../../ci/bumper_service.ts";
 
 const b = new BumperService("rhum", []);
 const c = new BumperService("rhum", ["--version=v1.2.3"]);
+const d = new BumperService("my-cool-module-dude-omg-yea", []);
 
 Rhum.testPlan(async () => {
   Rhum.testSuite("constructor()", () => {
@@ -39,13 +40,28 @@ Rhum.testPlan(async () => {
         rhum: await c.getModulesLatestVersion("rhum"),
         deno: await c.getModulesLatestVersion("deno"),
         deno_std: await c.getModulesLatestVersion("std"),
-        drash: await c.getModulesLatestVersion("drash")
+        drash: await c.getModulesLatestVersion("drash"),
       };
       Rhum.asserts.assertEquals(
         await c.getLatestVersions(),
         versions,
       );
     });
+    Rhum.testCase(
+      "defaults to (Module not found) if latest version can't be found",
+      async () => {
+        const versions = {
+          "my-cool-module-dude-omg-yea": "(Module not found)",
+          deno: await c.getModulesLatestVersion("deno"),
+          deno_std: await c.getModulesLatestVersion("std"),
+          drash: await c.getModulesLatestVersion("drash"),
+        };
+        Rhum.asserts.assertEquals(
+          await d.getLatestVersions(),
+          versions,
+        );
+      },
+    );
   });
 
   await Rhum.testSuite("bump", async () => {
@@ -87,8 +103,7 @@ Rhum.testPlan(async () => {
       {
         filename: "./tests/data/README.md",
         replaceTheRegex: /rhum\@v.+mod.ts"/g,
-        replaceWith:
-          `rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
+        replaceWith: `rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
       },
       {
         filename: "./tests/data/egg.json",
@@ -345,7 +360,8 @@ const data_bumpEggJson = `{
 
 `;
 
-const data_bumpMod = `import { assertions, asserts } from "./src/rhum_asserts.ts";
+const data_bumpMod =
+  `import { assertions, asserts } from "./src/rhum_asserts.ts";
 import type {
   ITestCase,
   ITestPlan,
@@ -361,5 +377,4 @@ const encoder = new TextEncoder();
 
 export type { Constructor, Stubbed } from "./src/types.ts";
 export { MockBuilder } from "./src/mock_builder.ts";
-
 `;

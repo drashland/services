@@ -1,4 +1,4 @@
-import { LoggerService} from "../logger/logger_service.ts";
+import { LoggerService } from "../logger/logger_service.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -191,7 +191,9 @@ export class BumperService {
     };
 
     try {
-      latestVersions[this.module_name] = await this.getModulesLatestVersion(this.module_name);
+      latestVersions[this.module_name] = await this.getModulesLatestVersion(
+        this.module_name,
+      );
     } catch (error) {
     }
 
