@@ -187,6 +187,7 @@ export class BumperService {
       [this.module_name]: await this.getModulesLatestVersion(this.module_name),
       deno: await this.getModulesLatestVersion("deno"),
       deno_std: await this.getModulesLatestVersion("std"),
+      drash: await this.getModulesLatestVersion("drash"),
     };
   }
 
