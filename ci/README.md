@@ -82,7 +82,7 @@ b.bump([
 You can also specify what version you want `{{ thisModulesLatestVersions }}` to be. You do this by instantiating the `BumperService` class with two arguments:
 
 * 1st argument: The name of the module.
-* 2nd argument: `["--version=vx.x.x"]` where `x.x.x` is the version you want `{{ thisModulesLatestVersion }}` to be.
+* 2nd argument: `["--version=vx.x.x"]` where `x.x.x` is the version you want `{{ thisModulesLatestVersion }}` to be. This can also be `Deno.args` if you want to call a script that includes this logic from a CI process.
 
 For example:
 
