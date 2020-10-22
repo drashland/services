@@ -201,4 +201,4 @@ You'll notice that this `bumper.yml` GitHub workflow file has a `Bump Versions` 
 
 _At 00:00 every day, install Deno, run `bumper.ts`, and create a pull request if there are changes to the current repository's files._
 
-Now, you have a GitHub workflow file that runs on a schedule to check if your `app.ts` file is up to date or not. If it's not, then the `bumper.ts` file will update it, and a pull request will be made so that you can review the changes that reflect the lates Deno version.
+Now, you have a GitHub workflow file that runs on a schedule to check if your `app.ts` file is up to date or not. If it's not, then the `bumper.ts` file will update it, and a pull request will be made so that you can review the changes that reflect the latest Deno version.
