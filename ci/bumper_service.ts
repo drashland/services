@@ -26,7 +26,7 @@ export class BumperService {
   /**
    * A property to hold Deno.args.
    */
-  protected args: string[];
+  protected args: string[] = [];
 
   /**
    * A property to determine whether or not the .bump() method should bump for
@@ -61,12 +61,14 @@ export class BumperService {
    *
    * @param moduleName - The name of the module using this class.
    */
-  constructor(moduleName: string, args: string[]) {
+  constructor(moduleName: string, args?: string[]) {
     this.module_name = moduleName;
 
     // Make a copy of the args in case they're readonly, which means we can't
     // mutate them. We want them mutable just in case.
-    this.args = args.slice();
+    if (args && args.length >= 1) {
+      this.args = args.slice();
+    }
 
     // Parse the arguments into key-value pairs
     this.parsed_args = this.getParsedArgs();
