@@ -263,6 +263,6 @@ interface ParsedArgs {
 
 interface Versions {
   latest: string; // "v1.2.3"
-  versions: string[]; // ["v1.2.3", "v1.2.2", ...[
+  versions: string[]; // ["v1.2.3", "v1.2.2", ...]
 }
 ```
