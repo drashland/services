@@ -51,17 +51,17 @@ Rhum.testPlan(async () => {
     const files = await b.bump([
       {
         filename: "./tests/data/master.yml",
-        replaceTheRegex: /deno: ["[0-9.]+[0-9.]+[0-9]"]/g,
+        replaceTheRegex: /deno: \[".+"\]/g,
         replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
       },
       {
         filename: "./tests/data/bumper.yml",
-        replaceTheRegex: /deno: ["[0-9.]+[0-9.]+[0-9]"]/g,
+        replaceTheRegex: /deno: \[".+"\]/g,
         replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
       },
       {
         filename: "./tests/data/pre_release.yml",
-        replaceTheRegex: /deno: ["[0-9.]+[0-9.]+[0-9]"]/g,
+        replaceTheRegex: /deno: \[".+"\]/g,
         replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
       },
     ], false);
@@ -91,7 +91,7 @@ Rhum.testPlan(async () => {
       },
       {
         filename: "./tests/data/egg.json",
-        replaceTheRegex: /"version": "[0-9\.]+[0-9\.]+[0-9\.]"/,
+        replaceTheRegex: /"version": ".+"/,
         replaceWith: `"version": "{{ thisModulesLatestVersion }}"`,
       },
       {
