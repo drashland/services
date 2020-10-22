@@ -244,8 +244,8 @@ export class CliService {
         });
       }
 
-      if (key == "commands") {
-        output += `\n\nCOMMANDS\n`;
+      if (key == "commands" || key == "subcommands") {
+        output += `\n\SUBCOMMANDS\n`;
         for (const command in data[key]) {
           output += (`\n    ${command}\n`);
           output += (`        ${this.wordWrap(`${data[key][command]}`, 8)}\n`);
