@@ -253,7 +253,7 @@ export class CliService {
       }
 
       if (key == "options") {
-        output += `\n\nOPTIONS\n\n    Options are categorized by command.\n`;
+        output += `\n\nOPTIONS\n\n    Options are categorized by subcommand.\n`;
         for (const command in data[key]!) {
           output += (`\n    ${command}\n`);
           for (const option in data[key]![command]) {
