@@ -183,12 +183,19 @@ export class BumperService {
    * question and the value is the module's latest version.
    */
   public async getLatestVersions(): Promise<{ [key: string]: string }> {
-    return {
-      [this.module_name]: await this.getModulesLatestVersion(this.module_name),
+    let latestVersions = {
+      [this.module_name]: "(Module not found)",
       deno: await this.getModulesLatestVersion("deno"),
       deno_std: await this.getModulesLatestVersion("std"),
       drash: await this.getModulesLatestVersion("drash"),
     };
+
+    try {
+      latestVersions[this.module_name] = await this.getModulesLatestVersion(this.module_name);
+    } catch (error) {
+    }
+
+    return latestVersions;
   }
 
   /**
