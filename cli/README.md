@@ -152,11 +152,19 @@ EXAMPLE USAGE
     
     // Add a single command that has a handler that requires Deno.args.
     // You can pass in args: string[] into the handler and the CliService
-    // will pass in Deno.args as the args.
-    c.addCommand("make", (args: string[]) => {
-       console.log(args); // outputs ["arg1", "arg2"] if you run `my-cli make arg1 arg2`
-       doSomething(args);
-    });
+    // will pass in Deno.args as the args. Also, to throw an error stating
+    // that this command requires args, pass in the { requires_args: true }
+    // option.
+    c.addCommand(
+      "make",
+      (args: string[]) => {
+        console.log(args); // outputs ["arg1", "arg2"] if you run `my-cli make arg1 arg2`
+        doSomething(args);
+      },
+      {
+        requires_args: true
+      }
+    );
     ```
 
 #### .run()
