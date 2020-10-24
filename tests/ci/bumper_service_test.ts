@@ -1,4 +1,4 @@
-import { Rhum } from "https://raw.githubusercontent.com/drashland/rhum/rhum-cli/mod.ts";
+import { Rhum } from "../../deps.ts";
 import { BumperService } from "../../ci/bumper_service.ts";
 
 const b = new BumperService("rhum");
