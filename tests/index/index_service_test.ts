@@ -25,11 +25,33 @@ Rhum.testPlan(async () => {
   });
 
   Rhum.testSuite("getItemPosition()", () => {
-    Rhum.testCase("can find the position of hello in the index", () => {
+    Rhum.testCase("can find the position of an item in the index", () => {
       const position = i.getItemPosition("hello");
       Rhum.asserts.assertEquals(
         position,
         24,
+      );
+    });
+  });
+
+  Rhum.testSuite("getItem()", () => {
+    Rhum.testCase("can get an item from the lookup table", () => {
+      let item: string | unknown;
+
+      item = i.getItem("hello");
+      Rhum.asserts.assertEquals(
+        item,
+        "_start_hello__is__1_stop_",
+      );
+
+      Rhum.asserts.assertThrows(() => {
+        item = i.getItem("wtfBrok");
+      });
+
+      item = i.getItem("wtfBro");
+      Rhum.asserts.assertEquals(
+        item,
+        "_start_wtfBro__is__3_stop_",
       );
     });
   });
