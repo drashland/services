@@ -5,7 +5,8 @@ A service to help develop CLIs.
 ## Table of Contents
 
 * [Quick Start](#quick-start)
-* [Help Menu Creation](#help-menu-creation)
+* [Guides](#guides)
+    * [Creating A Help Menu](#creating-a-help-menu)
 * [API](#api)
     * [Methods](#methods)
     * [Interfaces](#interfaces)
@@ -39,7 +40,9 @@ c.addCommand("do-something", () => {
 c.run();
 ```
 
-## Help Menu Creation
+## Guides
+
+### Creating A Help Menu
 
 Use the `static` `CliService.createHelpMenu()` method to create a help menu. The following code ...
 
@@ -50,9 +53,9 @@ export const help = CliService.createHelpMenu({
     description:
       `MyCli v1.2.3 - My cool CLI.`,
     usage: [
-      "my-cli [command]",
+      "my-cli [SUBCOMMAND] [OPTIONS]",
     ],
-    commands: {
+    subcommands: {
       "do-something": "Do something.",
       "help, --help": "Display the help menu.",
       "version, --version": "Display the version.",
@@ -91,12 +94,12 @@ MyCli v1.2.3 - My cool CLI.
 
 USAGE
 
-    my-cli [command]
+    my-cli [SUBCOMMAND] [OPTIONS]
 
 
-COMMANDS
+SUBCOMMAND
 
-    do-something
+    do-something [OPTIONS]
         Do something.
 
     help, --help
