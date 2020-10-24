@@ -1,3 +1,8 @@
+export interface ISearchResult {
+  result: string;
+  index: number;
+}
+
 export class IndexService {
   protected index = "";
 
@@ -39,7 +44,8 @@ export class IndexService {
   //   return split[1];
   // }
 
-  public getItem(input: string): {[key: string]: string} {
+  public getItem(input: string): ISearchResult[] {
+    const results: ISearchResult[] = [];
     const position = this.getItemPosition(input);
 
     if (position === -1) {
@@ -67,20 +73,23 @@ export class IndexService {
       backwardsCounts++;
     } while (found === false);
 
+    // Produce a clean string without the _start_ and _stop_ markers
     const clean = item.replace(":", "");
-    const split = clean.split(this.index_separator);
-    if (split.length > 1) {
-      let index = split[1].replace("_stop_", "");
-      if (index.includes(":_start")) {
-        index = index.split(":")[0];
-      }
-      return {
-        search_term: split[0].replace("_start_", ""),
-        index: index,
-      }
-    }
 
-    throw new Error(`Item '${input}' could not be matched to an index.`);
+    // Iterate through the results that matched the input and turn them into
+    // ISearchResult objects
+    let indexItems = clean.split(":");
+    indexItems.forEach((item: string) => {
+      const clean = item.replace(/_start_|_stop_/g, "");
+      const data = clean.split(this.index_separator);
+      const ret: ISearchResult  = {
+        result: data[0],
+        index: Number(data[1]),
+      };
+      results.push(ret);
+    });
+
+    return results;
   }
 
   protected findStartOfItem(backwardsCounts: number, position: number): string {
