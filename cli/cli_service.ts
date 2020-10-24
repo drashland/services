@@ -213,8 +213,13 @@ export class CliService {
     // Take off the first argument, which would be the subcommand
     this.args.shift();
 
-    if (this.subcommands[subcommand].options.requires_args && this.args.length <= 0) {
-      LoggerService.logError(`Subcommand \`${subcommand}\` requires arguments.`);
+    if (
+      this.subcommands[subcommand].options.requires_args &&
+      this.args.length <= 0
+    ) {
+      LoggerService.logError(
+        `Subcommand \`${subcommand}\` requires arguments.`,
+      );
       Deno.exit();
     }
 
@@ -248,7 +253,8 @@ export class CliService {
         output += `\n\SUBCOMMANDS\n`;
         for (const subcommand in data[key]) {
           output += (`\n    ${subcommand}\n`);
-          output += (`        ${this.wordWrap(`${data[key][subcommand]}`, 8)}\n`);
+          output +=
+            (`        ${this.wordWrap(`${data[key][subcommand]}`, 8)}\n`);
         }
       }
 
@@ -258,10 +264,12 @@ export class CliService {
           output += (`\n    ${subcommand}\n`);
           for (const option in data[key]![subcommand]) {
             output += (`        ${option}\n`);
-            output +=
-              (`${
-                this.wordWrap(`            ${data[key]![subcommand][option]}`, 12)
-              }\n`);
+            output += (`${
+              this.wordWrap(
+                `            ${data[key]![subcommand][option]}`,
+                12,
+              )
+            }\n`);
           }
         }
       }

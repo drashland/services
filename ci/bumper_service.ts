@@ -10,7 +10,7 @@ interface File {
 }
 
 interface ParsedArgs {
-  branch?: string; // value of --version arg
+  branch?: string; // value of the --version arg
 }
 
 interface Versions {
