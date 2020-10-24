@@ -32,7 +32,13 @@ export class IndexService {
     return this.index.search("_start_" + input);
   }
 
-  public getItem(input: string): unknown {
+  // public getIndexOfItem(input: string): number {
+  //   const item = this.getItem(input);
+  //   const split = item.split(this.index_separator);
+  //   return split[1];
+  // }
+
+  public getItem(input: string): string {
     const position = this.getItemPosition(input);
 
     if (position === -1) {
@@ -62,7 +68,7 @@ export class IndexService {
 
     const match = item.replace(":", "").match(/.+?:/);
     if (match) {
-      return match[0].replace(":", "");
+      return match[0].replace(/:|(_start_)|(_stop_)/g, "");
     }
 
     throw new Error(`Item '${input}' could not be matched to an index.`);
@@ -70,9 +76,5 @@ export class IndexService {
 
   protected findStartOfItem(backwardsCounts: number, position: number): string {
     return this.index.substring(position - backwardsCounts);
-  }
-
-  protected findStopOfItem(forwardCounts: number, position: number): string {
-    return this.index.substring(position + forwardCounts);
   }
 }
