@@ -17,11 +17,11 @@ export class IndexService {
     this.lookup_table = lookupTable;
   }
 
-  public addItem(item: string):void {
+  public addItem(searchTerm: string, value: unknown): void {
     const id = this.lookup_table.size;
-    this.lookup_table.set(id, item);
+    this.lookup_table.set(id, value);
     this.index +=
-      `:_start_${item}__is__${id}_stop_`;
+      `:_start_${searchTerm}__is__${id}_stop_`;
   }
 
   public getIndex(): string {
@@ -29,7 +29,8 @@ export class IndexService {
   }
 
   public getItemPosition(input: string): number {
-    return this.index.search("_start_" + input);
+    const searchTerm = "_start_" + input;
+    return this.index.search(searchTerm);
   }
 
   // public getIndexOfItem(input: string): number {
@@ -38,7 +39,7 @@ export class IndexService {
   //   return split[1];
   // }
 
-  public getItem(input: string): string {
+  public getItem(input: string): {[key: string]: string} {
     const position = this.getItemPosition(input);
 
     if (position === -1) {
@@ -66,9 +67,17 @@ export class IndexService {
       backwardsCounts++;
     } while (found === false);
 
-    const match = item.replace(":", "").match(/.+?:/);
-    if (match) {
-      return match[0].replace(/:|(_start_)|(_stop_)/g, "");
+    const clean = item.replace(":", "");
+    const split = clean.split(this.index_separator);
+    if (split.length > 1) {
+      let index = split[1].replace("_stop_", "");
+      if (index.includes(":_start")) {
+        index = index.split(":")[0];
+      }
+      return {
+        search_term: split[0].replace("_start_", ""),
+        index: index,
+      }
     }
 
     throw new Error(`Item '${input}' could not be matched to an index.`);
