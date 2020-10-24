@@ -79,15 +79,19 @@ export class IndexService {
     // Iterate through the results that matched the input and turn them into
     // ISearchResult objects
     let indexItems = clean.split(":");
-    indexItems.forEach((item: string) => {
-      const clean = item.replace(/_start_|_stop_/g, "");
+
+    let count = indexItems.length - 1;
+    while (count >= 0) {
+      const indexItem = indexItems[count];
+      const clean = indexItem.replace(/_start_|_stop_/g, "");
       const data = clean.split(this.index_separator);
       const ret: ISearchResult  = {
         result: data[0],
         index: Number(data[1]),
       };
       results.push(ret);
-    });
+      count -= 1;
+    }
 
     return results;
   }
