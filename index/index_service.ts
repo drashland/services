@@ -29,55 +29,37 @@ export class IndexService {
       `:_start_${searchTerm}__is__${id}_stop_`;
   }
 
+  /**
+   * Get the index.
+   *
+   * @returns The index.
+   */
   public getIndex(): string {
     return this.index;
   }
 
-  public getItemPosition(input: string): number {
-    const searchTerm = "_start_" + input;
-    return this.index.search(searchTerm);
-  }
-
-  // public getIndexOfItem(input: string): number {
-  //   const item = this.getItem(input);
-  //   const split = item.split(this.index_separator);
-  //   return split[1];
-  // }
-
-  public getItem(input: string): ISearchResult[] {
+  /**
+   * Get an item in the index given a search term.
+   *
+   * @param input - The term to search for.
+   *
+   * @returns An array of index items that the search term matched.
+   */
+  public getItem(searchTerm: string): ISearchResult[] {
     const results: ISearchResult[] = [];
-    const position = this.getItemPosition(input);
+    const position = this.getItemPosition(searchTerm);
 
     if (position === -1) {
-      throw new Error(`Item '${input}' does not exist in index.`);
+      throw new Error(`Item '${searchTerm}' does not exist in index.`);
     }
 
     let item = position > 1 ? this.index.substring(position - 1) : this.index;
-    let found = false;
-    let backwardsCounts = 1;
-    do {
-      if (
-        item.charAt(0) != ":"
-        && item.charAt(1) != "_"
-        && item.charAt(2) != "s"
-        && item.charAt(3) != "t"
-        && item.charAt(4) != "a"
-        && item.charAt(5) != "r"
-        && item.charAt(6) != "t"
-        && item.charAt(7) != "_"
-         ) {
-        item = this.findStartOfItem(backwardsCounts, position);
-      } else {
-        found = true;
-      }
-      backwardsCounts++;
-    } while (found === false);
 
     // Produce a clean string without the _start_ and _stop_ markers
     const clean = item.replace(":", "");
 
-    // Iterate through the results that matched the input and turn them into
-    // ISearchResult objects
+    // Iterate through the results that matched the `searchTerm` and turn them
+    // into ISearchResult objects
     let indexItems = clean.split(":");
 
     let count = indexItems.length - 1;
@@ -96,6 +78,32 @@ export class IndexService {
     return results;
   }
 
+  /**
+   * Get the position of an item in the index.
+   *
+   * @param searchTerm - The term to search for. For example, if an item in the
+   * index is _start_hello__is__0_stop_, then the search term can be "hello" and
+   * it will find the posoition of that item in the index.
+   *
+   * @returns The position of the item in the index.
+   */
+  public getItemPosition(searchTerm: string): number {
+    searchTerm = "_start_" + searchTerm;
+    return this.index.search(searchTerm);
+  }
+
+  /**
+   * Get the separator string that separates items in the index.
+   *
+   * @returns The separator.
+   */
+  public getSeparator(): string {
+    return this.index_separator;
+  }
+
+  /**
+   * Help find the starting position of an item in the index.
+   */
   protected findStartOfItem(backwardsCounts: number, position: number): string {
     return this.index.substring(position - backwardsCounts);
   }
