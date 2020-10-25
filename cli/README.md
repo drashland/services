@@ -10,6 +10,8 @@ A service to help develop CLIs.
 * [API](#api)
     * [Methods](#methods)
     * [Interfaces](#interfaces)
+* [ASCII Art](#ascii-art)
+    * [Drash Logo](#drash-logo)
 
 ## Quick Start
 
@@ -295,4 +297,18 @@ interface IHelpMenuData {
   };
   usage: string[];
 }
+```
+
+## ASCII Art
+
+### Drash Logo
+
+```typescript
+import {
+  drashLogoInRawAscii,
+  drashLogoInAsciiWithoutColour
+  drashLogoInAsciiWithColour,
+} from "https://raw.githubusercontent.com/drashland/services/master/cli/ascii/drash.ts"
+
+console.log(drashLogoInRawAscii) // same for all the others
 ```
