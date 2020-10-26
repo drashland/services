@@ -2,7 +2,7 @@
 
 A service to help index items in a `Map` -- resulting in faster lookup times when specifying the `Map` keys as regex patterns.
 
-_Note: Performance has shown not to improve when keys are NOT regex patterns.__
+_Note: Performance has shown not to improve when keys are NOT regex patterns._
 
 ## Table of Contents
 
