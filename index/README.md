@@ -205,4 +205,8 @@ Map.forEach():         5.27ms
 50k items
 IndexService.search(): 3.56ms
 Map.forEach():         6.23ms
+
+60k items
+IndexService.search(): 4.67ms
+Map.forEach():         8.97ms
 ```
