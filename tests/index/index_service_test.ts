@@ -69,5 +69,12 @@ Rhum.testPlan(async () => {
         ],
       );
     });
+
+    Rhum.testCase("returns 0 search results", () => {
+      Rhum.asserts.assertEquals(
+        i.search("deet"),
+        [],
+      );
+    });
   });
 });

@@ -62,20 +62,6 @@ export class IndexService {
   }
 
   /**
-   * Get the position of an item in the index.
-   *
-   * @param searchInput - The term to search for. For example, if an item in the
-   * index is _start_hello__is__0_stop_, then the search term can be "hello" and
-   * it will find the posoition of that item in the index.
-   *
-   * @returns The position of the item in the index.
-   */
-  public getItemPosition(searchInput: string): number {
-    searchInput = "_start_" + searchInput;
-    return this.index.search(searchInput);
-  }
-
-  /**
    * Get the separator string that separates items in the index.
    *
    * @returns The separator.
@@ -96,9 +82,7 @@ export class IndexService {
     const position = this.getItemPosition(searchInput);
 
     if (position === -1) {
-      throw new Error(
-        `Search input '${searchInput}' did not return any results from the index.`,
-      );
+      return results;
     }
 
     let item = position > 1 ? this.index.substring(position - 1) : this.index;
@@ -123,5 +107,23 @@ export class IndexService {
     }
 
     return results;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get the position of an item in the index.
+   *
+   * @param searchInput - The term to search for. For example, if an item in the
+   * index is _start_hello__is__0_stop_, then the search term can be "hello" and
+   * it will find the posoition of that item in the index.
+   *
+   * @returns The position of the item in the index.
+   */
+  public getItemPosition(searchInput: string): number {
+    searchInput = "_start_" + searchInput;
+    return this.index.search(searchInput);
   }
 }
