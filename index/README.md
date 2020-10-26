@@ -180,43 +180,88 @@ export interface ISearchResult {
 
 Benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map` -- matching the item using regex. Below are the times in milliseconds showing how long it took searches to complete and what method was used.
 
+The below simulates a single request for a record in a `Map`.
+
 ```
-      1 items processed in 0.089ms by Map.forEach()
-      1 items processed in 0.100ms by IndexService.search()
+1 items processed in 0.089ms by Map.forEach()
+1 items processed in 0.100ms by IndexService.search()
 
-   1000 items processed in 0.310ms by Map.forEach()
-   1000 items processed in 0.088ms by IndexService.search()
+1000 items processed in 0.310ms by Map.forEach()
+1000 items processed in 0.088ms by IndexService.search()
 
-  10000 items processed in 1.965ms by Map.forEach()
-  10000 items processed in 0.982ms by IndexService.search()
+10000 items processed in 1.965ms by Map.forEach()
+10000 items processed in 0.982ms by IndexService.search()
 
-  20000 items processed in 1.455ms by Map.forEach()
-  20000 items processed in 0.780ms by IndexService.search()
+20000 items processed in 1.455ms by Map.forEach()
+20000 items processed in 0.780ms by IndexService.search()
 
-  30000 items processed in 1.662ms by Map.forEach()
-  30000 items processed in 1.904ms by IndexService.search()
-  
-  40000 items processed in 2.029ms by Map.forEach()
-  40000 items processed in 1.424ms by IndexService.search()
-  
-  50000 items processed in 2.501ms by Map.forEach()
-  50000 items processed in 2.026ms by IndexService.search()
-  
-  60000 items processed in 3.109ms by Map.forEach()
-  60000 items processed in 2.258ms by IndexService.search()
-  
-  70000 items processed in 3.926ms by Map.forEach()
-  70000 items processed in 3.714ms by IndexService.search()
-  
-  80000 items processed in 4.112ms by Map.forEach()
-  80000 items processed in 3.091ms by IndexService.search()
-  
-  90000 items processed in 5.843ms by Map.forEach()
-  90000 items processed in 3.404ms by IndexService.search()
+30000 items processed in 1.662ms by Map.forEach()
+30000 items processed in 1.904ms by IndexService.search()
 
- 100000 items processed in 5.190ms by Map.forEach()
- 100000 items processed in 3.771ms by IndexService.search()
+40000 items processed in 2.029ms by Map.forEach()
+40000 items processed in 1.424ms by IndexService.search()
+
+50000 items processed in 2.501ms by Map.forEach()
+50000 items processed in 2.026ms by IndexService.search()
+
+60000 items processed in 3.109ms by Map.forEach()
+60000 items processed in 2.258ms by IndexService.search()
+
+70000 items processed in 3.926ms by Map.forEach()
+70000 items processed in 3.714ms by IndexService.search()
+
+80000 items processed in 4.112ms by Map.forEach()
+80000 items processed in 3.091ms by IndexService.search()
+  
+90000 items processed in 5.843ms by Map.forEach()
+90000 items processed in 3.404ms by IndexService.search()
+
+100000 items processed in 5.190ms by Map.forEach()
+100000 items processed in 3.771ms by IndexService.search()
 
 1000000 items processed in 62.774ms by Map.forEach()
 1000000 items processed in 36.196ms by IndexService.search()
+```
+
+The below simulates 1000 separate requests for a record in a `Map`.
+
+```
+1 items processed in 0.726ms by Map.forEach()
+1 items processed in 0.730ms by IndexService.search()
+
+1000 items processed in 61.691ms by Map.forEach()
+1000 items processed in 25.303ms by IndexService.search()
+
+10000 items processed in 574.073ms by Map.forEach()
+10000 items processed in 319.436ms by IndexService.search()
+
+20000 items processed in 959.952ms by Map.forEach()
+20000 items processed in 639.476ms by IndexService.search()
+
+30000 items processed in 1413.833ms by Map.forEach()
+30000 items processed in 956.506ms by IndexService.search()
+
+40000 items processed in 1832.229ms by Map.forEach()
+40000 items processed in 1301.036ms by IndexService.search()
+
+50000 items processed in 2182.978ms by Map.forEach()
+50000 items processed in 1601.445ms by IndexService.search()
+
+60000 items processed in 2636.283ms by Map.forEach()
+60000 items processed in 1919.324ms by IndexService.search()
+
+70000 items processed in 3037.691ms by Map.forEach()
+70000 items processed in 2278.864ms by IndexService.search()
+
+80000 items processed in 3472.815ms by Map.forEach()
+80000 items processed in 2698.906ms by IndexService.search()
+
+90000 items processed in 4154.238ms by Map.forEach()
+90000 items processed in 2950.018ms by IndexService.search()
+
+100000 items processed in 4541.861ms by Map.forEach()
+100000 items processed in 6289.579ms by IndexService.search()
+
+1000000 items processed in 47284.525ms by Map.forEach()
+1000000 items processed in 33431.793ms by IndexService.search()
 ```
