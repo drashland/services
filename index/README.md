@@ -2,6 +2,8 @@
 
 A service to help index items in a `Map` -- resulting in faster lookup times when specifying the `Map` keys as regex patterns.
 
+_Note: Performance has shown not to improve when keys are NOT regex patterns.__
+
 ## Table of Contents
 
 * [Quick Start](#quick-start)
@@ -11,6 +13,7 @@ A service to help index items in a `Map` -- resulting in faster lookup times whe
 * [API](#api)
     * [Methods](#methods)
     * [Interfaces](#interfaces)
+* [Benchmarks](#benchmarks)
 
 ## Quick Start
 
@@ -96,10 +99,11 @@ console.log(results);
 // ]
 ```
 
+## API
 
-## Methods
+### Methods
 
-### .addItem(searchInput: string, item: unknown)
+#### .addItem(searchInput: string, item: unknown)
 
 * Add an item to the index and lookup table.
 * Example:
@@ -107,7 +111,7 @@ console.log(results);
     const i = new IndexService(lookupTable);
     i.addItem("search term", "item to put in the lookup table");
     ````
-### .getIndex()
+#### .getIndex()
 
 * Gets the index. The index is a string.
 * Example:
@@ -117,7 +121,7 @@ console.log(results);
     i.getIndex(); // returns "_start_hello__is__0_stop_"
     ```
     
-### .getSeparator()
+#### .getSeparator()
 
 * Gets the separator used to separate search terms and IDs in the index.
 * Example:
@@ -126,7 +130,7 @@ console.log(results);
     i.getSeparator(); // returns "__is__"
     ```
 
-### .search(searchInput: string)
+#### .search(searchInput: string)
 
 * Search the index and get back an array of search results.
 * Example:
@@ -153,7 +157,7 @@ console.log(results);
                      // ]
     ```
 
-## Interfaces
+### Interfaces
 
 ```typescript
 /**
@@ -175,4 +179,22 @@ export interface ISearchResult {
   search_input: string;
   search_term: string;
 }
+```
+
+## Benchmarks
+
+Benchmarks were run with a set number of items in each `Map` (10k - 30k). The benchmarks application searched for the last item in each `Map`. Below are the times in milliseconds showing how long it took a search to complete.
+
+```
+10k items
+IndexService.search(): 1.03ms
+Map.forEach():         2.30ms
+
+20k items
+IndexService.search(): 1.44ms
+Map.forEach():         2.95ms
+
+30k items
+IndexService.search(): 2.23ms
+Map.forEach():         4.31ms
 ```
