@@ -24,17 +24,17 @@ import { doSomething } from ".src/commands/do_something.ts";
 const c = new CliService(Deno.args)
 
 // Add a help command
-c.addCommand("help", () => {
+c.addSubcommand("help", () => {
   console.log(help); // See Help Menu Creation section below to see how to create a help menu
 });
 
 // Add a version command
-c.addCommand("version" () => {
+c.addSubcommand("version" () => {
   console.log(version);
 });
 
 // Add a do-something command
-c.addCommand("do-something", () => {
+c.addSubcommand("do-something", () => {
   doSomething();
 });
 
@@ -142,25 +142,25 @@ EXAMPLE USAGE
     const c = CliService.createHelpMenu({ ... });
     ```
 
-#### .addCommand(command: string|string[], handler: (args: string[]) => void, options: ICommandOptions)
+#### .addSubcommand(command: string|string[], handler: (args: string[]) => void, options: ISubcommandOptions)
 
-* Add a command (or an array of commands) to the CLI with a handler.
+* Add a subcommand (or an array of subcommands) to the CLI with a handler.
 * Example:
     ```typescript
     const c = CliService(Deno.args);
     
     // Add a single command
-    c.addCommand("test", () => { console.log("Testing!"); });
+    c.addSubcommand("test", () => { console.log("Testing!"); });
     
     // Add an array of commands that share the same handler
-    c.addCommand(["help", "--help"], () => { console.log("Help!"); });
+    c.addSubcommand(["help", "--help"], () => { console.log("Help!"); });
     
-    // Add a single command that has a handler that requires Deno.args.
-    // You can pass in args: string[] into the handler and the CliService
-    // will pass in Deno.args as the args. Also, to throw an error stating
-    // that this command requires args, pass in the { requires_args: true }
+	// Add a single subcommand that has a handler that requires Deno.args.  You
+	// can pass in args: string[] into the handler and the CliService will pass
+	// in Deno.args as the args. Also, to throw an error stating that this
+	// subommand requires args, pass in the { requires_args: true }
     // option.
-    c.addCommand(
+    c.addSubcommand(
       "make",
       (args: string[]) => {
         console.log(args); // outputs ["arg1", "arg2"] if you run `my-cli make arg1 arg2`
@@ -186,25 +186,25 @@ EXAMPLE USAGE
 ```typescript
 /**
  * requires_args
- *     Set this to true if the command requires args. If args aren't passed to
- *     the command's handler, then an error will be throw -- stating the command
- *     requires args.
+ *     Set this to true if the subcommand requires args. If args aren't passed
+ *     to the subcommand's handler, then an error will be throw -- stating the
+ *     subcommand requires args.
  */
-interface ICommandOptions {
+interface ISubcommandOptions {
   requires_args: boolean;
 }
 
 /**
  * handler
- *     The commands handler. That is, the function to execute when the command
- *     runs.
+ *     The subcommand's handler. That is, the function to execute when the
+ *     subcommand runs.
  *
  * options
- *     The commands options. See ICommandOptions.
+ *     The subcommand's options. See ISubcommandOptions.
  */
-interface ICommand {
+interface ISubcommand {
   handler: (args: string[]) => void;
-  options: ICommandOptions;
+  options: ISubcommandOptions;
 }
 
 /**
@@ -212,11 +212,11 @@ interface ICommand {
  *     The description of the example being given.
  *
  * examples
- *     An array of examples showing how to use a command.
+ *     An array of examples showing how to use a subcommand.
  *
  * @example
  *   {
- *     description: "Run the help command."
+ *     description: "Run the help subcommand."
  *     examples: [
  *       "my-cli help",
  *       "my-cli --help",
@@ -229,33 +229,33 @@ interface IExample {
 }
 
 /**
- * commands
- *     The commands this CLI has where the key is the command and the value is
- *     the command's description.
+ * subcommands
+ *     The subcommands this CLI has where the key is the subcommand and the
+ *     value is the subcommand's description.
  *
  * description
  *     The description of this CLI.
  *
  * example_usage
- *     An array of examples that show how to use the command. See IExample for
- *     more information on how to structure examples.
+ *     An array of examples that show how to use the subcommand. See IExample
+ *     for more information on how to structure examples.
  *
  * options
  *     A key-value pair object showing what options are available for what
- *     commands. The key is the command and the value is a key-value pair object
- *     where the key is the option and the value is the description of the
- *     option.
+ *     subcommands. The key is the subcommand and the value is a key-value pair
+ *     object where the key is the option and the value is the description of
+ *     the option.
  *
  * usage
- *     An array of strings showing how to use the command.
+ *     An array of strings showing how to use the subcommand.
  *
  * @example
  *   {
  *       description: `MyCli v1.2.3 - My cool CLI.`,
  *       usage: [
- *         "my-cli [command]",
+ *         "my-cli [subcommand]",
  *       ],
- *       commands: {
+ *       subcommands: {
  *         "do-something": "Do something.",
  *         "help, --help": "Display the help menu.",
  *         "version, --version": "Display the version.",
@@ -287,7 +287,7 @@ interface IExample {
  *   }
  */
 interface IHelpMenuData {
-  commands: { [key: string]: string };
+  subcommands: { [key: string]: string };
   description: string;
   example_usage: IExample[];
   options?: {
