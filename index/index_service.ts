@@ -26,17 +26,30 @@ export class IndexService {
    */
   protected lookup_table: Map<unknown, unknown>;
 
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
   constructor(
     lookupTable: Map<unknown, unknown>,
   ) {
     this.lookup_table = lookupTable;
   }
 
-  public addItem(searchTerm: string, value: unknown): void {
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Add an item to the index.
+   *
+   * @param searchTerm - The term to search for in order to find the item.
+   * @param item - The item to add to the index.
+   */
+  public addItem(searchTerm: string, item: unknown): void {
     const id = this.lookup_table.size;
-    this.lookup_table.set(id, value);
-    this.index +=
-      `\n_start_${searchTerm}__is__${id}_stop_`;
+    this.lookup_table.set(id, item);
+    this.index += `\n_start_${searchTerm}__is__${id}_stop_`;
   }
 
   /**
@@ -83,12 +96,14 @@ export class IndexService {
     const position = this.getItemPosition(searchInput);
 
     if (position === -1) {
-      throw new Error(`Search input '${searchInput}' did not return any results from the index.`);
+      throw new Error(
+        `Search input '${searchInput}' did not return any results from the index.`,
+      );
     }
 
     let item = position > 1 ? this.index.substring(position - 1) : this.index;
 
-    let indexItems = item.match(new RegExp(searchInput + ".+_stop_", "g"))
+    let indexItems = item.match(new RegExp(searchInput + ".+_stop_", "g"));
 
     if (indexItems) {
       let count = indexItems.length - 1;
@@ -96,7 +111,7 @@ export class IndexService {
         const indexItem = indexItems[count].replace("_stop_", "");
         const data = indexItem.split(this.index_separator);
         const key = Number(data[1]);
-        const ret: ISearchResult  = {
+        const ret: ISearchResult = {
           id: key,
           item: this.lookup_table.get(key),
           search_term: data[0],
