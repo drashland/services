@@ -8,8 +8,8 @@ const i = new IndexService(
 
 // Add items to the index
 i.addItem("ok", "ok value");
-i.addItem("hello", "hello value 1");
-i.addItem("hello", "hello value 2");
+i.addItem("hello1", "hello value 1");
+i.addItem("hello2", "hello value 2");
 i.addItem("world", "world value");
 i.addItem("skrrrt", "skrrrt steak value");
 
@@ -24,13 +24,15 @@ Rhum.testPlan(async () => {
         [
           {
             id: 2,
-            result: "hello value 2",
-            search_term: "hello"
+            item: "hello value 2",
+            search_term: "hello2",
+            search_input: "hello",
           },
           {
             id: 1,
-            result: "hello value 1",
-            search_term: "hello"
+            item: "hello value 1",
+            search_term: "hello1",
+            search_input: "hello"
           },
         ]
       );

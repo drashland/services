@@ -8,8 +8,9 @@
  */
 export interface ISearchResult {
   id: number;
-  result: unknown;
+  item: unknown;
   search_term: string;
+  search_input: string;
 }
 
 export class IndexService {
@@ -50,15 +51,15 @@ export class IndexService {
   /**
    * Get the position of an item in the index.
    *
-   * @param searchTerm - The term to search for. For example, if an item in the
+   * @param searchInput - The term to search for. For example, if an item in the
    * index is _start_hello__is__0_stop_, then the search term can be "hello" and
    * it will find the posoition of that item in the index.
    *
    * @returns The position of the item in the index.
    */
-  public getItemPosition(searchTerm: string): number {
-    searchTerm = "_start_" + searchTerm;
-    return this.index.search(searchTerm);
+  public getItemPosition(searchInput: string): number {
+    searchInput = "_start_" + searchInput;
+    return this.index.search(searchInput);
   }
 
   /**
@@ -73,21 +74,21 @@ export class IndexService {
   /**
    * Get an item in the index given a search term.
    *
-   * @param input - The term to search for.
+   * @param searchInput- The term to search for.
    *
    * @returns An array of index items that the search term matched.
    */
-  public search(searchTerm: string): ISearchResult[] {
+  public search(searchInput: string): ISearchResult[] {
     const results: ISearchResult[] = [];
-    const position = this.getItemPosition(searchTerm);
+    const position = this.getItemPosition(searchInput);
 
     if (position === -1) {
-      throw new Error(`Item '${searchTerm}' does not exist in index.`);
+      throw new Error(`Search input '${searchInput}' did not return any results from the index.`);
     }
 
     let item = position > 1 ? this.index.substring(position - 1) : this.index;
 
-    let indexItems = item.match(new RegExp(searchTerm + ".+_stop_", "g"))
+    let indexItems = item.match(new RegExp(searchInput + ".+_stop_", "g"))
 
     if (indexItems) {
       let count = indexItems.length - 1;
@@ -97,8 +98,9 @@ export class IndexService {
         const key = Number(data[1]);
         const ret: ISearchResult  = {
           id: key,
-          result: this.lookup_table.get(key),
+          item: this.lookup_table.get(key),
           search_term: data[0],
+          search_input: searchInput,
         };
         results.push(ret);
         count -= 1;
