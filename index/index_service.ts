@@ -1,10 +1,15 @@
 /**
  * An interface that represents a result from an index search.
  *
- * result
- *     The item that was found in the index based on a specified search term.
- * index
+ * id
  *     The index of the item in the lookup table.
+ * item
+ *     The item that matches the id in the lookup table.
+ * search_term
+ *     The term associated with the id in the index. This is the item that gets
+ *     matched to the search input.
+ * search_input
+ *     The input specified that returned this result.
  */
 export interface ISearchResult {
   id: number;
@@ -71,11 +76,11 @@ export class IndexService {
   }
 
   /**
-   * Get an item in the index given a search term.
+   * Get an item in the index given a search input.
    *
    * @param searchInput- The term to search for.
    *
-   * @returns An array of index items that the search term matched.
+   * @returns An array of index items that the search input matched.
    */
   public search(searchInput: string): ISearchResult[] {
     const results: ISearchResult[] = [];
@@ -117,8 +122,8 @@ export class IndexService {
    * Get the position of an item in the index.
    *
    * @param searchInput - The term to search for. For example, if an item in the
-   * index is _start_hello__is__0_stop_, then the search term can be "hello" and
-   * it will find the posoition of that item in the index.
+   * index is _start_hello__is__0_stop_, then the search input can be "hello"
+   * and it will find the posoition of that item in the index.
    *
    * @returns The position of the item in the index.
    */
