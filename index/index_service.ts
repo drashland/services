@@ -7,8 +7,9 @@
  *     The index of the item in the lookup table.
  */
 export interface ISearchResult {
-  result: string;
-  index: number;
+  id: number;
+  result: unknown;
+  search_term: string;
 }
 
 export class IndexService {
@@ -34,7 +35,7 @@ export class IndexService {
     const id = this.lookup_table.size;
     this.lookup_table.set(id, value);
     this.index +=
-      `:_start_${searchTerm}__is__${id}_stop_`;
+      `\n_start_${searchTerm}__is__${id}_stop_`;
   }
 
   /**
@@ -44,17 +45,6 @@ export class IndexService {
    */
   public getIndex(): string {
     return this.index;
-  }
-
-  /**
-   * Get an item from the lookup table.
-   *
-   * @param key - The key of the item in the lookup table.
-   *
-   * @returns The item from the lookup table.
-   */
-  public getItem(key: number): unknown {
-    return this.lookup_table.get(key);
   }
 
   /**
@@ -72,13 +62,22 @@ export class IndexService {
   }
 
   /**
+   * Get the separator string that separates items in the index.
+   *
+   * @returns The separator.
+   */
+  public getSeparator(): string {
+    return this.index_separator;
+  }
+
+  /**
    * Get an item in the index given a search term.
    *
    * @param input - The term to search for.
    *
    * @returns An array of index items that the search term matched.
    */
-  public getSearchResults(searchTerm: string): ISearchResult[] {
+  public search(searchTerm: string): ISearchResult[] {
     const results: ISearchResult[] = [];
     const position = this.getItemPosition(searchTerm);
 
@@ -88,35 +87,24 @@ export class IndexService {
 
     let item = position > 1 ? this.index.substring(position - 1) : this.index;
 
-    // Produce a clean string without the _start_ and _stop_ markers
-    const clean = item.replace(":", "");
+    let indexItems = item.match(new RegExp(searchTerm + ".+_stop_", "g"))
 
-    // Iterate through the results that matched the `searchTerm` and turn them
-    // into ISearchResult objects
-    let indexItems = clean.split(":");
-
-    let count = indexItems.length - 1;
-    while (count >= 0) {
-      const indexItem = indexItems[count];
-      const clean = indexItem.replace(/_start_|_stop_/g, "");
-      const data = clean.split(this.index_separator);
-      const ret: ISearchResult  = {
-        result: data[0],
-        index: Number(data[1]),
-      };
-      results.push(ret);
-      count -= 1;
+    if (indexItems) {
+      let count = indexItems.length - 1;
+      while (count >= 0) {
+        const indexItem = indexItems[count].replace("_stop_", "");
+        const data = indexItem.split(this.index_separator);
+        const key = Number(data[1]);
+        const ret: ISearchResult  = {
+          id: key,
+          result: this.lookup_table.get(key),
+          search_term: data[0],
+        };
+        results.push(ret);
+        count -= 1;
+      }
     }
 
     return results;
-  }
-
-  /**
-   * Get the separator string that separates items in the index.
-   *
-   * @returns The separator.
-   */
-  public getSeparator(): string {
-    return this.index_separator;
   }
 }
