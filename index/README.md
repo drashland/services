@@ -1,8 +1,8 @@
 # Index
 
-A service to help index items in a `Map` when regex patterns are used as keys -- resulting in faster lookup times than `Map.forEach()`.
+A service to help index items in a `Map` when regex patterns are used to match items in a `Map` -- resulting in faster lookup times than `Map.forEach()`.
 
-_Note: Performance has shown not to improve when keys are NOT regex patterns._
+_Note: Performance does not improve when regex patterns are taken out of the equation._
 
 ## Table of Contents
 
@@ -178,45 +178,45 @@ export interface ISearchResult {
 
 ## Benchmarks
 
-Benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map`. Below are the times in milliseconds showing how long it took a search to complete.
+Benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map` -- matching the item using regex. Below are the times in milliseconds showing how long it took searches to complete and what method was used.
 
 ```
-1 items processed in       0.087ms by Map.forEach()
-1 items processed in       0.107ms by IndexService.search()
+      1 items processed in 0.089ms by Map.forEach()
+      1 items processed in 0.100ms by IndexService.search()
 
-1000 items processed in    0.107ms by Map.forEach()
-1000 items processed in    0.090ms by IndexService.search()
+   1000 items processed in 0.310ms by Map.forEach()
+   1000 items processed in 0.088ms by IndexService.search()
 
-10000 items processed in   1.148ms by Map.forEach()
-10000 items processed in   1.038ms by IndexService.search()
+  10000 items processed in 1.965ms by Map.forEach()
+  10000 items processed in 0.982ms by IndexService.search()
 
-20000 items processed in   0.835ms by Map.forEach()
-20000 items processed in   0.671ms by IndexService.search()
+  20000 items processed in 1.455ms by Map.forEach()
+  20000 items processed in 0.780ms by IndexService.search()
 
-30000 items processed in   2.099ms by Map.forEach()
-30000 items processed in   1.147ms by IndexService.search()
+  30000 items processed in 1.662ms by Map.forEach()
+  30000 items processed in 1.904ms by IndexService.search()
+  
+  40000 items processed in 2.029ms by Map.forEach()
+  40000 items processed in 1.424ms by IndexService.search()
+  
+  50000 items processed in 2.501ms by Map.forEach()
+  50000 items processed in 2.026ms by IndexService.search()
+  
+  60000 items processed in 3.109ms by Map.forEach()
+  60000 items processed in 2.258ms by IndexService.search()
+  
+  70000 items processed in 3.926ms by Map.forEach()
+  70000 items processed in 3.714ms by IndexService.search()
+  
+  80000 items processed in 4.112ms by Map.forEach()
+  80000 items processed in 3.091ms by IndexService.search()
+  
+  90000 items processed in 5.843ms by Map.forEach()
+  90000 items processed in 3.404ms by IndexService.search()
 
-40000 items processed in   1.527ms by Map.forEach()
-40000 items processed in   1.468ms by IndexService.search()
+ 100000 items processed in 5.190ms by Map.forEach()
+ 100000 items processed in 3.771ms by IndexService.search()
 
-50000 items processed in   1.842ms by Map.forEach()
-50000 items processed in   1.765ms by IndexService.search()
-
-60000 items processed in   3.425ms by Map.forEach()
-60000 items processed in   2.205ms by IndexService.search()
-
-70000 items processed in   2.605ms by Map.forEach()
-70000 items processed in   2.587ms by IndexService.search()
-
-80000 items processed in   2.883ms by Map.forEach()
-80000 items processed in   2.911ms by IndexService.search()
-
-90000 items processed in   3.379ms by Map.forEach()
-90000 items processed in   3.117ms by IndexService.search()
-
-100000 items processed in  4.334ms by Map.forEach()
-100000 items processed in  3.647ms by IndexService.search()
-
-1000000 items processed in 34.632ms by Map.forEach()
-1000000 items processed in 33.430ms by IndexService.search()
+1000000 items processed in 62.774ms by Map.forEach()
+1000000 items processed in 36.196ms by IndexService.search()
 ```
