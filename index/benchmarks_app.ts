@@ -1,6 +1,6 @@
 import { IndexService } from "./index_service.ts";
 
-const numRequests = 1000;
+const numRequests = 1;
 
 interface SearchResult {
   id: number;
@@ -21,12 +21,12 @@ function benchmark(
   const pt = performance.now();
   if ((pt - pn) > 1000) {
     console.log(
-      numItems + " items processed in " + ((pt - pn)/1000).toFixed(3) + "s by " +
+      "Searching " + numItems + " items processed in " + ((pt - pn)/1000).toFixed(3) + "s by " +
         method,
     );
   } else {
     console.log(
-      numItems + " items processed in " + (pt - pn).toFixed(3) + "ms by " +
+      "Searching " + numItems + " items processed in " + (pt - pn).toFixed(3) + "ms by " +
         method,
     );
   }
