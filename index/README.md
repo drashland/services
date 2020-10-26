@@ -183,7 +183,7 @@ export interface ISearchResult {
 
 ## Benchmarks
 
-Benchmarks were run with a set number of items in each `Map` (10k - 30k). The benchmarks application searched for the last item in each `Map`. Below are the times in milliseconds showing how long it took a search to complete.
+Benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map`. Below are the times in milliseconds showing how long it took a search to complete.
 
 ```
 10k items
