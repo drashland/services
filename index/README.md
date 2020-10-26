@@ -7,7 +7,7 @@ A service to help index items in a `Map` -- resulting faster lookup times.
 * [Quick Start](#quick-start)
 * [How It Works](#how-it-works)
 * [Guides](#guides)
-    * [Indexing A Map](#indexing-a-map)
+    * [Indexing A Map](#creating-an-indexed-map)
 * [API](#api)
     * [Methods](#methods)
     * [Interfaces](#interfaces)
