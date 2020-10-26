@@ -1,6 +1,6 @@
 # Index
 
-A service to help index items in a `Map` -- resulting faster lookup times.
+A service to help index items in a `Map` -- resulting in faster lookup times when specifying the `Map` keys as regex patterns.
 
 ## Table of Contents
 
