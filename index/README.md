@@ -1,6 +1,6 @@
 # Index
 
-A service to help index items in a `Map` -- resulting in faster lookup times when specifying the `Map` keys as regex patterns.
+A service to help index items in a `Map` when regex patterns are used as keys -- resulting in faster lookup times than `Map.forEach()`.
 
 _Note: Performance has shown not to improve when keys are NOT regex patterns._
 
@@ -197,4 +197,12 @@ Map.forEach():         2.95ms
 30k items
 IndexService.search(): 2.23ms
 Map.forEach():         4.31ms
+
+40k items
+IndexService.search(): 3.13ms
+Map.forEach():         5.27ms
+
+50k items
+IndexService.search(): 3.56ms
+Map.forEach():         6.23ms
 ```
