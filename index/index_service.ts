@@ -5,17 +5,17 @@
  *     The index of the item in the lookup table.
  * item
  *     The item that matches the id in the lookup table.
+ * search_input
+ *     The input specified that returned this result.
  * search_term
  *     The term associated with the id in the index. This is the item that gets
  *     matched to the search input.
- * search_input
- *     The input specified that returned this result.
  */
 export interface ISearchResult {
   id: number;
   item: unknown;
-  search_term: string;
   search_input: string;
+  search_term: string;
 }
 
 export class IndexService {
