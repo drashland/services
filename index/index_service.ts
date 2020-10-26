@@ -19,7 +19,7 @@ export interface ISearchResult {
 }
 
 export class IndexService {
-  protected index = "";
+  protected index: Map<string, number> = new Map<string, number>();
 
   /**
    * A property to separate indices with their associated values.
@@ -29,14 +29,14 @@ export class IndexService {
   /**
    * The lookup table that's used when an index is found in the index.
    */
-  protected lookup_table: Map<unknown, unknown>;
+  protected lookup_table: Map<number, unknown>;
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   constructor(
-    lookupTable: Map<unknown, unknown>,
+    lookupTable: Map<number, unknown>,
   ) {
     this.lookup_table = lookupTable;
   }
@@ -54,7 +54,7 @@ export class IndexService {
   public addItem(searchTerm: string, item: unknown): void {
     const id = this.lookup_table.size;
     this.lookup_table.set(id, item);
-    this.index += `\n_start_${searchTerm}__is__${id}_stop_`;
+    this.index.set(searchTerm, id);
   }
 
   /**
@@ -62,7 +62,7 @@ export class IndexService {
    *
    * @returns The index.
    */
-  public getIndex(): string {
+  public getIndex(): Map<string, number> {
     return this.index;
   }
 
@@ -82,53 +82,19 @@ export class IndexService {
    *
    * @returns An array of index items that the search input matched.
    */
-  public search(searchInput: string): ISearchResult[] {
-    const results: ISearchResult[] = [];
-    const position = this.getItemPosition(searchInput);
-
-    if (position === -1) {
-      return results;
-    }
-
-    let item = position > 1 ? this.index.substring(position - 1) : this.index;
-
-    let indexItems = item.match(new RegExp(searchInput + ".+_stop_", "g"));
-
-    if (indexItems) {
-      let count = indexItems.length - 1;
-      while (count >= 0) {
-        const indexItem = indexItems[count].replace("_stop_", "");
-        const data = indexItem.split(this.index_separator);
-        const key = Number(data[1]);
-        const ret: ISearchResult = {
-          id: key,
-          item: this.lookup_table.get(key),
-          search_term: data[0],
+  public search(searchInput: string): Map<number, ISearchResult> {
+    const results = new Map<number, ISearchResult>();
+    this.index.forEach((id: number, key: string) => {
+      if (key.includes(searchInput)) {
+        results.set(id, {
+          id: id,
+          item: this.lookup_table.get(id),
+          search_term: key,
           search_input: searchInput,
-        };
-        results.push(ret);
-        count -= 1;
+        });
       }
-    }
+    });
 
     return results;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get the position of an item in the index.
-   *
-   * @param searchInput - The term to search for. For example, if an item in the
-   * index is _start_hello__is__0_stop_, then the search input can be "hello"
-   * and it will find the posoition of that item in the index.
-   *
-   * @returns The position of the item in the index.
-   */
-  public getItemPosition(searchInput: string): number {
-    searchInput = "_start_" + searchInput;
-    return this.index.search(searchInput);
   }
 }

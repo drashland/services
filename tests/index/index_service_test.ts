@@ -1,5 +1,5 @@
 import { Rhum } from "../../deps.ts";
-import { IndexService } from "../../index/index_service.ts";
+import { ISearchResult, IndexService } from "../../index/index_service.ts";
 
 const lookupTable: Map<number, string> = new Map();
 const i = new IndexService(
@@ -19,14 +19,17 @@ Rhum.testPlan(async () => {
       i.addItem("test", "test value");
       Rhum.asserts.assertEquals(
         i.search("tes"),
-        [
-          {
-            id: 5,
-            item: "test value",
-            search_term: "test",
-            search_input: "tes",
-          },
-        ],
+        new Map<number, ISearchResult>([
+          [
+            5,
+            {
+              id: 5,
+              item: "test value",
+              search_term: "test",
+              search_input: "tes",
+            }
+          ],
+        ])
       );
     });
   });
@@ -35,7 +38,14 @@ Rhum.testPlan(async () => {
     Rhum.testCase("returns the index", () => {
       Rhum.asserts.assertEquals(
         i.getIndex(),
-        "\n_start_ok__is__0_stop_\n_start_hello1__is__1_stop_\n_start_hello2__is__2_stop_\n_start_world__is__3_stop_\n_start_skrrrt__is__4_stop_\n_start_test__is__5_stop_",
+        new Map<string, number>([
+          ["hello1", 1],
+          ["hello2", 2],
+          ["ok", 0],
+          ["skrrrt", 4],
+          ["test", 5],
+          ["world", 3],
+        ])
       );
     });
   });
@@ -53,20 +63,26 @@ Rhum.testPlan(async () => {
     Rhum.testCase("returns search results", () => {
       Rhum.asserts.assertEquals(
         i.search("hello"),
-        [
-          {
-            id: 2,
-            item: "hello value 2",
-            search_term: "hello2",
-            search_input: "hello",
-          },
-          {
-            id: 1,
-            item: "hello value 1",
-            search_term: "hello1",
-            search_input: "hello",
-          },
-        ],
+        new Map<number, ISearchResult>([
+          [
+            1,
+            {
+              id: 1,
+              item: "hello value 1",
+              search_input: "hello",
+              search_term: "hello1",
+            }
+          ],
+          [
+            2,
+            {
+              id: 2,
+              item: "hello value 2",
+              search_input: "hello",
+              search_term: "hello2",
+            }
+          ],
+        ])
       );
     });
 
