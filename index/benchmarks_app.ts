@@ -105,10 +105,10 @@ function service(numItems: number): void {
   const s = new IndexService(lt);
 
   for (let i = 0; i < numItems; i++) {
-    s.addItem(i.toString(), i.toString());
+    s.addItem([i.toString()], i.toString());
   }
 
-  s.addItem("last item", "last item value");
+  s.addItem(["last item"], "last item value");
 
   benchmark(() => {
     s.search("last");
