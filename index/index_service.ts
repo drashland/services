@@ -84,6 +84,15 @@ export class IndexService {
   }
 
   /**
+   * Get the lookup table.
+   *
+   * @returns The lookup table.
+   */
+  public getLookupTable(): Map<number, unknown> {
+    return this.lookup_table;
+  }
+
+  /**
    * Get an item in the index given a search input.
    *
    * @param searchInput- The term to search for.
