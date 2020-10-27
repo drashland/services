@@ -60,6 +60,10 @@ export class IndexService {
    * @param item - The item to add to the index.
    */
   public addItem(searchTerms: string[], item: unknown): void {
+    if (typeof searchTerms == "string") {
+      const terms = (searchTerms as string).split(" ");
+      return this.addItem(terms, item);
+    }
     const id = this.lookup_table.size;
     this.lookup_table.set(id, item);
     searchTerms.forEach((searchTerm: string) => {
