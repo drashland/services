@@ -138,7 +138,7 @@ console.log(results);
 
 #### .addItem(searchInput: string[], item: unknown)
 
-* Add an item to the index and lookup table.
+* Add an item to the index and lookup table and make them searchable via search terms.
 * Example:
     ```typescript
     const i = new IndexService(lookupTable);
@@ -146,7 +146,7 @@ console.log(results);
     ````
 #### .getIndex()
 
-* Gets the index. The index is a string.
+* Gets the index.
 * Example:
     ```typescript
     const i = new IndexService(lookupTable);
@@ -156,7 +156,7 @@ console.log(results);
 
 #### .search(searchInput: string)
 
-* Search the index and get back an array of search results.
+* Search the index and get search results.
 * Example:
     ```typescript
     const i = new IndexService(lookupTable);
@@ -217,45 +217,36 @@ The below simulates a single request for a record in a `Map` (best out of 3 sear
 Command used:
 
 ```
-$ deno run -A index/benchmarks_app.ts map 10 1000000 && deno run -A index/benchmarks_app.ts service 10 1000000
+$ deno run -A index/benchmarks_app.ts map 10 1000
+$ deno run -A index/benchmarks_app.ts service 10 1000
+$ deno run -A index/benchmarks_app.ts map 10 10000
+$ deno run -A index/benchmarks_app.ts service 10 10000
+$ deno run -A index/benchmarks_app.ts map 10 100000
+$ deno run -A index/benchmarks_app.ts service 10 100000
+$ deno run -A index/benchmarks_app.ts map 10 1000000
+$ deno run -A index/benchmarks_app.ts service 10 1000000
 ```
 
 ```
 Performing search with 1,000 item(s) for 10s.
-
 Searching took an avg of 0.00006s using Map.forEach().
-Req/sec: 12049.6
-
 Searching took an avg of 0.00003s using IndexService.search().
-Req/sec: 20477
 ```
 
 ```
 Performing search with 10,000 item(s) for 10s.
-
 Searching took an avg of 0.00056s using Map.forEach().
-Req/sec: 1727.8
-
 Searching took an avg of 0.00033s using IndexService.search().
-Req/sec: 2897.2
 ```
 
 ```
 Performing search with 100,000 item(s) for 10s.
-
 Searching took an avg of 0.00417s using Map.forEach().
-Req/sec: 233
-
 Searching took an avg of 0.00322s using IndexService.search().
-Req/sec: 305.7
 ```
 
 ```
 Performing search with 1,000,000 item(s) for 10s.
-
 Searching took an avg of 0.04415s using Map.forEach().
-Req/sec: 17.4
-
 Searching took an avg of 0.03270s using IndexService.search().
-Req/sec: 27.9
 ```
