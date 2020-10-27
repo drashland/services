@@ -1,0 +1,12 @@
+# files
+.DS_Store
+
+# directories
+tmp*/*
+tmp/*
+.idea
+.vscode
+
+# exceptions
+!.gitkeep
+
