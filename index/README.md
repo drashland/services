@@ -182,6 +182,12 @@ Benchmarks were run with a set number of items in each `Map`. The benchmarks app
 
 The below simulates a single request for a record in a `Map` (best out of 3 searches).
 
+Command used:
+
+```
+$ deno run -A index/benchmarks_app.ts map 10 1000000 && deno run -A index/benchmarks_app.ts service 10 1000000
+```
+
 ```
 Performing search with 1,000 item(s) for 10s.
 
