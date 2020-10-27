@@ -210,11 +210,7 @@ export interface ISearchResult {
 
 ## Benchmarks
 
-Benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map` -- matching the item using regex. Below are the average times showing how long it took searches to complete and what method was used.
-
-The below simulates a single request for a record in a `Map` (best out of 3 searches).
-
-Command used:
+The below benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map` -- matching the item using regex. Below are the average times showing how long it took searches to complete and what method was used.
 
 ```
 $ deno run -A index/benchmarks_app.ts map 10 1000
@@ -249,4 +245,19 @@ Searching took an avg of 0.00322s using IndexService.search().
 Performing search with 1,000,000 item(s) for 10s.
 Searching took an avg of 0.04415s using Map.forEach().
 Searching took an avg of 0.03270s using IndexService.search().
+```
+
+The benchmarks below shows how the index service performs in an HTTP server. The dataset being searched had 1,250,000 records. The search term used was "Happy". The result set returned by the search had 50,000 records.
+
+Command used: `wrk -c 40 -d 10 http://localhost:8000`
+
+```
+Running 10s test @ http://localhost:8000/Happy
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.50ms    2.43ms  56.94ms   98.28%
+    Req/Sec    15.28k     2.52k   16.97k    91.00%
+  304257 requests in 10.01s, 17.41MB read
+Requests/sec:  30394.09
+Transfer/sec:      1.74MB
 ```
