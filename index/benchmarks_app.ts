@@ -7,7 +7,11 @@ const seconds = Number(args[1]);
 let totalRequests = 0;
 let numItems = Number(args[2]);
 
-console.log(`Performing search with ${numberWithCommas(numItems)} item(s) for ${seconds}s.`);
+console.log(
+  `Performing search with ${
+    numberWithCommas(numItems)
+  } item(s) for ${seconds}s.`,
+);
 
 if (args[0] === "map") {
   map(numItems);
@@ -52,13 +56,15 @@ function benchmark(
   }
 
   let total = 0;
-  for(let i = 0; i < numbers.length; i++) {
-      total += numbers[i];
+  for (let i = 0; i < numbers.length; i++) {
+    total += numbers[i];
   }
 
   let avg = total / numbers.length;
 
-  console.log(`Searching took an avg of ${(avg / 1000).toFixed(5)}s using ${method}.`);
+  console.log(
+    `Searching took an avg of ${(avg / 1000).toFixed(5)}s using ${method}.`,
+  );
   console.log(`Req/sec: ${totalRequests / seconds}`);
 }
 
@@ -112,5 +118,5 @@ function service(numItems: number): void {
 // https://stackoverflow.com/questions/2901102
 // /how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
 function numberWithCommas(x: number): string {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

@@ -31,7 +31,14 @@ export class IndexService {
    */
   protected lookup_table: Map<number, unknown>;
 
-  protected cache: Map<string, Map<number, ISearchResult>> = new Map<string, Map<number, ISearchResult>>();
+  /**
+   * Search terms get cached for faster subsequent lookups. They are stored in a
+   * Map and associated with their search results.
+   */
+  protected cache: Map<string, Map<number, ISearchResult>> = new Map<
+    string,
+    Map<number, ISearchResult>
+  >();
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////

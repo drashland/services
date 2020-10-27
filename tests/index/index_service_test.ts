@@ -1,5 +1,5 @@
 import { Rhum } from "../../deps.ts";
-import { ISearchResult, IndexService } from "../../index/index_service.ts";
+import { IndexService, ISearchResult } from "../../index/index_service.ts";
 
 const lookupTable: Map<number, string> = new Map();
 const i = new IndexService(
@@ -27,9 +27,9 @@ Rhum.testPlan(async () => {
               item: "test value",
               search_term: "test",
               search_input: "tes",
-            }
+            },
           ],
-        ])
+        ]),
       );
     });
   });
@@ -45,18 +45,21 @@ Rhum.testPlan(async () => {
           ["skrrrt", 4],
           ["test", 5],
           ["world", 3],
-        ])
+        ]),
       );
     });
   });
 
   Rhum.testSuite("getSeparator()", () => {
-    Rhum.testCase("returns the separator between a search term and an id", () => {
-      Rhum.asserts.assertEquals(
-        i.getSeparator(),
-        "__is__"
-      );
-    });
+    Rhum.testCase(
+      "returns the separator between a search term and an id",
+      () => {
+        Rhum.asserts.assertEquals(
+          i.getSeparator(),
+          "__is__",
+        );
+      },
+    );
   });
 
   Rhum.testSuite("search()", () => {
@@ -71,7 +74,7 @@ Rhum.testPlan(async () => {
               item: "hello value 1",
               search_input: "hello",
               search_term: "hello1",
-            }
+            },
           ],
           [
             2,
@@ -80,9 +83,9 @@ Rhum.testPlan(async () => {
               item: "hello value 2",
               search_input: "hello",
               search_term: "hello2",
-            }
+            },
           ],
-        ])
+        ]),
       );
     });
 
