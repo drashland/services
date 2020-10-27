@@ -8,7 +8,8 @@ const i = new IndexService(
 
 // Add items to the index
 i.addItem(["ok"], "ok value");
-i.addItem(["hello1"], "hello value 1");
+i.addItem(["hello1"], "hello value 1-1");
+i.addItem(["hello1"], "hello value 1-2");
 i.addItem(["hello2"], "hello value 2");
 i.addItem(["world"], "world value");
 i.addItem(["skrrrt"], "skrrrt steak value");
@@ -21,9 +22,9 @@ Rhum.testPlan(async () => {
         i.search("tes"),
         new Map<number, ISearchResult>([
           [
-            5,
+            6,
             {
-              id: 5,
+              id: 6,
               item: "test value",
               search_term: "test",
               search_input: "tes",
@@ -38,28 +39,16 @@ Rhum.testPlan(async () => {
     Rhum.testCase("returns the index", () => {
       Rhum.asserts.assertEquals(
         i.getIndex(),
-        new Map<string, number>([
-          ["hello1", 1],
-          ["hello2", 2],
-          ["ok", 0],
-          ["skrrrt", 4],
-          ["test", 5],
-          ["world", 3],
+        new Map<string, number[]>([
+          ["ok", [0]],
+          ["hello1", [1,2]],
+          ["hello2", [3]],
+          ["world", [4]],
+          ["skrrrt", [5]],
+          ["test", [6]],
         ]),
       );
     });
-  });
-
-  Rhum.testSuite("getSeparator()", () => {
-    Rhum.testCase(
-      "returns the separator between a search term and an id",
-      () => {
-        Rhum.asserts.assertEquals(
-          i.getSeparator(),
-          "__is__",
-        );
-      },
-    );
   });
 
   Rhum.testSuite("search()", () => {
@@ -71,7 +60,7 @@ Rhum.testPlan(async () => {
             1,
             {
               id: 1,
-              item: "hello value 1",
+              item: "hello value 1-1",
               search_input: "hello",
               search_term: "hello1",
             },
@@ -80,6 +69,15 @@ Rhum.testPlan(async () => {
             2,
             {
               id: 2,
+              item: "hello value 1-2",
+              search_input: "hello",
+              search_term: "hello1",
+            },
+          ],
+          [
+            3,
+            {
+              id: 3,
               item: "hello value 2",
               search_input: "hello",
               search_term: "hello2",

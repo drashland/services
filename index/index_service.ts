@@ -23,7 +23,7 @@ export class IndexService {
    * The index -- where the key is the search term and the value is the index to
    * an item in the lookup table.
    */
-  protected index: Map<string, number> = new Map<string, number>();
+  protected index: Map<string, number[]> = new Map<string, number[]>();
 
   /**
    * The lookup table that's used when an index is found in the index.
@@ -60,14 +60,17 @@ export class IndexService {
    * @param item - The item to add to the index.
    */
   public addItem(searchTerms: string[], item: unknown): void {
-    if (typeof searchTerms == "string") {
-      const terms = (searchTerms as string).split(" ");
-      return this.addItem(terms, item);
-    }
+    // Make sure the IDs increment when storing items to the lookup table
     const id = this.lookup_table.size;
+
+    // Add the item to the lookup table
     this.lookup_table.set(id, item);
+
+    // Add all search terms and associate them with the item in the index
     searchTerms.forEach((searchTerm: string) => {
-      this.index.set(searchTerm, id);
+      let ids = this.index.get(searchTerm) || [];
+      ids.push(id);
+      this.index.set(searchTerm, ids);
     });
   }
 
@@ -76,7 +79,7 @@ export class IndexService {
    *
    * @returns The index.
    */
-  public getIndex(): Map<string, number> {
+  public getIndex(): Map<string, number[]> {
     return this.index;
   }
 
@@ -95,13 +98,15 @@ export class IndexService {
       }
     }
     const results = new Map<number, ISearchResult>();
-    this.index.forEach((id: number, key: string) => {
+    this.index.forEach((ids: number[], key: string) => {
       if (key.includes(searchInput)) {
-        results.set(id, {
-          id: id,
-          item: this.lookup_table.get(id),
-          search_term: key,
-          search_input: searchInput,
+        ids.forEach((id: number) => {
+          results.set(id, {
+            id: id,
+            item: this.lookup_table.get(id),
+            search_term: key,
+            search_input: searchInput,
+          });
         });
       }
     });
