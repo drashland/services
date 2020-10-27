@@ -1,8 +1,6 @@
 # Index
 
-A service to help index items in a `Map` when regex patterns are used to match items in a `Map` -- resulting in faster lookup times than `Map.forEach()`.
-
-_Note: Performance does not improve when regex patterns are taken out of the equation._
+A service to index items in a `Map` with search terms.
 
 ## Table of Contents
 
@@ -18,30 +16,59 @@ _Note: Performance does not improve when regex patterns are taken out of the equ
 ## Quick Start
 
 ```typescript
-const lookupTable = new Map<number, string>();
+import { IndexService } from "../index/index_service.ts";
+
+const lookupTable = new Map<number, string>(); // The key MUST be the number type
 const i = new IndexService(lookupTable);
 
-i.addItem("hello" "hello value"); // Adds the item as [0, "hello"] in lookupTable; adds ["hello", 0] to the index
-i.addItem("world", "world value"); // Adds the item as [1, "hello"] in lookupTable; adds ["world", 1] to the index
+i.addItem(["hello", "value"], "hello value");
+i.addItem(["world", "value"], "world value");
+console.log(i.getIndex());
+// Oputputs
+//
+// Map {
+//   "hello" => [ 0 ],
+//   "value" => [ 0, 1 ],
+//   "world" => [ 1 ]
+// }
 
 // Search the lookup table by specifying a "search input"
-const result = i.search("hel") // returns [{ id: 1, item: "hello value", search_term: "hello", search_input: "hel" }]
-const noResults = i.search("deet") // returns []
+const helResults = i.search("hel");
+console.log(helResults);
+// Oputputs
+//
+// Map {
+//   0 => {
+//     id: 0,
+//     item: "hello value",
+//     search_term: "hello",
+//     search_input: "hel"
+//   }
+// }
+const valResults = i.search("val");
+console.log(valResults);
+// Oputputs
+//
+// Map {
+//   0 => { id: 0, item: "hello value", search_term: "value", search_input: "val" },
+//   1 => { id: 1, item: "world value", search_term: "value", search_input: "val" }
+// }
+
 ```
 
 ## How It Works
 
 When the `IndexService` is instantiated, it stores the lookup table you provide to it as its `lookup_table` property. When you add items to your lookup table via `.addItem()`, the `IndexService`:
 
-1. Adds the first argument you provide to `.addItem()` as a "search term" and an "ID" to its `index` property (a `Map` with search terms and IDs -- the IDs are mapped to items in the lookup table); and
+1. Adds the first argument you provide to `.addItem()` as "search terms" and an "ID" to its `index` property (a `Map` with search terms and IDs -- the IDs are mapped to items in the lookup table); and
 2. Adds the second argument you provide to `.addItem()` to the lookup table.
 
-The search term is what you can search for in the index. If your search term matches anything in the index, the `IndexService` will take the ID associated with that search term and use that ID to target an item in the lookup table.
+The search term is what you can search for in the index. If your search term matches anything in the index, the `IndexService` will take the IDs associated with the search term and use them to target items in the lookup table.
 
-For example, if you call `.addItem("hello", "world")`, the `index` property will become the following ...
+For example, if you call `.addItem(["hello"], "world")`, the `index` property will become the following ...
 
 ```
-["hello", 0]
+["hello", [0]]
 ```
 
 ... and the lookup table will become the following ...
@@ -60,7 +87,9 @@ hell
 hello
 ```
 
-... and they will all match `["hello", 0]` in the `index` `Map`. The ID in the `Map` (`0` in this case) is used to target the lookup table via `.get()` -- returning an item from the lookup table without having to iterate through the entire lookup table in case it has thousands of items. This makes it extremely fast when using regex patterns as keys in a `Map`.
+... and they will all match `["hello", [0]]` in the `index` `Map`. The ID in the `Map` (`0` in this case) is used to target the lookup table via `.get()` -- returning an item from the lookup table without having to iterate through the entire lookup table in case it has millions of items.
+
+You should note that each search is cached, so subsequent searches of the same search term are 2x (sometimes faster) faster than the first search.
 
 ## Guides
 
@@ -69,23 +98,16 @@ hello
 1. Instantiate the index service and pass in your lookup table (which is the service's term for a `Map`) that you want indexed.
 
 ```typescript
-const lt = new Map<number, string>();
+const lt = new Map<number, string>(); // Key MUST be the number type
 const i = new IndexService(lt);
 ```
 
-2. Add items to your lookup table. If a string is used, the string is split on spaces -- turning the search term into an array of search terms. Each search term is then used to add an item to the index.
+2. Add items to your lookup table.
 
 ```typescript
-i.addItem("hello", "world");        // adds ["hello", 0]
-i.addItem(["again aga"], "again");  // adds ["again", 1] and ["aga", 1]
-i.addItem("test", "something");     // adds ["test", 2]
-```
-
-If one search term is provided to assocaite it with a record and the same search term is provided in a subsequent call to associate it with another record, then the subsequent call will overwrite the first call's association. See example below:
-
-```typescript
-i.addItem("hello", "world");     // adds ["hello", 0]
-i.addItem("hello", "something"); // adds ["hello", 1] --> "hello" is now associated with "something" and not "world"
+i.addItem(["hello"], "world");     // adds ["hello", [0]] to the index
+i.addItem(["again aga"], "again"); // adds ["again", [1]] and ["aga", [1]] to the index
+i.addItem(["hello"], "something"); // changes ["hello", [0]] to ["hello", [0,2]] in the index
 ```
 
 3. Search your lookup table.
@@ -101,9 +123,9 @@ console.log(results);
 //     search_term: "hello",
 //     search_input: "hel"
 //   },
-//   1 => {
-//     id: 1,
-//     item: "again",
+//   2 => {
+//     id: 2,
+//     item: "something",
 //     search_term: "hello",
 //     search_input: "hel"
 //   },
@@ -114,13 +136,13 @@ console.log(results);
 
 ### Methods
 
-#### .addItem(searchInput: string | string[], item: unknown)
+#### .addItem(searchInput: string[], item: unknown)
 
 * Add an item to the index and lookup table.
 * Example:
     ```typescript
     const i = new IndexService(lookupTable);
-    i.addItem("search term to use to find the item in the lookup table", "item to put in the lookup table");
+    i.addItem(["search", "terms"], {item to put into your lookup table});
     ````
 #### .getIndex()
 
@@ -128,8 +150,8 @@ console.log(results);
 * Example:
     ```typescript
     const i = new IndexService(lookupTable);
-    i.addItem("hello", "world");
-    i.getIndex(); // returns Map { 0 => "world" }
+    i.addItem(["hello"], "world");
+    i.getIndex(); // returns Map { "hello" => [0] }
     ```
 
 #### .search(searchInput: string)
@@ -139,24 +161,27 @@ console.log(results);
     ```typescript
     const i = new IndexService(lookupTable);
     
-    i.addItem("hello", "world");
-    i.addItem("hello", "again");
-    i.addItem("tests", "something");
+    i.addItem(["hello"], "world");
+    i.addItem(["hello"], "again");
+    i.addItem(["tests"], "something");
     
-    i.search("hel"); // returns Map {
-                     //   0 => {
-                     //     id: 0,
-                     //     item: "world",
-                     //     search_term: "hello",
-                     //     search_input: "hel"
-                     //   },
-                     //   1 => {
-                     //     id: 1,
-                     //     item: "again",
-                     //     search_term: "hello",
-                     //     search_input: "hel"
-                     //   },
-                     // }
+    const results = i.search("hel");
+    // Outputs
+    //
+    // Map {
+    //   0 => {
+    //     id: 0,
+    //     item: "world",
+    //     search_term: "hello",
+    //     search_input: "hel"
+    //   },
+    //   2 => {
+    //     id: 2,
+    //     item: "something",
+    //     search_term: "hello",
+    //     search_input: "hel"
+    //   },
+    // }
     ```
 
 ### Interfaces
