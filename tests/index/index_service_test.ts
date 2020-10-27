@@ -7,16 +7,16 @@ const i = new IndexService(
 );
 
 // Add items to the index
-i.addItem("ok", "ok value");
-i.addItem("hello1", "hello value 1");
-i.addItem("hello2", "hello value 2");
-i.addItem("world", "world value");
-i.addItem("skrrrt", "skrrrt steak value");
+i.addItem(["ok"], "ok value");
+i.addItem(["hello1"], "hello value 1");
+i.addItem(["hello2"], "hello value 2");
+i.addItem(["world"], "world value");
+i.addItem(["skrrrt"], "skrrrt steak value");
 
 Rhum.testPlan(async () => {
   Rhum.testSuite("addItem()", () => {
     Rhum.testCase("adds an item to the index and lookup table", () => {
-      i.addItem("test", "test value");
+      i.addItem(["test"], "test value");
       Rhum.asserts.assertEquals(
         i.search("tes"),
         new Map<number, ISearchResult>([

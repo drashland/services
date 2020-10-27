@@ -60,10 +60,12 @@ export class IndexService {
    * @param searchTerm - The term to search for in order to find the item.
    * @param item - The item to add to the index.
    */
-  public addItem(searchTerm: string, item: unknown): void {
+  public addItem(searchTerms: string[], item: unknown): void {
     const id = this.lookup_table.size;
     this.lookup_table.set(id, item);
-    this.index.set(searchTerm, id);
+    searchTerms.forEach((searchTerm: string) => {
+      this.index.set(searchTerm, id);
+    });
   }
 
   /**
