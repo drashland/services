@@ -92,10 +92,7 @@ export class IndexService {
    */
   public search(searchInput: string): Map<number, ISearchResult> {
     if (this.cache.has(searchInput)) {
-      const results = this.cache.get(searchInput);
-      if (results) {
-        return results;
-      }
+      return this.cache.get(searchInput) as Map<number, ISearchResult>;
     }
     const results = new Map<number, ISearchResult>();
     this.index.forEach((ids: number[], key: string) => {
