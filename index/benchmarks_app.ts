@@ -2,6 +2,16 @@ import { IndexService } from "./index_service.ts";
 
 const numRequests = 1;
 
+performSearch(1);
+performSearch(500);
+performSearch(1000);
+performSearch(5000);
+performSearch(10000);
+performSearch(50000);
+performSearch(100000);
+
+////////////////////////////////////////////////////////////////////////////////
+
 interface SearchResult {
   id: number;
   item: string;
@@ -10,26 +20,22 @@ interface SearchResult {
 }
 
 function benchmark(
-  numItems: number,
   process: () => void,
   method: string,
 ): void {
-  const pn = performance.now();
+  const numbers: number[] = [];
   for (let i = 0; i < numRequests; i++) {
+    const pn = performance.now();
     process();
+    const pt = performance.now();
+    numbers.push(pt - pn);
   }
-  const pt = performance.now();
-  if ((pt - pn) > 1000) {
-    console.log(
-      "Searching " + numItems + " items processed in " + ((pt - pn)/1000).toFixed(3) + "s by " +
-        method,
-    );
-  } else {
-    console.log(
-      "Searching " + numItems + " items processed in " + (pt - pn).toFixed(3) + "ms by " +
-        method,
-    );
+  let total = 0;
+  for(let i = 0; i < numbers.length; i++) {
+      total += numbers[i];
   }
+  let avg = total / numbers.length;
+  console.log(`Searching took an average of ${(avg / 1000).toFixed(5)}s using ${method}.`);
 }
 
 function map(numItems: number): void {
@@ -52,7 +58,7 @@ function map(numItems: number): void {
   });
 
   const results: SearchResult[] = [];
-  benchmark(numItems, () => {
+  benchmark(() => {
     m.forEach((item: SearchResult) => {
       if (results.length > 0) {
         return;
@@ -74,62 +80,14 @@ function service(numItems: number): void {
 
   s.addItem("last item", "last item value");
 
-  benchmark(numItems, () => {
+  benchmark(() => {
     s.search("last");
   }, "IndexService.search()");
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// RUN THE BENCHMARKS //////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-map(1);
-service(1);
-console.log();
-
-map(1000);
-service(1000);
-console.log();
-
-map(10000);
-service(10000);
-console.log();
-
-map(20000);
-service(20000);
-console.log();
-
-map(30000);
-service(30000);
-console.log();
-
-map(40000);
-service(40000);
-console.log();
-
-map(50000);
-service(50000);
-console.log();
-
-map(60000);
-service(60000);
-console.log();
-
-map(70000);
-service(70000);
-console.log();
-
-map(80000);
-service(80000);
-console.log();
-
-map(90000);
-service(90000);
-console.log();
-
-map(100000);
-service(100000);
-console.log();
-
-map(1000000);
-service(1000000);
+function performSearch(numItems: number) {
+  console.log(`Performing search with ${numItems} item(s) in each Map.`);
+  map(numItems);
+  service(numItems);
+  console.log();
+}
