@@ -183,39 +183,41 @@ Benchmarks were run with a set number of items in each `Map`. The benchmarks app
 The below simulates a single request for a record in a `Map` (best out of 3 searches).
 
 ```
-Performing search with 1 item(s) in each Map.
-Searching took 0.00005s using Map.forEach().
-Searching took 0.00004s using IndexService.search().
+Performing search with 1,000 item(s) for 10s.
 
-Performing search with 500 item(s) in each Map.
-Searching took 0.00014s using Map.forEach().
-Searching took 0.00005s using IndexService.search().
+Searching took an avg of 0.00006s using Map.forEach().
+Req/sec: 12049.6
 
-Performing search with 1,000 item(s) in each Map.
-Searching took 0.00021s using Map.forEach().
-Searching took 0.00007s using IndexService.search().
+Searching took an avg of 0.00003s using IndexService.search().
+Req/sec: 20477
+```
 
-Performing search with 5,000 item(s) in each Map.
-Searching took 0.00084s using Map.forEach().
-Searching took 0.00053s using IndexService.search().
+```
+Performing search with 10,000 item(s) for 10s.
 
-Performing search with 10,000 item(s) in each Map.
-Searching took 0.00074s using Map.forEach().
-Searching took 0.00039s using IndexService.search().
+Searching took an avg of 0.00056s using Map.forEach().
+Req/sec: 1727.8
 
-Performing search with 50,000 item(s) in each Map.
-Searching took 0.00257s using Map.forEach().
-Searching took 0.00167s using IndexService.search().
+Searching took an avg of 0.00033s using IndexService.search().
+Req/sec: 2897.2
+```
 
-Performing search with 100,000 item(s) in each Map.
-Searching took 0.00549s using Map.forEach().
-Searching took 0.00426s using IndexService.search().
+```
+Performing search with 100,000 item(s) for 10s.
 
-Performing search with 500,000 item(s) in each Map.
-Searching took 0.03453s using Map.forEach().
-Searching took 0.01767s using IndexService.search().
+Searching took an avg of 0.00417s using Map.forEach().
+Req/sec: 233
 
-Performing search with 1,000,000 item(s) in each Map.
-Searching took 0.07267s using Map.forEach().
-Searching took 0.03507s using IndexService.search().
+Searching took an avg of 0.00322s using IndexService.search().
+Req/sec: 305.7
+```
+
+```
+Performing search with 1,000,000 item(s) for 10s.
+
+Searching took an avg of 0.04415s using Map.forEach().
+Req/sec: 17.4
+
+Searching took an avg of 0.03270s using IndexService.search().
+Req/sec: 27.9
 ```

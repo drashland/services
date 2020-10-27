@@ -1,17 +1,26 @@
 import { IndexService } from "./index_service.ts";
 
-const numRequests = 3;
+let args = Deno.args.slice();
 
-performSearch(1);
-performSearch(500);
-performSearch(1000);
-performSearch(5000);
-performSearch(10000);
-performSearch(50000);
-performSearch(100000);
-performSearch(500000);
-performSearch(1000000);
+const numRequests = 100000000000;
+const seconds = Number(args[1]);
+let totalRequests = 0;
+let numItems = Number(args[2]);
 
+console.log(`Performing search with ${numberWithCommas(numItems)} item(s) for ${seconds}s.`);
+
+if (args[0] === "map") {
+  map(numItems);
+  Deno.exit();
+}
+
+if (args[0] === "service") {
+  service(numItems);
+  Deno.exit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// FILE MARKER - HELPERS ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 interface SearchResult {
@@ -26,18 +35,31 @@ function benchmark(
   method: string,
 ): void {
   const numbers: number[] = [];
-  for (let i = 0; i < numRequests; i++) {
+  const now = performance.now();
+  let i = 0;
+  while (i < numRequests) {
     const pn = performance.now();
     process();
+    totalRequests += 1;
     const pt = performance.now();
     numbers.push(pt - pn);
+    const then = performance.now();
+    if (((then + now) / 1000) >= seconds) {
+      i = 0;
+      break;
+    }
+    i++;
   }
+
   let total = 0;
   for(let i = 0; i < numbers.length; i++) {
       total += numbers[i];
   }
+
   let avg = total / numbers.length;
-  console.log(`Searching took ${(avg / 1000).toFixed(5)}s using ${method}.`);
+
+  console.log(`Searching took an avg of ${(avg / 1000).toFixed(5)}s using ${method}.`);
+  console.log(`Req/sec: ${totalRequests / seconds}`);
 }
 
 function map(numItems: number): void {
@@ -85,13 +107,6 @@ function service(numItems: number): void {
   benchmark(() => {
     s.search("last");
   }, "IndexService.search()");
-}
-
-function performSearch(numItems: number) {
-  console.log(`Performing search with ${numberWithCommas(numItems)} item(s) in each Map.`);
-  map(numItems);
-  service(numItems);
-  console.log();
 }
 
 // https://stackoverflow.com/questions/2901102
