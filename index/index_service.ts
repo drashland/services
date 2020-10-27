@@ -23,7 +23,7 @@ export class IndexService {
    * The index -- where the key is the search term and the value is the index to
    * an item in the lookup table.
    */
-  protected index_separator = "__is__";
+  protected index: Map<string, number> = new Map<string, number>();
 
   /**
    * The lookup table that's used when an index is found in the index.
@@ -74,15 +74,6 @@ export class IndexService {
    */
   public getIndex(): Map<string, number> {
     return this.index;
-  }
-
-  /**
-   * Get the separator string that separates items in the index.
-   *
-   * @returns The separator.
-   */
-  public getSeparator(): string {
-    return this.index_separator;
   }
 
   /**
