@@ -19,10 +19,9 @@ export interface ISearchResult {
 }
 
 export class IndexService {
-  protected index: Map<string, number> = new Map<string, number>();
-
   /**
-   * A property to separate indices with their associated values.
+   * The index -- where the key is the search term and the value is the index to
+   * an item in the lookup table.
    */
   protected index_separator = "__is__";
 
