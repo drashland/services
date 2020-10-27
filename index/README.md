@@ -73,12 +73,19 @@ const lt = new Map<number, string>();
 const i = new IndexService(lt);
 ```
 
-2. Add items to your lookup table.
+2. Add items to your lookup table. If a string is used, the string is split on spaces -- turning the search term into an array of search terms. Each search term is then used to add an item to the index.
 
 ```typescript
-i.addItem("hello", "world");
-i.addItem("hello", "again");
-i.addItem("test", "something");
+i.addItem("hello", "world");        // adds ["hello", 0]
+i.addItem(["again aga"], "again");  // adds ["again", 1] and ["aga", 1]
+i.addItem("test", "something");     // adds ["test", 2]
+```
+
+If one search term is provided to assocaite it with a record and the same search term is provided in a subsequent call to associate it with another record, then the subsequent call will overwrite the first call's association. See example below:
+
+```typescript
+i.addItem("hello", "world");     // adds ["hello", 0]
+i.addItem("hello", "something"); // adds ["hello", 1] --> "hello" is now associated with "something" and not "world"
 ```
 
 3. Search your lookup table.
@@ -107,7 +114,7 @@ console.log(results);
 
 ### Methods
 
-#### .addItem(searchInput: string, item: unknown)
+#### .addItem(searchInput: string | string[], item: unknown)
 
 * Add an item to the index and lookup table.
 * Example:
