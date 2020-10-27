@@ -1,6 +1,6 @@
 import { IndexService } from "./index_service.ts";
 
-const numRequests = 1;
+const numRequests = 3;
 
 performSearch(1);
 performSearch(500);
