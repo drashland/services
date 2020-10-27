@@ -31,6 +31,8 @@ export class IndexService {
    */
   protected lookup_table: Map<number, unknown>;
 
+  protected cache: Map<string, Map<number, ISearchResult>> = new Map<string, Map<number, ISearchResult>>();
+
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -83,6 +85,12 @@ export class IndexService {
    * @returns An array of index items that the search input matched.
    */
   public search(searchInput: string): Map<number, ISearchResult> {
+    if (this.cache.has(searchInput)) {
+      const results = this.cache.get(searchInput);
+      if (results) {
+        return results;
+      }
+    }
     const results = new Map<number, ISearchResult>();
     this.index.forEach((id: number, key: string) => {
       if (key.includes(searchInput)) {
@@ -94,6 +102,8 @@ export class IndexService {
         });
       }
     });
+
+    this.cache.set(searchInput, results);
 
     return results;
   }
