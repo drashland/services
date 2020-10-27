@@ -13,11 +13,17 @@ console.log(
   } item(s) for ${seconds}s.`,
 );
 
+//
+// deno run benchmarks_app.ts map 10 10000
+//
 if (args[0] === "map") {
   map(numItems);
   Deno.exit();
 }
 
+//
+// deno run benchmarks_app.ts service 10 10000
+//
 if (args[0] === "service") {
   service(numItems);
   Deno.exit();
