@@ -32,7 +32,7 @@ export class IndexService {
 
   /**
    * Search terms get cached for faster subsequent lookups. They are stored in a
-   * Map and associated with their search results.
+   * Map and associated with their search result(s).
    */
   protected cache: Map<string, Map<number, ISearchResult>> = new Map<
     string,
