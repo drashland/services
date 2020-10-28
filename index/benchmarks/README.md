@@ -19,6 +19,8 @@ Command used:
 $ deno run -A benchmarks/app.ts map [seconds] [number of records to create]
 ```
 
+#### Results
+
 ```
 Performing search with 1,000 records(s) for 10s.
 Searching took an avg of 0.00002s using Map.forEach().
@@ -47,6 +49,8 @@ Command used:
 $ deno run --allow-net app_http.ts [number of records to create]
 $ wrk -c 40 -d 10 http://localhost:8000/{searchTerm}
 ```
+
+#### Results
 
 ```
 Running 10s test @ http://localhost:8000/Happy
