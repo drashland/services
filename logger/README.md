@@ -11,6 +11,8 @@ A service to help log different types of messages in the console.
 
 ### Methods
 
+All methods are `static`, so you do not have to instantiate the `LoggerService` class. All methods are readily available via `LoggerService.{theMethod}`.
+
 #### .logDebug(message: string)
 
 * Log a debug message with a green DEBUG string.
