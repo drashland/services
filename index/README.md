@@ -12,6 +12,8 @@ A service to index items in a `Map` with search terms.
     * [Methods](#methods)
     * [Interfaces](#interfaces)
 * [Benchmarks](#benchmarks)
+    * [performance.now()](#performance-now)
+    * [In An HTTP Server](#in-an-http-server)
 
 ## Quick Start
 
@@ -210,46 +212,43 @@ export interface ISearchResult {
 
 ## Benchmarks
 
-The below benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map` -- matching the item using regex. Below are the average times showing how long it took searches to complete and what method was used.
+### performance.now()
+
+The below benchmarks were run with a set number of items in each `Map`. The benchmarks application searched for the last item in each `Map`. Below are the average times showing how long it took searches to complete and what method was used.
+
+Command used:
 
 ```
-$ deno run -A index/benchmarks_app.ts map 10 1000
-$ deno run -A index/benchmarks_app.ts service 10 1000
-$ deno run -A index/benchmarks_app.ts map 10 10000
-$ deno run -A index/benchmarks_app.ts service 10 10000
-$ deno run -A index/benchmarks_app.ts map 10 100000
-$ deno run -A index/benchmarks_app.ts service 10 100000
-$ deno run -A index/benchmarks_app.ts map 10 1000000
-$ deno run -A index/benchmarks_app.ts service 10 1000000
+$ deno run -A benchmarks/app.ts map [seconds] [number of records to put in Map]
 ```
 
 ```
-Performing search with 1,000 item(s) for 10s.
-Searching took an avg of 0.00006s using Map.forEach().
-Searching took an avg of 0.00003s using IndexService.search().
+Performing search with 1,000 records(s) for 10s.
+Searching took an avg of 0.00002s using Map.forEach().
+Searching took an avg of 0.00001s using IndexService.search().
+
+Performing search with 10,000 records(s) for 10s.
+Searching took an avg of 0.00014s using Map.forEach().
+Searching took an avg of 0.00001s using IndexService.search().
+
+Performing search with 100,000 records(s) for 10s.
+Searching took an avg of 0.00136s using Map.forEach().
+Searching took an avg of 0.00001s using IndexService.search().
+
+Performing search with 1,000,000 records(s) for 10s.
+Searching took an avg of 0.01379s using Map.forEach().
+Searching took an avg of 0.00001s using IndexService.search().
 ```
 
-```
-Performing search with 10,000 item(s) for 10s.
-Searching took an avg of 0.00056s using Map.forEach().
-Searching took an avg of 0.00033s using IndexService.search().
-```
+### In An HTTP Server
+
+The benchmarks below show how the index service performs in an HTTP server. The dataset being searched had 1,250,000 records. The search term used was "Happy". The result set returned by the search had 50,000 records.
+
+Command used:
 
 ```
-Performing search with 100,000 item(s) for 10s.
-Searching took an avg of 0.00417s using Map.forEach().
-Searching took an avg of 0.00322s using IndexService.search().
+$ wrk -c 40 -d 10 http://localhost:8000/Happy
 ```
-
-```
-Performing search with 1,000,000 item(s) for 10s.
-Searching took an avg of 0.04415s using Map.forEach().
-Searching took an avg of 0.03270s using IndexService.search().
-```
-
-The benchmarks below shows how the index service performs in an HTTP server. The dataset being searched had 1,250,000 records. The search term used was "Happy". The result set returned by the search had 50,000 records.
-
-Command used: `wrk -c 40 -d 10 http://localhost:8000`
 
 ```
 Running 10s test @ http://localhost:8000/Happy
