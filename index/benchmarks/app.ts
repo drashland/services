@@ -1,23 +1,22 @@
-import { IndexService } from "./index_service.ts";
+import { IndexService } from "../index_service.ts";
 
 let args = Deno.args.slice();
 
 const numRequests = 100000000000;
 const seconds = Number(args[1]);
-let totalRequests = 0;
-let numItems = Number(args[2]);
+let records = Number(args[2]);
 
 console.log(
   `Performing search with ${
-    numberWithCommas(numItems)
-  } item(s) for ${seconds}s.`,
+    numberWithCommas(records)
+  } record(s) for ${seconds}s.`,
 );
 
 //
 // deno run benchmarks_app.ts map 10 10000
 //
 if (args[0] === "map") {
-  map(numItems);
+  map(records);
   Deno.exit();
 }
 
@@ -25,7 +24,7 @@ if (args[0] === "map") {
 // deno run benchmarks_app.ts service 10 10000
 //
 if (args[0] === "service") {
-  service(numItems);
+  service(records);
   Deno.exit();
 }
 
@@ -50,7 +49,6 @@ function benchmark(
   while (i < numRequests) {
     const pn = performance.now();
     process();
-    totalRequests += 1;
     const pt = performance.now();
     numbers.push(pt - pn);
     const then = performance.now();
@@ -71,17 +69,16 @@ function benchmark(
   console.log(
     `Searching took an avg of ${(avg / 1000).toFixed(5)}s using ${method}.`,
   );
-  console.log(`Req/sec: ${totalRequests / seconds}`);
 }
 
-function map(numItems: number): void {
+function map(records: number): void {
   const m = new Map<string, SearchResult>();
 
-  for (let i = 0; i < numItems; i++) {
+  for (let i = 0; i < records; i++) {
     m.set(i.toString(), {
       id: i,
       item: i.toString() + "value",
-      search_term: new RegExp(i.toString(), "g"),
+      search_term: i.toString(),
       search_input: i.toString(),
     });
   }
@@ -99,25 +96,25 @@ function map(numItems: number): void {
       if (results.length > 0) {
         return;
       }
-      if ("test".match(item.search_term)) {
+      if ((item.search_term as string).includes("test")) {
         results.push(item);
       }
     });
   }, "Map.forEach()");
 }
 
-function service(numItems: number): void {
+function service(records: number): void {
   const lt = new Map<number, string>();
   const s = new IndexService(lt);
 
-  for (let i = 0; i < numItems; i++) {
+  for (let i = 0; i < records; i++) {
     s.addItem([i.toString()], i.toString());
   }
 
   s.addItem(["last item"], "last item value");
 
   benchmark(() => {
-    s.search("last");
+    const result = s.search("last");
   }, "IndexService.search()");
 }
 
