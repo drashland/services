@@ -4,7 +4,7 @@
 ## Table of Contents
 
 * [Benchmark Runs](#benchmark-runs)
-    * [performance.now()](#performance-now)
+    * [performance.now()](#performancenow)
     * [In An HTTP Server](#in-an-http-server)
 
 ## Benchmark Runs
