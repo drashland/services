@@ -16,7 +16,7 @@ The below benchmarks were run with a set number of items in each `Map`; and usin
 Command used:
 
 ```
-$ deno run -A benchmarks/app.ts map [seconds] [number of records to create]
+$ deno run -A benchmarks/app.ts [map|service] [number of seconds] [number of records to create]
 ```
 
 #### Results
