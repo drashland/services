@@ -220,7 +220,7 @@ export class CliService {
       LoggerService.logError(
         `Subcommand \`${subcommand}\` requires arguments.`,
       );
-      Deno.exit();
+      Deno.exit(1);
     }
 
     // Execute the subcommand
