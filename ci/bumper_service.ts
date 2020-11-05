@@ -113,22 +113,9 @@ export class BumperService {
       return this.bumpForPreRelease(files, write);
     }
 
+    files = this.replaceVersionVariables(files);
+
     files.forEach((file) => {
-      file.replaceWith = file.replaceWith.replace(
-        "{{ latestDenoVersion }}",
-        this.latest_versions.deno,
-      );
-
-      file.replaceWith = file.replaceWith.replace(
-        "{{ latestStdVersion }}",
-        this.latest_versions.deno_std,
-      );
-
-      file.replaceWith = file.replaceWith.replace(
-        "{{ latestDrashVersion }}",
-        this.latest_versions.drash,
-      );
-
       ret.push(this.writeFile(file, write));
     });
 
@@ -156,6 +143,8 @@ export class BumperService {
     const version = this.parsed_args.branch.substring(
       this.parsed_args.branch.indexOf("v") + 1,
     ); // 1.0.5
+
+    files = this.replaceVersionVariables(files)
 
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
@@ -288,5 +277,39 @@ export class BumperService {
     }
 
     return "";
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PRIVATE ///////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Replaces template variables with what values they should have
+   *
+   * @param files - The list of files to replace the `replaceWith` with
+   *
+   * @example
+   * Say `file.replaceWith` is `{{ latestStdVersion }}`, this method will replace that with
+   * the latest std version
+   */
+  private replaceVersionVariables (files: File[]): File[] {
+    files.forEach((file) => {
+      file.replaceWith = file.replaceWith.replace(
+          "{{ latestDenoVersion }}",
+          this.latest_versions.deno,
+      );
+
+      file.replaceWith = file.replaceWith.replace(
+          "{{ latestStdVersion }}",
+          this.latest_versions.deno_std,
+      );
+
+      file.replaceWith = file.replaceWith.replace(
+          "{{ latestDrashVersion }}",
+          this.latest_versions.drash,
+      );
+    });
+
+    return files
   }
 }
