@@ -29,7 +29,7 @@ c.addSubcommand("help", () => {
 });
 
 // Add a version command
-c.addSubcommand("version" () => {
+c.addSubcommand("version", () => {
   console.log(version);
 });
 

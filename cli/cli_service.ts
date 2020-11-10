@@ -77,10 +77,7 @@ interface IExample {
  *         "version, --version": "Display the version.",
  *       },
  *       options: {
- *         "do-something": {
- *           "--some-option":
- *             "Execute some option.",
- *         },
+ *          "--some-option": "Execute some option.",
  *       },
  *       example_usage: [
  *         {
@@ -107,9 +104,7 @@ interface IHelpMenuData {
   description: string;
   example_usage: IExample[];
   options?: {
-    [key: string]: {
-      [key: string]: string;
-    };
+    [key: string]: string,
   };
   usage: string[];
 }
@@ -250,7 +245,7 @@ export class CliService {
       }
 
       if (key == "subcommands") {
-        output += `\n\SUBCOMMANDS\n`;
+        output += `\n\nSUBCOMMANDS\n`;
         for (const subcommand in data[key]) {
           output += (`\n    ${subcommand}\n`);
           output +=
@@ -259,18 +254,15 @@ export class CliService {
       }
 
       if (key == "options") {
-        output += `\n\nOPTIONS\n\n    Options are categorized by subcommand.\n`;
-        for (const subcommand in data[key]!) {
-          output += (`\n    ${subcommand}\n`);
-          for (const option in data[key]![subcommand]) {
-            output += (`        ${option}\n`);
-            output += (`${
-              this.wordWrap(
-                `            ${data[key]![subcommand][option]}`,
-                12,
-              )
-            }\n`);
-          }
+        output += `\n\nOPTIONS\n`;
+        for (const option in data[key]!) {
+          output += (`        ${option}\n`);
+          output += (`${
+            this.wordWrap(
+              `        ${data[key]![option]}`,
+              12,
+            )
+          }\n`);
         }
       }
 
