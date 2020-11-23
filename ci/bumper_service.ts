@@ -144,7 +144,7 @@ export class BumperService {
       this.parsed_args.branch.indexOf("v") + 1,
     ); // 1.0.5
 
-    files = this.replaceVersionVariables(files)
+    files = this.replaceVersionVariables(files);
 
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
@@ -292,24 +292,24 @@ export class BumperService {
    * Say `file.replaceWith` is `{{ latestStdVersion }}`, this method will replace that with
    * the latest std version
    */
-  private replaceVersionVariables (files: File[]): File[] {
+  private replaceVersionVariables(files: File[]): File[] {
     files.forEach((file) => {
       file.replaceWith = file.replaceWith.replace(
-          "{{ latestDenoVersion }}",
-          this.latest_versions.deno,
+        "{{ latestDenoVersion }}",
+        this.latest_versions.deno,
       );
 
       file.replaceWith = file.replaceWith.replace(
-          "{{ latestStdVersion }}",
-          this.latest_versions.deno_std,
+        "{{ latestStdVersion }}",
+        this.latest_versions.deno_std,
       );
 
       file.replaceWith = file.replaceWith.replace(
-          "{{ latestDrashVersion }}",
-          this.latest_versions.drash,
+        "{{ latestDrashVersion }}",
+        this.latest_versions.drash,
       );
     });
 
-    return files
+    return files;
   }
 }
