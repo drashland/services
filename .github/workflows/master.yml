@@ -22,11 +22,11 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@v2
 
-      - name: CI Tests
-        run: deno test -A tests/ci/bumper_service_test.ts
+      - name: Install Rhum
+        run: deno install -Af https://raw.githubusercontent.com/drashland/rhum/rhum-cli/cli.ts
 
-      - name: Index Tests
-        run: deno test -A tests/index/index_service_test.ts
+      - name: Run Unit Tests
+        run: rhum test --allow-net --allow-read --ignore=data tests/
 
   linter:
     # Only one OS is required since fmt is cross platform

@@ -233,7 +233,7 @@ const data_bumpEggJson = `{
 `;
 
 const data_bumpMod =
-    `import { assertions, asserts } from "./src/rhum_asserts.ts";
+  `import { assertions, asserts } from "./src/rhum_asserts.ts";
 import type {
   ITestCase,
   ITestPlan,

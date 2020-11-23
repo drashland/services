@@ -41,7 +41,7 @@ Rhum.testPlan(async () => {
         i.getIndex(),
         new Map<string, number[]>([
           ["ok", [0]],
-          ["hello1", [1,2]],
+          ["hello1", [1, 2]],
           ["hello2", [3]],
           ["world", [4]],
           ["skrrrt", [5]],
