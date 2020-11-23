@@ -26,7 +26,9 @@ jobs:
         run: deno install -Af https://raw.githubusercontent.com/drashland/rhum/rhum-cli/cli.ts
 
       - name: Run Unit Tests
-        run: rhum test --allow-net --allow-read --ignore=data tests/
+        run: |
+          export PATH="~/.deno/bin:$PATH"
+          rhum test --allow-net --allow-read --ignore=data tests/
 
   linter:
     # Only one OS is required since fmt is cross platform
