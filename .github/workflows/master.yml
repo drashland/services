@@ -26,9 +26,12 @@ jobs:
         run: deno install -Af https://raw.githubusercontent.com/drashland/rhum/rhum-cli/cli.ts
 
       - name: Run Unit Tests
+        # TODO (crookse) When Rhum v2.0 is released, this step will need to be updated from using
+        # `rhum-cli` to `rhum`. The reason it's `rhum-cli` right now is because the branch name
+        # is `rhum-cli` (as seen in the above step).
         run: |
           export PATH="~/.deno/bin:$PATH"
-          rhum test --allow-net --allow-read --ignore=data tests/
+          rhum-cli test --allow-net --allow-read --ignore=data tests/
 
   linter:
     # Only one OS is required since fmt is cross platform
