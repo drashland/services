@@ -255,7 +255,7 @@ export { MockBuilder } from "./src/mock_builder.ts";
 // TESTS ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-Rhum.testPlan(async () => {
+Rhum.testPlan("Bumper Service", async () => {
   Rhum.testSuite("constructor()", () => {
     Rhum.testCase("sets module_name", () => {
       Rhum.asserts.assertEquals(

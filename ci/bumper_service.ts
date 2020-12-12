@@ -1,4 +1,4 @@
-import { LoggerService } from "../logger/logger_service.ts";
+import { ConsoleLogger } from "../loggers/console_logger.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -264,7 +264,7 @@ export class BumperService {
   protected writeFile(file: File, write: boolean = true): string {
     try {
       if (write) {
-        LoggerService.logInfo(`Writing file: ${file.filename}`);
+        ConsoleLogger.info(`Writing file: ${file.filename}`);
       }
       let fileContent = decoder.decode(Deno.readFileSync(file.filename));
       fileContent = fileContent.replace(file.replaceTheRegex, file.replaceWith);
@@ -273,7 +273,7 @@ export class BumperService {
       }
       return fileContent;
     } catch (error) {
-      LoggerService.logError(error.stack);
+      ConsoleLogger.error(error.stack);
     }
 
     return "";

@@ -1,12 +1,12 @@
 import { colors } from "./deps.ts";
 
-export class LoggerService {
+export class ConsoleLogger {
   /**
    * Log a debug message.
    *
    * @param message The message to log.
    */
-  public static logDebug(message: string): void {
+  public static debug(message: string): void {
     console.log(colors.green("DEBUG") + " " + message);
   }
 
@@ -15,7 +15,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public static logError(message: string): void {
+  public static error(message: string): void {
     console.log(colors.red("ERROR") + " " + message);
   }
 
@@ -24,7 +24,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public static logInfo(message: string): void {
+  public static info(message: string): void {
     console.log(colors.blue("INFO") + " " + message);
   }
 
@@ -33,7 +33,7 @@ export class LoggerService {
    *
    * @param message The message to log.
    */
-  public static logWarn(message: string): void {
+  public static warn(message: string): void {
     console.log(colors.yellow("WARN") + " " + message);
   }
 }
