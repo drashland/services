@@ -1,17 +1,17 @@
 # Loggers
 
-A service to help log different types of messages in the console.
+A service to help log messages in the console or write logs to a file.
 
 ## Table of Contents
 
-* [API](#api)
-    * [Methods](#methods)
+* [ConsoleLogger](#consolelogger)
+* [FileLogger](#filelogger)
 
-## API
+## ConsoleLogger
+
+All methods are `static`, so you do not have to instantiate the `ConsoleLogger` class.
 
 ### Methods
-
-All methods are `static`, so you do not have to instantiate the `ConsoleLogger` class. All methods are readily available via `ConsoleLogger.{theMethod}`.
 
 #### .debug(message: string)
 
@@ -43,4 +43,18 @@ All methods are `static`, so you do not have to instantiate the `ConsoleLogger` 
 * Example:
     ```
     ConsoleLogger.warn("Some message.") // outputs => WARN Some message.
+    ```
+
+## FileLogger
+
+The `FileLogger` should be instantiated with a target file (e.g. `/path/to/file.log`).
+
+### Methods
+
+#### .write(message: string)
+
+* Writes a message to the log file.
+* Example:
+    ```
+    FileLogger.write("Some message.")
     ```
