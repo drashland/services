@@ -8,7 +8,7 @@ Rhum.testPlan("file_logger.ts", () => {
     Rhum.testCase(`writes file: ${file}`, () => {
       const fileLogger = new FileLogger(file);
       const decoder = new TextDecoder();
-      
+
       fileLogger.write("This is cool!");
       const actual = decoder.decode(Deno.readFileSync(file));
       Rhum.asserts.assertEquals(actual, "This is cool!\n");
