@@ -382,3 +382,5 @@ Rhum.testPlan("Bumper Service", async () => {
     });
   });
 });
+
+Rhum.run()

@@ -31,7 +31,7 @@ jobs:
         # is `rhum-cli` (as seen in the above step).
         run: |
           export PATH="~/.deno/bin:$PATH"
-          rhum-cli test --allow-net --allow-read --ignore=data tests/
+          deno test -A tests
 
   linter:
     # Only one OS is required since fmt is cross platform
