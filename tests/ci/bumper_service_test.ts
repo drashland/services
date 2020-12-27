@@ -251,6 +251,42 @@ export type { Constructor, Stubbed } from "./src/types.ts";
 export { MockBuilder } from "./src/mock_builder.ts";
 `;
 
+const bumpFiles = await b.bump([
+  {
+    filename: "./tests/data/master.yml",
+    replaceTheRegex: /deno: \[".+"\]/g,
+    replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
+  },
+  {
+    filename: "./tests/data/bumper.yml",
+    replaceTheRegex: /deno: \[".+"\]/g,
+    replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
+  },
+  {
+    filename: "./tests/data/pre_release.yml",
+    replaceTheRegex: /deno: \[".+"\]/g,
+    replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
+  },
+], false);
+
+const preReleaseFiles = await c.bump([
+  {
+    filename: "./tests/data/README.md",
+    replaceTheRegex: /rhum\@v.+mod.ts"/g,
+    replaceWith: `rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
+  },
+  {
+    filename: "./tests/data/egg.json",
+    replaceTheRegex: /"version": ".+"/,
+    replaceWith: `"version": "{{ thisModulesLatestVersion }}"`,
+  },
+  {
+    filename: "./tests/data/mod.ts",
+    replaceTheRegex: /version = ".+"/g,
+    replaceWith: `version = "v{{ thisModulesLatestVersion }}"`,
+  },
+], false);
+
 ////////////////////////////////////////////////////////////////////////////////
 // TESTS ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -314,70 +350,32 @@ Rhum.testPlan("Bumper Service", async () => {
     );
   });
 
-  await Rhum.testSuite("bump", async () => {
-    const files = await b.bump([
-      {
-        filename: "./tests/data/master.yml",
-        replaceTheRegex: /deno: \[".+"\]/g,
-        replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
-      },
-      {
-        filename: "./tests/data/bumper.yml",
-        replaceTheRegex: /deno: \[".+"\]/g,
-        replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
-      },
-      {
-        filename: "./tests/data/pre_release.yml",
-        replaceTheRegex: /deno: \[".+"\]/g,
-        replaceWith: `deno: ["{{ latestDenoVersion }}"]`,
-      },
-    ], false);
-
-    const master = files[0];
-    const bumper = files[1];
-    const preRelease = files[2];
-
+  Rhum.testSuite("bump", async () => {
     Rhum.testCase("bumps master.yml correctly", () => {
+      const master = bumpFiles[0];
       Rhum.asserts.assertEquals(master, data_bumpMaster);
     });
     Rhum.testCase("bumps bumper.yml correctly", () => {
+      const bumper = bumpFiles[1];
       Rhum.asserts.assertEquals(bumper, data_bumpBumper);
     });
     Rhum.testCase("bumps pre_release.yml correctly", () => {
+      const preRelease = bumpFiles[2];
       Rhum.asserts.assertEquals(preRelease, data_bumpPreRelease);
     });
   });
 
-  await Rhum.testSuite("bump for pre-release", async () => {
-    const files = await c.bump([
-      {
-        filename: "./tests/data/README.md",
-        replaceTheRegex: /rhum\@v.+mod.ts"/g,
-        replaceWith: `rhum@v{{ thisModulesLatestVersion }}/mod.ts"`,
-      },
-      {
-        filename: "./tests/data/egg.json",
-        replaceTheRegex: /"version": ".+"/,
-        replaceWith: `"version": "{{ thisModulesLatestVersion }}"`,
-      },
-      {
-        filename: "./tests/data/mod.ts",
-        replaceTheRegex: /version = ".+"/g,
-        replaceWith: `version = "v{{ thisModulesLatestVersion }}"`,
-      },
-    ], false);
-
-    const readme = files[0];
-    const eggJson = files[1];
-    const mod = files[2];
-
+  Rhum.testSuite("bump for pre-release", async () => {
     Rhum.testCase("bumps README.md correctly", () => {
+      const readme = preReleaseFiles[0];
       Rhum.asserts.assertEquals(readme, data_bumpReadme);
     });
     Rhum.testCase("bumps egg.json correctly", () => {
+      const eggJson = preReleaseFiles[1];
       Rhum.asserts.assertEquals(eggJson, data_bumpEggJson);
     });
     Rhum.testCase("bumps mod.ts correctly", () => {
+      const mod = preReleaseFiles[2];
       Rhum.asserts.assertEquals(mod, data_bumpMod);
     });
   });
