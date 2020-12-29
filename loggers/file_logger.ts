@@ -18,8 +18,7 @@ export class FileLogger {
    *
    */
   public write(message: string): void {
-    const encoder = new TextEncoder();
-    const encoded = encoder.encode(message + "\n");
-    Deno.writeFileSync(this.file, encoded, { append: true });
+    const line = message + "\n";
+    Deno.writeTextFileSync(this.file, line, { append: true });
   }
 }

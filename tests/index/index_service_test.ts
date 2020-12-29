@@ -96,4 +96,4 @@ Rhum.testPlan("IndexServicce", async () => {
   });
 });
 
-Rhum.run()
+Rhum.run();
