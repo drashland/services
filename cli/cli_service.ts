@@ -1,4 +1,4 @@
-import { LoggerService } from "../logger/logger_service.ts";
+import { ConsoleLogger } from "../loggers/console_logger.ts";
 
 /**
  * requires_args
@@ -217,7 +217,7 @@ export class CliService {
       this.subcommands[subcommand].options.requires_args &&
       this.args.length <= 0
     ) {
-      LoggerService.logError(
+      ConsoleLogger.error(
         `Subcommand \`${subcommand}\` requires arguments.`,
       );
       Deno.exit(1);
@@ -301,7 +301,7 @@ export class CliService {
    */
   protected subcommandExists(subcommand: string): void {
     if (this.recognized_subcommands.indexOf(subcommand) === -1) {
-      LoggerService.logError(`Subcommand \`${subcommand}\` not recognized.`);
+      ConsoleLogger.error(`Subcommand \`${subcommand}\` not recognized.`);
       Deno.exit();
     }
   }

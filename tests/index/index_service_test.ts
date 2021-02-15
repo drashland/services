@@ -14,7 +14,7 @@ i.addItem(["hello2"], "hello value 2");
 i.addItem(["world"], "world value");
 i.addItem(["skrrrt"], "skrrrt steak value");
 
-Rhum.testPlan(async () => {
+Rhum.testPlan("IndexServicce", async () => {
   Rhum.testSuite("addItem()", () => {
     Rhum.testCase("adds an item to the index and lookup table", () => {
       i.addItem(["test"], "test value");
@@ -95,3 +95,5 @@ Rhum.testPlan(async () => {
     });
   });
 });
+
+Rhum.run();

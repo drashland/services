@@ -22,8 +22,9 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@v2
 
-      - name: Install Rhum
-        run: deno install -Af https://raw.githubusercontent.com/drashland/rhum/rhum-cli/cli.ts
+      # See comment in "Run Unit Tests" job.
+      # - name: Install Rhum
+      #   run: deno install -Af https://raw.githubusercontent.com/drashland/rhum/rhum-cli/cli.ts
 
       - name: Run Unit Tests
         # TODO (crookse) When Rhum v2.0 is released, this step will need to be updated from using
@@ -31,7 +32,7 @@ jobs:
         # is `rhum-cli` (as seen in the above step).
         run: |
           export PATH="~/.deno/bin:$PATH"
-          rhum-cli test --allow-net --allow-read --ignore=data tests/
+          deno test -A tests
 
   linter:
     # Only one OS is required since fmt is cross platform
