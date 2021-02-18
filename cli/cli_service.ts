@@ -1,143 +1,205 @@
 import { ConsoleLogger } from "../loggers/console_logger.ts";
 
-/**
- * requires_args
- *     Set this to true if the subcommand requires args. If args aren't passed
- *     to the subcommand's handler, then an error will be throw -- stating the
- *     subcommand requires args.
- */
-interface ISubcommandOptions {
-  requires_args: boolean;
+type THandler = () => void | Promise<void>;
+
+export class Option {
+
+  public cli: CliService;
+  public name: string;
+  public description: string;
+  public handler_fn: THandler|null = null;
+  public subcommand: Subcommand;
+  public value: null|string = null;
+
+  constructor(cli: CliService, subcommand: Subcommand, name: string, description: string) {
+    this.cli = cli;
+    this.subcommand = subcommand;
+    this.name = name;
+    this.description = description;
+    this.value = subcommand.cli.input.getOption(name) ?? null;
+  }
+
+  public handler(handler: THandler): this {
+    this.handler_fn = handler;
+    return this;
+  }
+
+  public run() {
+    if (!this.handler_fn) {
+      ConsoleLogger.error(
+        `Option "${this.name}" does not have a handler.`
+      );
+      Deno.exit(1);
+    }
+
+    this.handler_fn();
+  }
+
+  public showHelp() {
+    console.log(this.createHelpMenu());
+  }
+
+  protected createHelpMenu(): string {
+    let cmdDescription = this.subcommand.cli.description;
+    let menu = `\n${this.subcommand.cli.name}${cmdDescription ? " - " + cmdDescription : ""}\n\n`;
+
+    menu += `OPTION\n\n`;
+    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
+    menu += `\n\n`;
+
+
+    menu += `USAGE\n\n`;
+
+    menu += `    ${this.subcommand.cli.command} ${this.subcommand.name} [deno flags] ${this.name}="option value" [directory|file]\n`;
+
+    return menu;
+  }
 }
 
-/**
- * handler
- *     The subcommand's handler. That is, the function to execute when the
- *     subcommand runs.
- *
- * options
- *     The subcommand's options. See ISubcommandOptions.
- */
-interface ISubcommand {
-  handler: (args: string[]) => void;
-  options: ISubcommandOptions;
+export class Subcommand {
+
+  public cli: CliService;
+  public name: string;
+  public description: string;
+  public handler_fn: null|THandler = null;
+  protected options: {[key: string]: Option} = {};
+
+  constructor(cli: CliService, name: string, description: string) {
+    this.cli = cli;
+    this.name = name;
+    this.description = description;
+  }
+
+  public getOption(input: string): null|Option {
+    return this.options[input] ?? null;
+  }
+
+  public handler(handler: THandler): this {
+    if (this.handler_fn) {
+      ConsoleLogger.error(
+        `Subcommand "${this.name}" can only have one handler.`
+      );
+      Deno.exit(1);
+    }
+
+    this.handler_fn = handler;
+    return this;
+  }
+
+  public run(): void {
+    if (!this.handler_fn) {
+      ConsoleLogger.error(
+        `Subcommand "${this.name}" does not have a handler.`
+      );
+      Deno.exit(1);
+    }
+
+    this.handler_fn();
+  }
+
+  public option(option: Option): this {
+    this.options[option.name] = option;
+    return this;
+  }
+
+  public hasOptionSpecified(optionName: string): boolean {
+    return this.cli.input.hasOption(optionName);
+  }
+
+  public showHelp(): void {
+    console.log(this.createHelpMenu());
+  }
+
+  protected createHelpMenu(): string {
+    let cmdDescription = this.cli.description;
+    let menu = `\n${this.cli!.name}${cmdDescription ? " - " + cmdDescription : ""}\n\n`;
+
+    menu += `SUBCOMMAND\n\n`;
+    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
+    menu += `\n\n`;
+
+    menu += `USAGE\n\n`;
+
+    menu += `    ${this.cli.command} ${this.name} [--deno-flags] [--options] [directory|file]`;
+    menu += "\n\n";
+
+    menu += "OPTIONS\n\n";
+
+    for (const optionName in this.options) {
+      const option: Option = this.options[optionName];
+      menu += `    ${optionName}\n        ${wordWrap(option.description, 8)}\n`;
+    }
+
+    return menu;
+  }
 }
 
-/**
- * description
- *     The description of the example being given.
- *
- * examples
- *     An array of examples showing how to use a subcommand.
- *
- * @example
- *   {
- *     description: "Run the help subcommand."
- *     examples: [
- *       "my-cli help",
- *       "my-cli --help",
- *     ]
- *   }
- */
-interface IExample {
-  description: string;
-  examples: string[];
-}
+export class Input {
+  public deno_args: string[] = [];
+  public args: string[] = [];
+  public options: Map<string, null|string> = new Map<string, null|string>();
 
-/**
- * subcommands
- *     The subcommands this CLI has where the key is the subcommand and the
- *     value is the subcommand's description.
- *
- * description
- *     The description of this CLI.
- *
- * example_usage
- *     An array of examples that show how to use the subcommand. See IExample
- *     for more information on how to structure examples.
- *
- * options
- *     A key-value pair object showing what options are available for what
- *     subcommands. The key is the subcommand and the value is a key-value pair
- *     object where the key is the option and the value is the description of
- *     the option.
- *
- * usage
- *     An array of strings showing how to use the subcommand.
- *
- * @example
- *   {
- *       description: `MyCli v1.2.3 - My cool CLI.`,
- *       usage: [
- *         "my-cli [subcommand]",
- *       ],
- *       subcommands: {
- *         "do-something": "Do something.",
- *         "help, --help": "Display the help menu.",
- *         "version, --version": "Display the version.",
- *       },
- *       options: {
- *         "do-something": {
- *           "--some-option":
- *             "Execute some option.",
- *         },
- *       },
- *       example_usage: [
- *         {
- *           description:
- *             "Do something and pass in an option.",
- *           examples: [
- *             `my-cli do-something --some-option`,
- *           ],
- *         },
- *         {
- *           description:
- *             "Display the help menu.",
- *           examples: [
- *             `my-cli help`,
- *             `my-cli --help`,
- *           ],
- *         },
- *       ],
- *     });
- *   }
- */
-interface IHelpMenuData {
-  subcommands: { [key: string]: string };
-  description: string;
-  example_usage: IExample[];
-  options?: {
-    [key: string]: {
-      [key: string]: string;
-    };
-  };
-  usage: string[];
+  constructor(denoArgs: string[]) {
+    this.deno_args = denoArgs;
+
+    this.deno_args.forEach((arg: string) => {
+      if (
+        arg.includes("--")
+      ) {
+        if (arg.includes("=")) {
+          const split = arg.split("=");
+          this.options.set(split[0], split[1]);
+        } else {
+          this.options.set(arg, null);
+        }
+      } else {
+        this.args.push(arg);
+      }
+    });
+  }
+
+  public first() {
+    return this.deno_args[0];
+  }
+
+  public last() {
+    return this.deno_args[this.deno_args.length - 1];
+  }
+
+  public hasArg(input: string): boolean {
+    return this.args.indexOf(input) > 0;
+  }
+
+  public hasOption(input: string): boolean {
+    return this.options.has(input);
+  }
+
+  public getOption(input: string): null|string {
+    return this.options.get(input) ?? null;
+  }
+
+  public hasOptions(): boolean {
+    return this.options.size > 0;
+  }
+
+  public hasArgs(): boolean {
+    return this.args.length > 0;
+  }
 }
 
 /**
  * A class to help build CLIs.
  */
 export class CliService {
-  /**
-   * A porperty to hold Deno.args.
-   */
-  protected args: string[];
+  public input: Input;
+  public command: string;
+  public description: string;
+  public name: string;
+  public version: string;
 
-  /**
-   * A property to hold all available subcommand.
-   */
-  protected subcommands: { [key: string]: ISubcommand } = {};
-
-  /**
-   * A property that tells this class if a subcommand was passed in or not.
-   */
-  protected has_subcommand: boolean;
-
-  /**
-   * A list of recognized subcommand. If any subcommand is not recognized, this
-   * class will display an error.
-   */
-  protected recognized_subcommands: string[] = [];
+  protected current_subcommand: null|Subcommand = null;
+  protected options: {[key: string]: Option} = {};
+  protected subcommands: {[key: string]: Subcommand} = {};
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
@@ -146,185 +208,189 @@ export class CliService {
   /**
    * Construct an object of this class.
    *
-   * @param args - Deno.args
+   * @param name - The name of the CLI.
    */
-  constructor(args: string[]) {
-    // Make a clone of the array in case it's readonly. We want this to be
-    // mutable.
-    this.args = args.slice();
-    this.has_subcommand = this.args.length <= 0;
+  constructor(command: string, name: string, description: string, version: string) {
+    this.command = command;
+    this.name = name;
+    this.description = description;
+    this.version = version;
+    this.input = new Input(Deno.args);
   }
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
+  public hasSubcommands(): boolean {
+    return Object.keys(this.subcommands).length > 0;
+  }
+
   /**
    * Add a subcommand to the CLI that is being built with this class.
-   */
-  public addSubcommand(
-    subcommand: string | string[],
-    handler: (args: string[]) => void,
-    options: ISubcommandOptions = {
-      requires_args: false,
-    },
-  ): this {
-    if (Array.isArray(subcommand)) {
-      subcommand.forEach((subcommand: string) => {
-        this.addSubcommand(subcommand, handler);
-      });
-
-      return this;
-    }
-
-    // Track that this is a recognized subcommand
-    this.recognized_subcommands.push(subcommand);
-
-    // Add the subcommand to the list of subcommands
-    this.subcommands[subcommand] = {
-      handler,
-      options,
-    };
-
-    return this;
-  }
-
-  /**
-   * Does the instance of this class have a subcommand passed in?
    *
-   * @returns True if a comand was passed in; false if not.
+   * @param subcommand
    */
-  public hasSubcommand(): boolean {
-    return this.has_subcommand;
+  public subcommand(name: string, description: string): Subcommand {
+    const s = new Subcommand(this, name, description);
+    this.current_subcommand = s;
+    this.subcommands[name] = s;
+    return s;
   }
 
-  /**
-   * Run this service.
-   */
+  public option(name: string, description: string): Option {
+    const o = new Option(this, this.current_subcommand!, name, description);
+    return o;
+  }
+
   public run() {
-    if (this.args.length <= 0) {
-      this.subcommands["help"].handler(this.args);
-      Deno.exit();
+    this.validate();
+
+    if (!this.input.hasArgs() && !this.input.hasOptions()) {
+      return this.showHelp();
     }
 
-    const subcommand = this.args[0];
-    this.subcommandExists(subcommand);
-
-    // Take off the first argument, which would be the subcommand
-    this.args.shift();
+    const firstInputItem = this.input.first();
 
     if (
-      this.subcommands[subcommand].options.requires_args &&
-      this.args.length <= 0
+      firstInputItem == "--help"
+      || firstInputItem == "--h"
     ) {
+      return this.showHelp();
+    }
+
+    if (
+      firstInputItem == "--version"
+      || firstInputItem == "-v"
+    ) {
+      return this.showVersion();
+    }
+
+    if (this.hasSubcommand(firstInputItem)) {
+      return this.runSubcommand(firstInputItem);
+    }
+
+    ConsoleLogger.error(
+      `Unknown input "${firstInputItem}" specified.`
+    );
+    this.showHelp();
+  }
+
+  protected hasSubcommand(input: string): boolean {
+    return !!this.subcommands[input];
+  }
+
+  protected showVersion(): void {
+    console.log(
+      `${this.name} ${this.version}`
+    );
+  }
+
+  protected showHelp(): void {
+    console.log(this.createHelpMenu());
+  }
+
+  protected runSubcommand(subcommandName: string): void {
+    try {
+      return this.subcommands[subcommandName].run();
+    } catch (error) {
+    }
+
+    ConsoleLogger.error(
+      `Error occurred while trying to run the "${subcommandName}" option.`
+    );
+    Deno.exit(1);
+  }
+
+  protected validate(): void {
+    this.validateThis();
+    this.validateSubcommands();
+  }
+
+  protected validateThis() {
+    if (!this.command) {
       ConsoleLogger.error(
-        `Subcommand \`${subcommand}\` requires arguments.`,
+        `CliService.command() was not called.
+Please call ClicService.command() and specify the command name.`
       );
       Deno.exit(1);
     }
-
-    // Execute the subcommand
-    this.subcommands[subcommand].handler(this.args);
   }
 
-  /**
-   * Create the help menu.
-   *
-   * @param data - The data to use to create the help menu.
-   *
-   * @returns The help menu output.
-   */
-  public static createHelpMenu(data: IHelpMenuData): string {
-    let output = "\n";
+  protected validateSubcommand(subcommand: Subcommand): void {
+    if (!subcommand.handler_fn) {
+      ConsoleLogger.error(
+        `Subcommand "${subcommand.name}" does not have a handler.`
+      );
+      Deno.exit(1);
+    }
+  }
 
-    for (const key in data) {
-      if (key == "description") {
-        output += this.wordWrap(data[key]);
-      }
-
-      if (key == "usage") {
-        output += `\n\nUSAGE\n\n`;
-        data[key].forEach((usageLine: string) => {
-          output += ("    " + usageLine + "\n");
-        });
-      }
-
-      if (key == "subcommands") {
-        output += `\n\SUBCOMMANDS\n`;
-        for (const subcommand in data[key]) {
-          output += (`\n    ${subcommand}\n`);
-          output +=
-            (`        ${this.wordWrap(`${data[key][subcommand]}`, 8)}\n`);
-        }
-      }
-
-      if (key == "options") {
-        output += `\n\nOPTIONS\n\n    Options are categorized by subcommand.\n`;
-        for (const subcommand in data[key]!) {
-          output += (`\n    ${subcommand}\n`);
-          for (const option in data[key]![subcommand]) {
-            output += (`        ${option}\n`);
-            output += (`${
-              this.wordWrap(
-                `            ${data[key]![subcommand][option]}`,
-                12,
-              )
-            }\n`);
-          }
-        }
-      }
-
-      if (key == "example_usage") {
-        output += `\n\nEXAMPLE USAGE\n`;
-        data[key].forEach((exampleUsageData: IExample) => {
-          output +=
-            (`\n    ${this.wordWrap(exampleUsageData.description, 4)}\n`);
-          exampleUsageData.examples.forEach((example: string) => {
-            output += (`        ${example}\n`);
-          });
-        });
+  protected validateSubcommands(): void {
+    if (this.hasSubcommands()) {
+      for (const subcommandName in this.subcommands) {
+        const subcommand = this.subcommands[subcommandName];
+        this.validateSubcommand(subcommand);
       }
     }
-
-    return output;
   }
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Does the subcommand that was passed in exist? That is, is it in the list of
-   * recongized subcommands?
-   *
-   * @param subcommand - The subcommand in question.
-   */
-  protected subcommandExists(subcommand: string): void {
-    if (this.recognized_subcommands.indexOf(subcommand) === -1) {
-      ConsoleLogger.error(`Subcommand \`${subcommand}\` not recognized.`);
-      Deno.exit();
-    }
-  }
+  protected createHelpMenu(): string {
+    let description = this.description;
+    let menu = `\n${this.name}${description ? " - " + description : ""}\n\n`;
 
-  /**
-   * Word wrap a string. Thanks
-   * https://j11y.io/snippets/wordwrap-for-javascript/.
-   *
-   * We use this to word wrap descriptions in the help menu.
-   */
-  protected static wordWrap(str: string, indent = 0): string {
-    const brk = "\n" + (indent > 0 ? " ".repeat(indent) : "");
-    const regex = new RegExp(/.{1,80}(\s|$)/, "g");
-    const ret = str.match(regex);
+    menu += `USAGE\n\n`;
 
-    if (!ret) {
-      throw new Error("Error loading help menu.");
+    menu += `    ${this.command} [--options]\n`;
+    menu += `    ${this.command} subcommand [--deno-flags]\n`;
+    menu += `    ${this.command} subcommand [--deno-flags] [--options]`;
+    menu += "\n\n";
+
+    menu += "OPTIONS\n\n";
+
+    menu += `    --help\n        Show the help menu.\n`;
+    menu += `    --version\n        Show the version.`;
+    menu += "\n\n";
+
+    menu += "SUBCOMMANDS\n\n";
+
+    for (const subcommandName in this.subcommands) {
+      const subcommand: Subcommand = this.subcommands[subcommandName];
+      menu += `    ${subcommandName}\n        ${wordWrap(subcommand.description, 4)}\n`;
     }
 
-    ret.map((item: string) => {
-      return item.trim();
-    });
-
-    return ret.join(brk);
+    return menu;
   }
+}
+
+
+/**
+ * Word wrap a string. Thanks
+ * https://j11y.io/snippets/wordwrap-for-javascript/.
+ *
+ * We use this to word wrap descriptions in the help menu.
+ *
+ * @param str - The string to wrap.
+ * @param indent - The number of spaces to indent.
+ *
+ * @returns A word-wrapped string.
+ */
+function wordWrap(str: string, indent = 0): string {
+  const brk = "\n" + (indent > 0 ? " ".repeat(indent) : "");
+  const regex = new RegExp(/.{1,80}(\s|$)/, "g");
+  const ret = str.match(regex);
+
+  if (!ret) {
+    throw new Error("Error loading help menu.");
+  }
+
+  ret.map((item: string) => {
+    return item.trim();
+  });
+
+  return ret.join(brk);
 }
