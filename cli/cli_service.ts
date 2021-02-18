@@ -3,15 +3,19 @@ import { ConsoleLogger } from "../loggers/console_logger.ts";
 type THandler = () => void | Promise<void>;
 
 export class Option {
-
   public cli: CliService;
   public name: string;
   public description: string;
-  public handler_fn: THandler|null = null;
+  public handler_fn: THandler | null = null;
   public subcommand: Subcommand;
-  public value: null|string = null;
+  public value: null | string = null;
 
-  constructor(cli: CliService, subcommand: Subcommand, name: string, description: string) {
+  constructor(
+    cli: CliService,
+    subcommand: Subcommand,
+    name: string,
+    description: string,
+  ) {
     this.cli = cli;
     this.subcommand = subcommand;
     this.name = name;
@@ -27,7 +31,7 @@ export class Option {
   public run() {
     if (!this.handler_fn) {
       ConsoleLogger.error(
-        `Option "${this.name}" does not have a handler.`
+        `Option "${this.name}" does not have a handler.`,
       );
       Deno.exit(1);
     }
@@ -41,28 +45,29 @@ export class Option {
 
   protected createHelpMenu(): string {
     let cmdDescription = this.subcommand.cli.description;
-    let menu = `\n${this.subcommand.cli.name}${cmdDescription ? " - " + cmdDescription : ""}\n\n`;
+    let menu = `\n${this.subcommand.cli.name}${
+      cmdDescription ? " - " + cmdDescription : ""
+    }\n\n`;
 
     menu += `OPTION\n\n`;
     menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
     menu += `\n\n`;
 
-
     menu += `USAGE\n\n`;
 
-    menu += `    ${this.subcommand.cli.command} ${this.subcommand.name} [deno flags] ${this.name}="option value" [directory|file]\n`;
+    menu +=
+      `    ${this.subcommand.cli.command} ${this.subcommand.name} [deno flags] ${this.name}="option value" [directory|file]\n`;
 
     return menu;
   }
 }
 
 export class Subcommand {
-
   public cli: CliService;
   public name: string;
   public description: string;
-  public handler_fn: null|THandler = null;
-  protected options: {[key: string]: Option} = {};
+  public handler_fn: null | THandler = null;
+  protected options: { [key: string]: Option } = {};
 
   constructor(cli: CliService, name: string, description: string) {
     this.cli = cli;
@@ -70,14 +75,14 @@ export class Subcommand {
     this.description = description;
   }
 
-  public getOption(input: string): null|Option {
+  public getOption(input: string): null | Option {
     return this.options[input] ?? null;
   }
 
   public handler(handler: THandler): this {
     if (this.handler_fn) {
       ConsoleLogger.error(
-        `Subcommand "${this.name}" can only have one handler.`
+        `Subcommand "${this.name}" can only have one handler.`,
       );
       Deno.exit(1);
     }
@@ -89,7 +94,7 @@ export class Subcommand {
   public run(): void {
     if (!this.handler_fn) {
       ConsoleLogger.error(
-        `Subcommand "${this.name}" does not have a handler.`
+        `Subcommand "${this.name}" does not have a handler.`,
       );
       Deno.exit(1);
     }
@@ -112,7 +117,9 @@ export class Subcommand {
 
   protected createHelpMenu(): string {
     let cmdDescription = this.cli.description;
-    let menu = `\n${this.cli!.name}${cmdDescription ? " - " + cmdDescription : ""}\n\n`;
+    let menu = `\n${this.cli!.name}${
+      cmdDescription ? " - " + cmdDescription : ""
+    }\n\n`;
 
     menu += `SUBCOMMAND\n\n`;
     menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
@@ -120,7 +127,8 @@ export class Subcommand {
 
     menu += `USAGE\n\n`;
 
-    menu += `    ${this.cli.command} ${this.name} [--deno-flags] [--options] [directory|file]`;
+    menu +=
+      `    ${this.cli.command} ${this.name} [--deno-flags] [--options] [directory|file]`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";
@@ -137,7 +145,7 @@ export class Subcommand {
 export class Input {
   public deno_args: string[] = [];
   public args: string[] = [];
-  public options: Map<string, null|string> = new Map<string, null|string>();
+  public options: Map<string, null | string> = new Map<string, null | string>();
 
   constructor(denoArgs: string[]) {
     this.deno_args = denoArgs;
@@ -174,7 +182,7 @@ export class Input {
     return this.options.has(input);
   }
 
-  public getOption(input: string): null|string {
+  public getOption(input: string): null | string {
     return this.options.get(input) ?? null;
   }
 
@@ -197,9 +205,9 @@ export class CliService {
   public name: string;
   public version: string;
 
-  protected current_subcommand: null|Subcommand = null;
-  protected options: {[key: string]: Option} = {};
-  protected subcommands: {[key: string]: Subcommand} = {};
+  protected current_subcommand: null | Subcommand = null;
+  protected options: { [key: string]: Option } = {};
+  protected subcommands: { [key: string]: Subcommand } = {};
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
@@ -210,7 +218,12 @@ export class CliService {
    *
    * @param name - The name of the CLI.
    */
-  constructor(command: string, name: string, description: string, version: string) {
+  constructor(
+    command: string,
+    name: string,
+    description: string,
+    version: string,
+  ) {
     this.command = command;
     this.name = name;
     this.description = description;
@@ -253,15 +266,15 @@ export class CliService {
     const firstInputItem = this.input.first();
 
     if (
-      firstInputItem == "--help"
-      || firstInputItem == "--h"
+      firstInputItem == "--help" ||
+      firstInputItem == "--h"
     ) {
       return this.showHelp();
     }
 
     if (
-      firstInputItem == "--version"
-      || firstInputItem == "-v"
+      firstInputItem == "--version" ||
+      firstInputItem == "-v"
     ) {
       return this.showVersion();
     }
@@ -271,7 +284,7 @@ export class CliService {
     }
 
     ConsoleLogger.error(
-      `Unknown input "${firstInputItem}" specified.`
+      `Unknown input "${firstInputItem}" specified.`,
     );
     this.showHelp();
   }
@@ -282,7 +295,7 @@ export class CliService {
 
   protected showVersion(): void {
     console.log(
-      `${this.name} ${this.version}`
+      `${this.name} ${this.version}`,
     );
   }
 
@@ -297,7 +310,7 @@ export class CliService {
     }
 
     ConsoleLogger.error(
-      `Error occurred while trying to run the "${subcommandName}" option.`
+      `Error occurred while trying to run the "${subcommandName}" option.`,
     );
     Deno.exit(1);
   }
@@ -311,7 +324,7 @@ export class CliService {
     if (!this.command) {
       ConsoleLogger.error(
         `CliService.command() was not called.
-Please call ClicService.command() and specify the command name.`
+Please call ClicService.command() and specify the command name.`,
       );
       Deno.exit(1);
     }
@@ -320,7 +333,7 @@ Please call ClicService.command() and specify the command name.`
   protected validateSubcommand(subcommand: Subcommand): void {
     if (!subcommand.handler_fn) {
       ConsoleLogger.error(
-        `Subcommand "${subcommand.name}" does not have a handler.`
+        `Subcommand "${subcommand.name}" does not have a handler.`,
       );
       Deno.exit(1);
     }
@@ -360,13 +373,14 @@ Please call ClicService.command() and specify the command name.`
 
     for (const subcommandName in this.subcommands) {
       const subcommand: Subcommand = this.subcommands[subcommandName];
-      menu += `    ${subcommandName}\n        ${wordWrap(subcommand.description, 4)}\n`;
+      menu += `    ${subcommandName}\n        ${
+        wordWrap(subcommand.description, 4)
+      }\n`;
     }
 
     return menu;
   }
 }
-
 
 /**
  * Word wrap a string. Thanks
