@@ -3,6 +3,7 @@ import { Option } from "./option.ts";
 import { Subcommand } from "./subcommand.ts";
 import { TLogMethod } from "./types.ts";
 import { UserInput } from "./user_input.ts";
+export { Subcommand } from "./subcommand.ts";
 
 /**
  * The interface of the "single source of truth" logger for the entire CLI.
