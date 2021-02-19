@@ -1,212 +1,76 @@
 import { ConsoleLogger } from "../loggers/console_logger.ts";
+import { Option } from "./option.ts";
+import { Subcommand } from "./subcommand.ts";
+import { TLogMethod } from "./types.ts";
+import { UserInput } from "./user_input.ts";
 
-type THandler = () => void | Promise<void>;
-
-export class Option {
-  public cli: CliService;
-  public name: string;
-  public description: string;
-  public handler_fn: THandler | null = null;
-  public subcommand: Subcommand;
-  public value: null | string = null;
-
-  constructor(
-    cli: CliService,
-    subcommand: Subcommand,
-    name: string,
-    description: string,
-  ) {
-    this.cli = cli;
-    this.subcommand = subcommand;
-    this.name = name;
-    this.description = description;
-    this.value = subcommand.cli.input.getOption(name) ?? null;
-  }
-
-  public handler(handler: THandler): this {
-    this.handler_fn = handler;
-    return this;
-  }
-
-  public run() {
-    if (!this.handler_fn) {
-      ConsoleLogger.error(
-        `Option "${this.name}" does not have a handler.`,
-      );
-      Deno.exit(1);
-    }
-
-    this.handler_fn();
-  }
-
-  public showHelp() {
-    console.log(this.createHelpMenu());
-  }
-
-  protected createHelpMenu(): string {
-    let cmdDescription = this.subcommand.cli.description;
-    let menu = `\n${this.subcommand.cli.name}${
-      cmdDescription ? " - " + cmdDescription : ""
-    }\n\n`;
-
-    menu += `OPTION\n\n`;
-    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
-
-    menu +=
-      `    ${this.subcommand.cli.command} ${this.subcommand.name} [deno flags] ${this.name}="option value" [directory|file]\n`;
-
-    return menu;
-  }
-}
-
-export class Subcommand {
-  public cli: CliService;
-  public name: string;
-  public description: string;
-  public handler_fn: null | THandler = null;
-  protected options: { [key: string]: Option } = {};
-
-  constructor(cli: CliService, name: string, description: string) {
-    this.cli = cli;
-    this.name = name;
-    this.description = description;
-  }
-
-  public getOption(input: string): null | Option {
-    return this.options[input] ?? null;
-  }
-
-  public handler(handler: THandler): this {
-    if (this.handler_fn) {
-      ConsoleLogger.error(
-        `Subcommand "${this.name}" can only have one handler.`,
-      );
-      Deno.exit(1);
-    }
-
-    this.handler_fn = handler;
-    return this;
-  }
-
-  public run(): void {
-    if (!this.handler_fn) {
-      ConsoleLogger.error(
-        `Subcommand "${this.name}" does not have a handler.`,
-      );
-      Deno.exit(1);
-    }
-
-    this.handler_fn();
-  }
-
-  public option(option: Option): this {
-    this.options[option.name] = option;
-    return this;
-  }
-
-  public hasOptionSpecified(optionName: string): boolean {
-    return this.cli.input.hasOption(optionName);
-  }
-
-  public showHelp(): void {
-    console.log(this.createHelpMenu());
-  }
-
-  protected createHelpMenu(): string {
-    let cmdDescription = this.cli.description;
-    let menu = `\n${this.cli!.name}${
-      cmdDescription ? " - " + cmdDescription : ""
-    }\n\n`;
-
-    menu += `SUBCOMMAND\n\n`;
-    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
-
-    menu +=
-      `    ${this.cli.command} ${this.name} [--deno-flags] [--options] [directory|file]`;
-    menu += "\n\n";
-
-    menu += "OPTIONS\n\n";
-
-    for (const optionName in this.options) {
-      const option: Option = this.options[optionName];
-      menu += `    ${optionName}\n        ${wordWrap(option.description, 8)}\n`;
-    }
-
-    return menu;
-  }
-}
-
-export class Input {
-  public deno_args: string[] = [];
-  public args: string[] = [];
-  public options: Map<string, null | string> = new Map<string, null | string>();
-
-  constructor(denoArgs: string[]) {
-    this.deno_args = denoArgs;
-
-    this.deno_args.forEach((arg: string) => {
-      if (
-        arg.includes("--")
-      ) {
-        if (arg.includes("=")) {
-          const split = arg.split("=");
-          this.options.set(split[0], split[1]);
-        } else {
-          this.options.set(arg, null);
-        }
-      } else {
-        this.args.push(arg);
-      }
-    });
-  }
-
-  public first() {
-    return this.deno_args[0];
-  }
-
-  public last() {
-    return this.deno_args[this.deno_args.length - 1];
-  }
-
-  public hasArg(input: string): boolean {
-    return this.args.indexOf(input) > 0;
-  }
-
-  public hasOption(input: string): boolean {
-    return this.options.has(input);
-  }
-
-  public getOption(input: string): null | string {
-    return this.options.get(input) ?? null;
-  }
-
-  public hasOptions(): boolean {
-    return this.options.size > 0;
-  }
-
-  public hasArgs(): boolean {
-    return this.args.length > 0;
-  }
+/**
+ * The interface of the "single source of truth" logger for the entire CLI.
+ */
+interface Logger {
+  debug: TLogMethod;
+  error: TLogMethod;
+  info: TLogMethod;
+  warn: TLogMethod;
 }
 
 /**
  * A class to help build CLIs.
  */
 export class CliService {
-  public input: Input;
+  /**
+   * The user's input. See UserInput for more information on its data structure.
+   */
+  public user_input: UserInput;
+
+  /**
+   * This CLI's main command (e.g., rhum).
+   */
   public command: string;
+
+  /**
+   * This CLI's description.
+   */
   public description: string;
+
+  /**
+   * This CLI's name.
+   */
   public name: string;
+
+  /**
+   * This CLI's version.
+   */
   public version: string;
 
+  /**
+   * A "single source of truth" logger for subcommands and options in this CLI.
+   * All subcommands and options have access to this logger so they can log
+   * inside of their data members.
+   */
+  public logger: Logger = {
+    debug: ConsoleLogger.debug,
+    error: ConsoleLogger.error,
+    info: ConsoleLogger.info,
+    warn: ConsoleLogger.warn,
+  };
+
+  /**
+   * The current subcomand being created. This is set when
+   * CliService.subcommand() is called.
+   */
   protected current_subcommand: null | Subcommand = null;
+
+  /**
+   * This CLI's options. This is not to be confused with a subcommand's options.
+   * CLI options come after the main command. Subcommand options come after the
+   * subcommand.
+   */
   protected options: { [key: string]: Option } = {};
+
+  /**
+   * This CLI's subcommands.
+   */
   protected subcommands: { [key: string]: Subcommand } = {};
 
   //////////////////////////////////////////////////////////////////////////////
@@ -228,13 +92,18 @@ export class CliService {
     this.name = name;
     this.description = description;
     this.version = version;
-    this.input = new Input(Deno.args);
+    this.user_input = new UserInput(Deno.args);
   }
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Does this CLI have subcommands?
+   *
+   * @returns True if yes, false if no.
+   */
   public hasSubcommands(): boolean {
     return Object.keys(this.subcommands).length > 0;
   }
@@ -242,7 +111,11 @@ export class CliService {
   /**
    * Add a subcommand to the CLI that is being built with this class.
    *
-   * @param subcommand
+   * @param name - The subcommand's name. This is also the subcommand to run.
+   * For example, if name = test, then the subcommand would be test.
+   * @param description - The subcommand's description.
+   *
+   * @returns The subcommand in object form.
    */
   public subcommand(name: string, description: string): Subcommand {
     const s = new Subcommand(this, name, description);
@@ -251,58 +124,83 @@ export class CliService {
     return s;
   }
 
+  /**
+   * Create an option for a subcommand.
+   *
+   * @param name - The option's name. This is also the option to run. For
+   * example, if name = --hello, then the option would be --hello.
+   * @param description - The option's description.
+   *
+   * @returns The option in object form.
+   */
   public option(name: string, description: string): Option {
     const o = new Option(this, this.current_subcommand!, name, description);
     return o;
   }
 
-  public run() {
+  /**
+   * Run this CLI.
+   */
+  public run(): void {
     this.validate();
 
-    if (!this.input.hasArgs() && !this.input.hasOptions()) {
+    // No args or options specified?
+    if (!this.user_input.hasArgs() && !this.user_input.hasOptions()) {
       return this.showHelp();
     }
 
-    const firstInputItem = this.input.first();
+    const firstUserInputItem = this.user_input.first();
 
-    if (
-      firstInputItem == "--help" ||
-      firstInputItem == "--h"
-    ) {
+    // Show help?
+    if ( firstUserInputItem == "--help" || firstUserInputItem == "--h") {
       return this.showHelp();
     }
 
-    if (
-      firstInputItem == "--version" ||
-      firstInputItem == "-v"
-    ) {
+    // Show version?
+    if ( firstUserInputItem == "--version" || firstUserInputItem == "-v") {
       return this.showVersion();
     }
 
-    if (this.hasSubcommand(firstInputItem)) {
-      return this.runSubcommand(firstInputItem);
+    // If the subcommand specified exists, then run it ...
+    if (this.hasSubcommand(firstUserInputItem)) {
+      return this.runSubcommand(firstUserInputItem);
     }
 
+    // ... otherwise, we have no idea what to run.
     ConsoleLogger.error(
-      `Unknown input "${firstInputItem}" specified.`,
+      `Unknown input "${firstUserInputItem}" specified.`,
     );
     this.showHelp();
   }
 
-  protected hasSubcommand(input: string): boolean {
-    return !!this.subcommands[input];
+  /**
+   * Does this CLI have the subcommand in question?
+   *
+   * @returns True if yes, false if no.
+   */
+  protected hasSubcommand(subcommand: string): boolean {
+    return !!this.subcommands[subcommand];
   }
 
+  /**
+   * Show this CLI's help menu.
+   */
+  protected showHelp(): void {
+    console.log(this.createHelpMenu());
+  }
+
+  /**
+   * Show this CLI's version.
+   */
   protected showVersion(): void {
     console.log(
       `${this.name} ${this.version}`,
     );
   }
 
-  protected showHelp(): void {
-    console.log(this.createHelpMenu());
-  }
-
+  /**
+   * Run the specified subcommand.
+   */
   protected runSubcommand(subcommandName: string): void {
     try {
       return this.subcommands[subcommandName].run();
@@ -315,21 +213,18 @@ export class CliService {
     Deno.exit(1);
   }
 
+  /**
+   * Validate this CLI and its subcommands.
+   */
   protected validate(): void {
-    this.validateThis();
     this.validateSubcommands();
   }
 
-  protected validateThis() {
-    if (!this.command) {
-      ConsoleLogger.error(
-        `CliService.command() was not called.
-Please call ClicService.command() and specify the command name.`,
-      );
-      Deno.exit(1);
-    }
-  }
-
+  /**
+   * Validate the specified subcommand.
+   *
+   * @param subcommand - The subcommand in question.
+   */
   protected validateSubcommand(subcommand: Subcommand): void {
     if (!subcommand.handler_fn) {
       ConsoleLogger.error(
@@ -339,6 +234,9 @@ Please call ClicService.command() and specify the command name.`,
     }
   }
 
+  /**
+   * Validate this CLI's subcommands.
+   */
   protected validateSubcommands(): void {
     if (this.hasSubcommands()) {
       for (const subcommandName in this.subcommands) {
@@ -352,6 +250,11 @@ Please call ClicService.command() and specify the command name.`,
   // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Create this CLI's help menu.
+   *
+   * @returns The help menu.
+   */
   protected createHelpMenu(): string {
     let description = this.description;
     let menu = `\n${this.name}${description ? " - " + description : ""}\n\n`;
@@ -393,7 +296,7 @@ Please call ClicService.command() and specify the command name.`,
  *
  * @returns A word-wrapped string.
  */
-function wordWrap(str: string, indent = 0): string {
+export function wordWrap(str: string, indent = 0): string {
   const brk = "\n" + (indent > 0 ? " ".repeat(indent) : "");
   const regex = new RegExp(/.{1,80}(\s|$)/, "g");
   const ret = str.match(regex);
