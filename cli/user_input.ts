@@ -126,6 +126,8 @@ export class UserInput {
         if (input.includes("=")) {
           const split = input.split("=");
           ret.set(split[0], split[1] ?? null);
+        } else {
+          ret.set(input, null);
         }
       }
     });
