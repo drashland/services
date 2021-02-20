@@ -128,7 +128,7 @@ export class Subcommand {
     menu += `USAGE\n\n`;
 
     menu +=
-      `    ${this.cli.command} ${this.name} [--deno-flags] [--options] [directory|file]`;
+      `    ${this.cli.command} ${this.name} [--deno-flags] [--option] [directory|file]`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";

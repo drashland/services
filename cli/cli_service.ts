@@ -262,9 +262,9 @@ export class CliService {
 
     menu += `USAGE\n\n`;
 
-    menu += `    ${this.command} [--options]\n`;
+    menu += `    ${this.command} [--option]\n`;
     menu += `    ${this.command} subcommand [--deno-flags]\n`;
-    menu += `    ${this.command} subcommand [--deno-flags] [--options]`;
+    menu += `    ${this.command} subcommand [--deno-flags] [--option]`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";

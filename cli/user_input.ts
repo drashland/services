@@ -57,23 +57,28 @@ export class UserInput {
     return this.deno_args[0];
   }
 
-  public getDenoFlags(): string[] {
+  /**
+   * Get the deno flags (e.g., --allow-all) from the Deno.args array.
+   *
+   * @returns An array of Deno flags.
+   */
+  public getDenoFlagsFromDenoArgs(): string[] {
     const ret: string[] = [];
 
     if (this.hasArg("-A")) {
       ret.push("--allow-all");
     } else {
-      if (this.hasArg("--allow-run")) {
-        ret.push("--allow-run");
+      if (this.hasArg("--allow-net")) {
+        ret.push("--allow-net");
       }
       if (this.hasArg("--allow-read")) {
         ret.push("--allow-read");
       }
+      if (this.hasArg("--allow-run")) {
+        ret.push("--allow-run");
+      }
       if (this.hasArg("--allow-write")) {
         ret.push("--allow-write");
-      }
-      if (this.hasArg("--allow-net")) {
-        ret.push("--allow-net");
       }
     }
 
