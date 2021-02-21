@@ -329,18 +329,16 @@ export class CliService {
 
     menu += `USAGE\n\n`;
 
-    menu += `    ${this.command.name} [--option]\n`;
-    menu += `    ${this.command.name} subcommand [--deno-flags] [--option]`;
+    menu += `    ${this.command.name} [options]\n`;
+    menu += `    ${this.command.name} subcommand [deno flags] [options]`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";
 
     menu += `    -h, --help\n        Show this menu.\n`;
-    menu += `    -i, --info\n        Show information about this CLI.\n`;
+    menu += `    -i, --info\n        Show this CLI's information.\n`;
     menu += `    -v, --version\n        Show this CLI's version.`;
     menu += "\n\n";
-
-    menu += "SUBCOMMANDS\n\n";
 
     menu += this.createHelpMenuSubcommandsSection();
 
@@ -355,11 +353,11 @@ export class CliService {
       },
       {
         name: "info",
-        description: "Show information about this module.",
+        description: "Show this CLI's information.",
       },
       {
         name: "version",
-        description: "Show this module's verison.",
+        description: "Show this CLI's verison.",
       },
     ];
 
@@ -386,7 +384,7 @@ export class CliService {
       return 0;
     });
 
-    let ret = ``;
+    let ret = `SUBCOMMANDS\n\n`;
 
     for (const index in sorted) {
       ret += `    ${sorted[index].name}\n        ${

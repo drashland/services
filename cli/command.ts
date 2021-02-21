@@ -35,9 +35,9 @@ export class Command extends BaseCommand {
   //////////////////////////////////////////////////////////////////////////////
 
 
-public addOption(name: string, description: string): this {
-  return this;
-}
+  public addOption(name: string, description: string): this {
+    return this;
+  }
 
   /**
    * {@inhertidoc}

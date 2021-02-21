@@ -103,7 +103,7 @@ export class Subcommand extends BaseCommand {
     let menu = `USAGE\n\n`;
 
     menu +=
-      `    ${this.command.name} ${this.name} [--deno-flags] [--option] ${this.command.cli.colors.green(this.args_schema)}`;
+      `    ${this.command.name} ${this.name} [deno flags] [options] ${this.command.cli.colors.green(this.args_schema)}`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";
