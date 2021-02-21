@@ -186,12 +186,14 @@ export class CliService {
   // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-  protected getOptionsAndValues(subcommand: Subcommand): {[key: string]: null|string} {
+  protected getOptionsAndValues(
+    subcommand: Subcommand
+  ): {[key: string]: null|string} {
     let ret: {[key: string]: null|string} = {};
 
     for (const optionName in subcommand.options) {
       if (subcommand.hasOptionSpecified(optionName)) {
-        ret[optionName] = this.command.user_input.getOption(optionName);
+        ret[optionName] = this.command.user_input.getOptionValue(optionName);
       }
     }
 
