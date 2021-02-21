@@ -19,7 +19,7 @@ export abstract class BaseOption {
    * in the this.cli.user_input, then "someValue" will be the value the
    * this.cli.user_input object would store.
    */
-  public value: null | string = null;
+  public value: string = "";
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////

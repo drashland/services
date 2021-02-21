@@ -107,8 +107,8 @@ export class UserInput {
    *
    * @returns The value of the option, or null if the option is not found.
    */
-  public getOption(input: string): null | string {
-    return this.options.get(input) ?? null;
+  public getOptionValue(optionName: string): string {
+    return this.options.get(optionName) ?? "";
   }
 
   /**

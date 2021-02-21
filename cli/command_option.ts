@@ -31,8 +31,8 @@ export class CommandOption extends BaseOption {
     this.value = this.getValue();
   }
 
-  protected getValue(): null|string {
-    return this.command.user_input.getOption(this.name);
+  protected getValue(): string {
+    return this.command.user_input.getOptionValue(this.name);
   }
 
   //////////////////////////////////////////////////////////////////////////////
