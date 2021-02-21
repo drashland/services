@@ -10,6 +10,8 @@ import { wordWrap } from "./cli_service.ts";
  */
 export class Subcommand extends BaseCommand {
 
+  public args_schema: null|string = null;
+
   public command: Command;
 
   public options: { [key: string]: SubcommandOption } = {};
@@ -39,8 +41,12 @@ export class Subcommand extends BaseCommand {
   // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-  public addHandler(handler: THandler): this {
+  public addHandler(
+    handler: THandler,
+    argsSchema: string,
+  ): this {
     this.handler_fn = handler;
+    this.args_schema = argsSchema;
     return this;
   }
 
@@ -59,7 +65,7 @@ export class Subcommand extends BaseCommand {
   /**
    * Run this subcommand.
    */
-  public run(): void {
+  public async run(): Promise<void> {
     if (!this.handler_fn) {
       this.command.cli.logger.error(
         `Subcommand "${this.name}" does not have a handler.`,
@@ -67,7 +73,7 @@ export class Subcommand extends BaseCommand {
       Deno.exit(1);
     }
 
-    this.handler_fn();
+    await this.handler_fn();
   }
 
   /**
@@ -87,6 +93,13 @@ export class Subcommand extends BaseCommand {
    * @returns The help menu.
    */
   protected createHelpMenu(): string {
+    if (!this.args_schema) {
+      this.command.cli.logger.error(
+        `Cannot display help menu for the "${this.name}" subcommand.`
+      );
+      Deno.exit(1);
+    }
+
     let menu = `\nSUBCOMMAND\n\n`;
 
     menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
@@ -95,7 +108,7 @@ export class Subcommand extends BaseCommand {
     menu += `USAGE\n\n`;
 
     menu +=
-      `    ${this.command.name} ${this.name} [--deno-flags] [--option] ${this.command.cli.colors.green("<DIRECTORY OR FILE>")}`;
+      `    ${this.command.name} ${this.name} [--deno-flags] [--option] ${this.command.cli.colors.green(this.args_schema)}`;
     menu += "\n\n";
 
     menu += "OPTIONS\n\n";

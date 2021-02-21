@@ -6,6 +6,7 @@ import { TColorMethod, TLogMethod } from "./types.ts";
 import { green } from "./deps.ts";
 
 export { Command } from "./command.ts";
+export { Subcommand } from "./subcommand.ts";
 
 /**
  * The interface of the "single source of truth" logger for the entire CLI.
@@ -304,7 +305,7 @@ export class CliService {
 
     if (args.length == 0) {
       this.logger.error(
-        `The "${subcommand.name}" subcommand is missing <DIRECTORY OR FILE>.`
+        `The "${subcommand.name}" subcommand is missing ${subcommand.args_schema}.`
       );
       subcommand.showHelp();
       Deno.exit(1);
