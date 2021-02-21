@@ -177,7 +177,8 @@ export class CliService {
 
     // If the subcommand specified exists, then run it ...
     if (this.hasSubcommand(firstUserInputItem)) {
-      return this.runSubcommand(firstUserInputItem);
+      this.runSubcommand(firstUserInputItem);
+      return;
     }
 
     // ... otherwise, we have no idea what to run.
@@ -242,7 +243,7 @@ export class CliService {
   /**
    * Run the specified subcommand.
    */
-  protected runSubcommand(subcommandName: string): void {
+  protected async runSubcommand(subcommandName: string): Promise<void> {
     const s = this.subcommands[subcommandName];
     this.validateOptionsForSubcommand(
       s,
@@ -251,7 +252,8 @@ export class CliService {
     this.validateArgsForSubcommand(s);
 
     try {
-      return s.run();
+      await s.run();
+      Deno.exit(0);
     } catch (error) {
       this.logger.error(
         `The "${subcommandName}" subcommand is not set up properly.\n${error}`
