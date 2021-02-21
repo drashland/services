@@ -47,25 +47,11 @@ export abstract class BaseCommand {
     return this.user_input.hasOption(optionName);
   }
 
-  /**
-   * Show this subcommand's help menu.
-   */
-  public showHelp(): void {
-    console.log(this.createHelpMenu());
-  }
-
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - METHODS - ABSTRACT //////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   public abstract addOption(name: string, description: string): this;
-
-  /**
-   * Create this subcommand's help menu.
-   *
-   * @returns The help menu.
-   */
-  protected abstract createHelpMenu(): string;
 
   /**
    * Run this command.

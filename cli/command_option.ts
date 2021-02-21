@@ -42,35 +42,5 @@ export class CommandOption extends BaseOption {
   public addOption(name: string, description: string): this {
     return this;
   }
-
-  /**
-   * Show the help menu for this option.
-   */
-  public showHelp(): void {
-    console.log(this.createHelpMenu());
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Create the help menu for this option.
-   *
-   * @returns The help menu.
-   */
-  protected createHelpMenu(): string {
-    let menu = `\nOPTION\n\n`;
-
-    menu += `    ${this.name}\n`;
-    menu += `        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
-
-    menu += `    ${this.command.name} [deno flags] ${this.name}=${this.command.cli.colors.green("<OPTION VALUE>")} [directory|file]\n`;
-
-    return menu;
-  }
 }
 

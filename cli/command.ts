@@ -1,4 +1,4 @@
-import { CliService, wordWrap } from "./cli_service.ts";
+import { CliService } from "./cli_service.ts";
 import { BaseCommand } from "./base_command.ts";
 import { CommandOption } from "./command_option.ts";
 
@@ -52,35 +52,4 @@ public addOption(name: string, description: string): this {
 
     this.handler_fn();
   }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Create this subcommand's help menu.
-   *
-   * @returns The help menu.
-   */
-  protected createHelpMenu(): string {
-    let menu = `\nCOMMAND\n\n`;
-
-    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
-
-    menu += `    ${this.name} [subcommand] [--deno-flags] [--option] [directory|file]`
-    menu += "\n\n";
-
-    menu += "OPTIONS\n\n";
-
-    for (const optionName in this.options) {
-      const option: CommandOption = this.options[optionName];
-      menu += `    ${optionName}\n        ${wordWrap(option.description, 8)}\n`;
-    }
-
-    return menu;
-  }
 }
-

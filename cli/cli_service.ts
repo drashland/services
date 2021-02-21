@@ -69,12 +69,6 @@ export class CliService {
   };
 
   /**
-   * The current subcomand being created. This is set when
-   * CliService.subcommand() is called.
-   */
-  protected current_subcommand: null | Subcommand = null;
-
-  /**
    * This CLI's options. This is not to be confused with a subcommand's options.
    * CLI options come after the main command. Subcommand options come after the
    * subcommand.
@@ -122,7 +116,6 @@ export class CliService {
    */
   public addSubcommand(name: string, description: string): Subcommand {
     const s = new Subcommand(this.command, name, description);
-    this.current_subcommand = s;
     this.subcommands[name] = s;
     return s;
   }
@@ -256,9 +249,7 @@ export class CliService {
       await s.run();
       Deno.exit(0);
     } catch (error) {
-      this.logger.error(
-        `The "${subcommandName}" subcommand is not set up properly.\n${error}`
-      );
+      this.logger.error(error.message);
     }
 
     Deno.exit(1);

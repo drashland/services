@@ -8,7 +8,7 @@ import { Subcommand } from "./subcommand.ts";
  */
 export class SubcommandOption extends BaseOption {
 
-  public command: Subcommand;
+  public subcommand: Subcommand;
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
@@ -17,22 +17,22 @@ export class SubcommandOption extends BaseOption {
   /**
    * Construct an object of this class.
    *
-   * @param command - See this.command for more information.
+   * @param subcommand - See this.subcommand for more information.
    * @param name - See this.name for more information.
    * @param description - See this.description for more information.
    */
   constructor(
-    command: Subcommand,
+    subcommand: Subcommand,
     name: string,
     description: string,
   ) {
     super(name, description);
-    this.command = command;
+    this.subcommand = subcommand;
     this.value = this.getValue();
   }
 
-  protected getValue(): null|string {
-    return null;
+  protected getValue(): string {
+    return this.subcommand.user_input.getOptionValue(this.name);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -56,15 +56,9 @@ export class SubcommandOption extends BaseOption {
    * @returns The help menu.
    */
   protected createHelpMenu(): string {
-    let menu = `\nOPTION\n\n`;
+    let menu = `USAGE\n\n`;
 
-    menu += `    ${this.name}\n`;
-    menu += `        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
-
-    menu += `    ${this.command.command.name} ${this.command.name} [deno flags] ${this.name}=${this.command.command.cli.colors.green("<OPTION VALUE>")} [directory|file]\n`;
+    menu += `    ${this.subcommand.command.name} ${this.subcommand.name} [deno flags] ${this.name}=${this.subcommand.command.cli.colors.green("<OPTION VALUE>")} <ARGS>\n`;
 
     return menu;
   }

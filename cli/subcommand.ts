@@ -100,12 +100,7 @@ export class Subcommand extends BaseCommand {
       Deno.exit(1);
     }
 
-    let menu = `\nSUBCOMMAND\n\n`;
-
-    menu += `    ${this.name}\n        ${wordWrap(this.description, 8)}`;
-    menu += `\n\n`;
-
-    menu += `USAGE\n\n`;
+    let menu = `USAGE\n\n`;
 
     menu +=
       `    ${this.command.name} ${this.name} [--deno-flags] [--option] ${this.command.cli.colors.green(this.args_schema)}`;
