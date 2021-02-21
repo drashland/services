@@ -139,7 +139,6 @@ export class CliService {
    * Run this CLI.
    */
   public run(): void {
-    console.log(Deno.args);
     this.validate();
 
     // No args or options specified?
