@@ -145,7 +145,7 @@ export class CliService {
     // Show help?
     if (
       firstUserInputItem == "--help"
-      || firstUserInputItem == "--h"
+      || firstUserInputItem == "-h"
       || firstUserInputItem == "help"
     ) {
       return this.showHelp();
