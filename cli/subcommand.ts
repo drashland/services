@@ -56,8 +56,12 @@ export class Subcommand extends BaseCommand {
    * @param option - The option object. See CliService.option() for more
    * information on creating an option object.
    */
-  public addOption(name: string, description: string): this {
-    const o = new SubcommandOption(this, name, description);
+  public addOption(
+    name: string,
+    description: string,
+    argsSchema: string
+  ): this {
+    const o = new SubcommandOption(this, name, description, argsSchema);
     this.options[o.name] = o;
     return this;
   }

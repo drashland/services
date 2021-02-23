@@ -51,8 +51,6 @@ export abstract class BaseCommand {
   // FILE MARKER - METHODS - ABSTRACT //////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-  public abstract addOption(name: string, description: string): this;
-
   /**
    * Run this command.
    */

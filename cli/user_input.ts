@@ -58,6 +58,20 @@ export class UserInput {
   }
 
   /**
+   * Get the first item in the Deno.args array.
+   *
+   * @returns The first item.
+   */
+  public getItem(index: number): null|string {
+    try {
+      return this.deno_args[index];
+    } catch (error) {
+    }
+
+    return null;
+  }
+
+  /**
    * Get the deno flags (e.g., --allow-all) from the Deno.args array.
    *
    * @returns An array of Deno flags.
@@ -65,7 +79,7 @@ export class UserInput {
   public getDenoFlagsFromDenoArgs(): string[] {
     const ret: string[] = [];
 
-    if (this.hasArg("-A")) {
+    if (this.hasArg("-A") || this.hasArg("--allow-all")) {
       ret.push("--allow-all");
     } else {
       if (this.hasArg("--allow-net")) {

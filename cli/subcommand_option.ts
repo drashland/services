@@ -1,4 +1,3 @@
-import { wordWrap } from "./cli_service.ts";
 import { BaseOption} from "./base_option.ts";
 import { Subcommand } from "./subcommand.ts";
 
@@ -8,6 +7,7 @@ import { Subcommand } from "./subcommand.ts";
  */
 export class SubcommandOption extends BaseOption {
 
+  public args_schema: string;
   public subcommand: Subcommand;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,10 @@ export class SubcommandOption extends BaseOption {
     subcommand: Subcommand,
     name: string,
     description: string,
+    argsSchema: string,
   ) {
     super(name, description);
+    this.args_schema = argsSchema;
     this.subcommand = subcommand;
     this.value = this.getValue();
   }
@@ -58,7 +60,7 @@ export class SubcommandOption extends BaseOption {
   protected createHelpMenu(): string {
     let menu = `USAGE\n\n`;
 
-    menu += `    ${this.subcommand.command.name} ${this.subcommand.name} [deno flags] ${this.name}=${this.subcommand.command.cli.colors.green("<OPTION VALUE>")} <ARGS>\n`;
+    menu += `    ${this.subcommand.command.name} ${this.subcommand.name} [deno flags] ${this.name}=${this.subcommand.command.cli.colors.green(this.args_schema)} <ARGS>\n`;
 
     return menu;
   }
