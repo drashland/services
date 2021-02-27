@@ -69,6 +69,10 @@ export class CommandLine {
     return this.arguments[argumentName] ?? null;
   }
 
+  public getOption(optionName: string): null|string {
+    return this.options[optionName] ?? null;
+  }
+
   protected extractDenoFlagsFromArguments(): void {
     // Extract all options from the line
     this.deno_args.forEach((datum: string) => {

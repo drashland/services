@@ -2,6 +2,13 @@ import { ConsoleLogger } from "../loggers/console_logger.ts";
 import { TColorMethod, TLogMethod } from "./types.ts";
 import { green } from "./deps.ts";
 import { CommandLine } from "./command_line.ts";
+import { Subcommand } from "./subcommand.ts";
+import { SubcommandOption } from "./subcommand_option.ts";
+
+export {
+  Subcommand,
+  SubcommandOption,
+}
 
 export interface ICliServiceConfigs {
   name: string;
@@ -9,100 +16,6 @@ export interface ICliServiceConfigs {
   command: string;
   subcommands: typeof Subcommand[];
   version: string;
-}
-
-export class SubcommandOption {
-  public subcommand: Subcommand;
-  public name: string = "";
-  public description: string = "";
-  public signature: string = "";
-
-  constructor(subcommand: Subcommand) {
-    this.subcommand = subcommand;
-    this.setProperties();
-  }
-
-  protected setProperties(): void {
-    const split = this.signature.split(" ");
-    this.name = split[0] ?? "";
-  }
-}
-
-export class Subcommand {
-  public cli: CliService;
-  public name: string = "";
-  public description: string = "";
-  public signature: string = "";
-  public options: (typeof SubcommandOption[] | SubcommandOption[]) = [];
-
-  constructor(cli: CliService) {
-    this.cli = cli;
-    this.setProperties();
-  }
-
-  public getArgument(argumentName: string): string|null {
-    return this.cli.command_line.getArgument(argumentName);
-  }
-
-  public getOption(optionName: string): SubcommandOption|null {
-    const results = (this.options as SubcommandOption[])
-      .filter((option: SubcommandOption) => {
-        return option.name == optionName;
-      });
-
-    return results[0] ?? null;
-  }
-
-  public getDenoFlags(): string[] {
-    return this.cli.command_line.getDenoFlags();
-  }
-
-  public handle(): void {
-    return;
-  }
-
-  /**
-   * Show this subcommand's help menu.
-   */
-  public showHelp(): void {
-    console.log(this.createHelpMenu());
-  }
-
-  /**
-   * Create this subcommand's help menu.
-   *
-   * @returns The help menu.
-   */
-  protected createHelpMenu(): string {
-    let menu = `USAGE\n\n`;
-
-    menu +=
-      `    ${this.cli.command} ${this.signature} [deno flags] [options]`;
-    menu += "\n\n";
-
-    menu += "OPTIONS\n\n";
-
-    return menu;
-  }
-
-  /**
-   * Take the array of Option classes and instantiate all of them.
-   */
-  protected createOptions(): void {
-    let options: SubcommandOption[] = [];
-
-    (this.options as unknown as (typeof SubcommandOption)[])
-      .filter((option: typeof SubcommandOption) => {
-        options.push(new option(this));
-      });
-
-    this.options = options;
-  }
-
-  protected setProperties(): void {
-    const split = this.signature.split(" ");
-    this.name = split[0] ?? "";
-  }
 }
 
 /**
@@ -214,11 +127,18 @@ export class CliService {
     const subcommand = this.getSubcommand(this.command_line.subcommand);
 
     if (!subcommand) {
-      throw new Error(
+      this.logger.error(
         `Unknown subcommand "${this.command_line.subcommand}" specified.`
       );
+      let availSubcommands = `\nAVAILABLE SUBCOMMANDS\n\n`;
+      (this.subcommands as typeof Subcommand[]).forEach((subcommand: typeof Subcommand) => {
+        availSubcommands += `    ${subcommand.name}\n`;
+      });
+      console.log(availSubcommands);
+      Deno.exit(1);
     }
 
+    subcommand.instantiateOptions();
     subcommand.handle();
   }
 
@@ -244,17 +164,22 @@ export class CliService {
 
     (this.subcommands as unknown as (typeof Subcommand)[])
       .filter((subcommand: typeof Subcommand) => {
-        subcommands.push(new subcommand(this));
+        const s = new subcommand(this)
+        s.name = s.signature.split(" ")[0];
+        subcommands.push(s);
       });
 
     this.subcommands = subcommands;
   }
 
+  /**
+   * Show this CLI's help menu.
+   */
   protected showHelp(): void {
     let help = `${this.name} - ${this.description}\n\n`;
 
     help += `USAGE\n\n`;
-    help += `    ${this.command} [option | [[subcommand] [deno flags] [options]]\n`;
+    help += `    ${this.command} [option | [[subcommand] [args] [deno flags] [options]]\n`;
     help += `\n`;
 
     help += `OPTIONS\n\n`;
