@@ -198,7 +198,7 @@ export class Commander {
     help += `SUBCOMMANDS\n\n`;
     (this.subcommands as Subcommand[]).forEach((subcommand: Subcommand) => {
       help += `    ${subcommand.name}\n`;
-      help += `        ${subcommand.description}`;
+      help += `        ${subcommand.description}\n`;
     });
 
     console.log(help);
