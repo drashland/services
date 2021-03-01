@@ -14,9 +14,10 @@ A service to help build command-line interfaces (CLIs).
 import {
   Commander,
   Subcommand,
-} from "https://raw.githubusercontent.com/drashland/services/v0.2.0/cli/mod.ts";
+} from "https://raw.githubusercontent.com/drashland/services/v0.2.0/cli/commander/mod.ts";
 
 const decoder = new TextDecoder();
+const encoder = new TextEncoder();
 
 class Read extends Subcommand {
   public signature = "read [file]";
@@ -24,6 +25,9 @@ class Read extends Subcommand {
 
   public async handle(): Promise<void> {
     const file = this.getArgument("[file]");
+    if (!file) {
+      return console.log("File not specified");
+    }
     const contents = Deno.readFileSync(file);
     console.log(decoder.decode(contents));
   }
@@ -35,9 +39,15 @@ class Write extends Subcommand {
 
   public async handle(): Promise<void> {
     const file = this.getArgument("[file]");
+    if (!file) {
+      return console.log("File not specified");
+    }
     const contents = this.getArgument("[contents]");
+    if (!contents) {
+      return console.log("Contents not specified");
+    }
     try {
-      Deno.writeFileSync(file, contents);
+      Deno.writeFileSync(file, encoder.encode(contents));
       console.log("Successfully wrote file.");
     } catch (error) {
       console.log(error);
