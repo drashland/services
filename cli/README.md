@@ -4,14 +4,14 @@ A service to help develop CLIs.
 
 ## Table of Contents
 
-* [Quick Start](#quick-start)
-* [Guides](#guides)
-    * [Creating A Help Menu](#creating-a-help-menu)
-* [API](#api)
-    * [Methods](#methods)
-    * [Interfaces](#interfaces)
-* [ASCII Art](#ascii-art)
-    * [Drash Logo](#drash-logo)
+- [Quick Start](#quick-start)
+- [Guides](#guides)
+  - [Creating A Help Menu](#creating-a-help-menu)
+- [API](#api)
+  - [Methods](#methods)
+  - [Interfaces](#interfaces)
+- [ASCII Art](#ascii-art)
+  - [Drash Logo](#drash-logo)
 
 ## Quick Start
 
@@ -46,7 +46,8 @@ c.run();
 
 ### Creating A Help Menu
 
-Use the `static` `CliService.createHelpMenu()` method to create a help menu. The following code ...
+Use the `static` `CliService.createHelpMenu()` method to create a help menu. The
+following code ...
 
 ```typescript
 import { CliService } from "https://raw.githubusercontent.com/drashland/services/master/cli/cli_service.ts";
@@ -136,50 +137,54 @@ EXAMPLE USAGE
 
 #### .createHelpMenu(data: IHelpMenuData)
 
-* A `static` method to help create help menus.
-* Example:
-    ```typescript
-    const c = CliService.createHelpMenu({ ... });
-    ```
+- A `static` method to help create help menus.
+- Example:
+      ```typescript
+      const c = CliService.createHelpMenu({ ... });
+      ```
 
 #### .addSubcommand(command: string|string[], handler: (args: string[]) => void, options: ISubcommandOptions)
 
-* Add a subcommand (or an array of subcommands) to the CLI with a handler.
-* Example:
-    ```typescript
-    const c = CliService(Deno.args);
-    
-    // Add a single command
-    c.addSubcommand("test", () => { console.log("Testing!"); });
-    
-    // Add an array of commands that share the same handler
-    c.addSubcommand(["help", "--help"], () => { console.log("Help!"); });
-    
-	// Add a single subcommand that has a handler that requires Deno.args.  You
-	// can pass in args: string[] into the handler and the CliService will pass
-	// in Deno.args as the args. Also, to throw an error stating that this
-	// subommand requires args, pass in the { requires_args: true }
-    // option.
-    c.addSubcommand(
-      "make",
-      (args: string[]) => {
-        console.log(args); // outputs ["arg1", "arg2"] if you run `my-cli make arg1 arg2`
-        doSomething(args);
-      },
-      {
-        requires_args: true
-      }
-    );
-    ```
+- Add a subcommand (or an array of subcommands) to the CLI with a handler.
+- Example:
+      ```typescript
+      const c = CliService(Deno.args);
+
+      // Add a single command
+      c.addSubcommand("test", () => {
+        console.log("Testing!");
+      });
+
+      // Add an array of commands that share the same handler
+      c.addSubcommand(["help", "--help"], () => {
+        console.log("Help!");
+      });
+
+      // Add a single subcommand that has a handler that requires Deno.args.  You
+      // can pass in args: string[] into the handler and the CliService will pass
+      // in Deno.args as the args. Also, to throw an error stating that this
+      // subommand requires args, pass in the { requires_args: true }
+      // option.
+      c.addSubcommand(
+        "make",
+        (args: string[]) => {
+          console.log(args); // outputs ["arg1", "arg2"] if you run `my-cli make arg1 arg2`
+          doSomething(args);
+        },
+        {
+          requires_args: true,
+        },
+      );
+      ```
 
 #### .run()
 
-* Run the CLI service.
-* Example:
-    ```typescript
-    const c = CliService(Deno.args);
-    c.run();
-    ```
+- Run the CLI service.
+- Example:
+      ```typescript
+      const c = CliService(Deno.args);
+      c.run();
+      ```
 
 ### Interfaces
 
@@ -305,10 +310,10 @@ interface IHelpMenuData {
 
 ```typescript
 import {
-  drashLogoInRawAscii,
-  drashLogoInAsciiWithoutColour
   drashLogoInAsciiWithColour,
-} from "https://raw.githubusercontent.com/drashland/services/master/cli/ascii/drash.ts"
+  drashLogoInAsciiWithoutColour,
+  drashLogoInRawAscii,
+} from "https://raw.githubusercontent.com/drashland/services/master/cli/ascii/drash.ts";
 
-console.log(drashLogoInRawAscii) // same for all the others
+console.log(drashLogoInRawAscii); // same for all the others
 ```

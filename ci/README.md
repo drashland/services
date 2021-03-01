@@ -4,16 +4,18 @@ A group of service classes to help with CI processes.
 
 ## Table of Contents
 
-* [Bumper Service](#bumper-service)
-    * [Quick Start](#bumper-service-quick-start)
-    * [How It Works](#bumper-service-how-it-works)
-    * [Guides](#bumper-service-guides)
-        * [Bumping Module Versions In Files](#bumping-module-versions-in-files)
-        * [Bumping Deno and Deno Standard Modules Versions In Files](#bumping-deno-and-deno-standard-modules-versions-in-files)
-        * [Running The Bumper Service In A CI Process](#running-the-bumper-service-in-a-ci-process)
-    * [API](#bumper-service-api)
-        * [Methods](#bumper-service-api-methods)
-        * [Interfaces](#bumper-service-interfaces)
+- [Bumper Service](#bumper-service)
+  - [Quick Start](#bumper-service-quick-start)
+  - [How It Works](#bumper-service-how-it-works)
+  - [Guides](#bumper-service-guides)
+    - [Bumping Module Versions In Files](#bumping-module-versions-in-files)
+    - [Bumping Deno and Deno Standard Modules Versions In
+      Files](#bumping-deno-and-deno-standard-modules-versions-in-files)
+    - [Running The Bumper Service In A CI
+      Process](#running-the-bumper-service-in-a-ci-process)
+  - [API](#bumper-service-api)
+    - [Methods](#bumper-service-api-methods)
+    - [Interfaces](#bumper-service-interfaces)
 
 ## Bumper Service
 
@@ -38,11 +40,14 @@ b.bump([
 
 ### Bumper Service: How It Works
 
-Bumping versions in files works by using the `BumperService.bump()` method. When using this method, you pass in an array of file data -- key-value pair objects. Each key-value pair object in the array should contain:
+Bumping versions in files works by using the `BumperService.bump()` method. When
+using this method, you pass in an array of file data -- key-value pair objects.
+Each key-value pair object in the array should contain:
 
-* `filename`: The path to the file needing to be updated.
-* `replaceTheRegex`: The pattern to search for in the file.
-* `replaceWith`: The string to replace the `replaceTheRegex` pattern matches with.
+- `filename`: The path to the file needing to be updated.
+- `replaceTheRegex`: The pattern to search for in the file.
+- `replaceWith`: The string to replace the `replaceTheRegex` pattern matches
+  with.
 
 When the `.bump()` method executes, it does the following:
 
@@ -54,11 +59,16 @@ When the `.bump()` method executes, it does the following:
 
 #### Bumping Module Versions In Files
 
-The first argument that the `BumperService`'s constructor takes in is the name of a module. When the `BumperService` class is instantiated, it fetches the latest version of that module (if it can find it). Once found, the `BumperService` stores the latest version of the module in the following string variable:
+The first argument that the `BumperService`'s constructor takes in is the name
+of a module. When the `BumperService` class is instantiated, it fetches the
+latest version of that module (if it can find it). Once found, the
+`BumperService` stores the latest version of the module in the following string
+variable:
 
-* `{{ thisModulesLatestVersion }}`
+- `{{ thisModulesLatestVersion }}`
 
-The `BumperService` does this so you can easily replace the `replaceTheRegex` pattern matches with the latest version of your module. For example:
+The `BumperService` does this so you can easily replace the `replaceTheRegex`
+pattern matches with the latest version of your module. For example:
 
 ```typescript
 const b = new BumperService("rhum");
@@ -82,10 +92,13 @@ b.bump([
 ]);
 ```
 
-You can also specify what version you want `{{ thisModulesLatestVersions }}` to be. You do this by instantiating the `BumperService` class with two arguments:
+You can also specify what version you want `{{ thisModulesLatestVersions }}` to
+be. You do this by instantiating the `BumperService` class with two arguments:
 
-* 1st argument: The name of the module.
-* 2nd argument: `["--version=vx.x.x"]` where `x.x.x` is the version you want `{{ thisModulesLatestVersion }}` to be. This can also be `Deno.args` if you want to call a script that includes this logic from a CI process.
+- 1st argument: The name of the module.
+- 2nd argument: `["--version=vx.x.x"]` where `x.x.x` is the version you want
+  `{{ thisModulesLatestVersion }}` to be. This can also be `Deno.args` if you
+  want to call a script that includes this logic from a CI process.
 
 For example:
 
@@ -113,12 +126,16 @@ b.bump([
 
 #### Bumping Deno and Deno Standard Modules Versions In Files
 
-By default, the `BumperService` fetches the latest Deno and Deno Standard Modules versions. These versions are then stored in the following string variables:
+By default, the `BumperService` fetches the latest Deno and Deno Standard
+Modules versions. These versions are then stored in the following string
+variables:
 
-* `{{ latestDenoVersion }}`
-* `{{ latestStdVersion }}`
+- `{{ latestDenoVersion }}`
+- `{{ latestStdVersion }}`
 
-The `BumperService` does this so you can easily replace `replaceTheRegex` pattern matches with the latest Deno and Deno Standard Modules versions. For example:
+The `BumperService` does this so you can easily replace `replaceTheRegex`
+pattern matches with the latest Deno and Deno Standard Modules versions. For
+example:
 
 ```typescript
 const b = new BumperService("my-module-name");
@@ -139,7 +156,10 @@ b.bump([
 
 #### Running The Bumper Service In A CI Process
 
-Let's say you have an `app.ts` file you want to keep updated with the latest Deno version. You want to check that this file has the latest Deno version, and if it does not, then you want to update it and create a pull request to update this file to reflect the latest Deno version. It looks like the following:
+Let's say you have an `app.ts` file you want to keep updated with the latest
+Deno version. You want to check that this file has the latest Deno version, and
+if it does not, then you want to update it and create a pull request to update
+this file to reflect the latest Deno version. It looks like the following:
 
 ```typescript
 // File: app.ts
@@ -147,7 +167,8 @@ Let's say you have an `app.ts` file you want to keep updated with the latest Den
 const denoVersion = "v1.2.3";
 ```
 
-The first thing you will need is a script to help you update this file. Let's say you have a `bumper.ts` file. It looks like the following:
+The first thing you will need is a script to help you update this file. Let's
+say you have a `bumper.ts` file. It looks like the following:
 
 ```typescript
 // File: bumper.ts
@@ -160,12 +181,14 @@ b.bump([
   {
     filename: "./app.ts",
     replaceTheRegex: /version = ".+"/g,
-    replaceWith: `version = "v{{ latestDenoVersion }}"` // becomes version = "vx.x.x" where x.x.x is the latest Deno version
-  }
+    replaceWith: `version = "v{{ latestDenoVersion }}"`, // becomes version = "vx.x.x" where x.x.x is the latest Deno version
+  },
 ]);
 ```
 
-To automate this process using the CI, you will need a GitHub workflow file that runs on a schedule (a cron job). Let's say you have a `bumper.yml` GitHub workflow file that runs every day. It looks like the following:
+To automate this process using the CI, you will need a GitHub workflow file that
+runs on a schedule (a cron job). Let's say you have a `bumper.yml` GitHub
+workflow file that runs every day. It looks like the following:
 
 ```yaml
 name: bumper
@@ -200,11 +223,17 @@ jobs:
           branch: update-dependencies
 ```
 
-You'll notice that this `bumper.yml` GitHub workflow file has a `Bump Versions` step that includes running the `bumper.ts` script. This GitHub workflow file basically says the following:
+You'll notice that this `bumper.yml` GitHub workflow file has a `Bump Versions`
+step that includes running the `bumper.ts` script. This GitHub workflow file
+basically says the following:
 
-_At 00:00 every day, install Deno, run `bumper.ts`, and create a pull request if there are changes to the current repository's files._
+_At 00:00 every day, install Deno, run `bumper.ts`, and create a pull request if
+there are changes to the current repository's files._
 
-Now, you have a GitHub workflow file that runs on a schedule to check if your `app.ts` file is up to date or not. If it's not, then the `bumper.ts` file will update it, and a pull request will be made so that you can review the changes that reflect the latest Deno version.
+Now, you have a GitHub workflow file that runs on a schedule to check if your
+`app.ts` file is up to date or not. If it's not, then the `bumper.ts` file will
+update it, and a pull request will be made so that you can review the changes
+that reflect the latest Deno version.
 
 ## Bumper Service: API
 
@@ -212,41 +241,41 @@ Now, you have a GitHub workflow file that runs on a schedule to check if your `a
 
 #### .bump(files: File[], write: boolean = true)
 
-* A  method to bump versions in specified files.
-* Example:
-    ```typescript
-    const b = new BumperService("rhum");
-    
-    b.bump([
-      {
-        filename: "./egg.json",
-        replaceTheRegex: /"version": ".+"/,
-        replaceWith: `"version": "{{ thisModulesLatestVersion }}"`, // becomes "version": "x.x.x" where x.x.x is the module's latest version
-      },
-      {
-        filename: "./README.md",
-        replaceTheRegex: /rhum\@v.+mod.ts/g,
-        replaceWith: `rhum@v{{ thisModulesLatestVersion }}/mod.ts`, // becomes rhum@vx.x.x/mod.ts where x.x.x is the module's latest version
-      },
-      {
-        filename: "./src/mod.ts",
-        replaceTheRegex: /version = ".+"/g,
-        replaceWith: `version = "v{{ thisModulesLatestVersion }}"`, // becomes version = "vx.x.x." where x.x.x is the module's latest version
-      },
-    ]);
-    ```
+- A method to bump versions in specified files.
+- Example:
+      ```typescript
+      const b = new BumperService("rhum");
+
+      b.bump([
+        {
+          filename: "./egg.json",
+          replaceTheRegex: /"version": ".+"/,
+          replaceWith: `"version": "{{ thisModulesLatestVersion }}"`, // becomes "version": "x.x.x" where x.x.x is the module's latest version
+        },
+        {
+          filename: "./README.md",
+          replaceTheRegex: /rhum\@v.+mod.ts/g,
+          replaceWith: `rhum@v{{ thisModulesLatestVersion }}/mod.ts`, // becomes rhum@vx.x.x/mod.ts where x.x.x is the module's latest version
+        },
+        {
+          filename: "./src/mod.ts",
+          replaceTheRegex: /version = ".+"/g,
+          replaceWith: `version = "v{{ thisModulesLatestVersion }}"`, // becomes version = "vx.x.x." where x.x.x is the module's latest version
+        },
+      ]);
+      ```
 
 #### .getModulesLatestVersion(moduleName: string)
 
-* Get the specified module's latest version.
-* Example:
-    ```typescript
-    const b = new BumperService("rhum");
-    
-    const latestVersionRhum = b.getModulesLatestVersion("rhum"); // returns x.x.x where x.x.x is Rhum's latest version
-    const latestVersionDeno = b.getModulesLatestVersion("deno"); // returns x.x.x where x.x.x is Deno's latest version
-    const latestVersionDenoStd = b.getModulesLatestVersion("std"); // returns x.x.x where x.x.x is Deno Standard Module's latest version
-    ```
+- Get the specified module's latest version.
+- Example:
+      ```typescript
+      const b = new BumperService("rhum");
+
+      const latestVersionRhum = b.getModulesLatestVersion("rhum"); // returns x.x.x where x.x.x is Rhum's latest version
+      const latestVersionDeno = b.getModulesLatestVersion("deno"); // returns x.x.x where x.x.x is Deno's latest version
+      const latestVersionDenoStd = b.getModulesLatestVersion("std"); // returns x.x.x where x.x.x is Deno Standard Module's latest version
+      ```
 
 ### Bumper Service API: Interfaces
 
