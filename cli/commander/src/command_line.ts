@@ -1,8 +1,8 @@
-import { CliService, Subcommand } from "./cli_service.ts";
+import { Commander, Subcommand } from "../mod.ts";
 
 export class CommandLine {
 
-  public cli: CliService;
+  public cli: Commander;
 
   public subcommand: string;
 

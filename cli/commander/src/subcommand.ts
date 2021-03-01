@@ -1,13 +1,13 @@
-import { CliService, ILogger, SubcommandOption } from "./cli_service.ts";
+import { Commander, ILogger, SubcommandOption } from "../mod.ts";
 
 export class Subcommand {
-  public cli: CliService;
+  public cli: Commander;
   public name: string = "";
   public description: string = "";
   public signature: string = "";
   public options: (typeof SubcommandOption[] | SubcommandOption[]) = [];
 
-  constructor(cli: CliService) {
+  constructor(cli: Commander) {
     this.cli = cli;
   }
 
@@ -79,7 +79,7 @@ export class Subcommand {
     help += "OPTIONS\n\n";
     (this.options as SubcommandOption[]).forEach((option: SubcommandOption) => {
       help += `    ${option.name}\n`;
-      help += `        ${option.description}`;
+      help += `        ${option.description}\n`;
     });
 
     console.log(help);

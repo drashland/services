@@ -1,7 +1,11 @@
+import { Subcommand } from "../mod.ts";
+
+type TLogMethod = (messag: string) => void;
+
 /**
  * This CLI's configs.
  */
-export interface ICliServiceConfigs {
+export interface ICommanderConfigs {
   name: string;
   description: string;
   command: string;
