@@ -10,7 +10,7 @@ A service to help build command-line interfaces (CLIs).
 
 1. Create your `app.ts` file.
 
-```
+```typescript
 import {
   Commander,
   Subcommand,
@@ -61,13 +61,13 @@ service.run();
 
 2. Install your `app.ts` file as a binary under the name `fm`.
 
-```
+```shell
 $ deno install --allow-read --allow-write --name fm app.ts
 ```
 
 3. Run your app.
 
-```
+```shell
 $ fm
 
 File Manager - A file manager.
