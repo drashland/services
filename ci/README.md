@@ -242,9 +242,7 @@ that reflect the latest Deno version.
 #### .bump(files: File[], write: boolean = true)
 
 - A method to bump versions in specified files.
-- Example:
-      ```typescript
-      const b = new BumperService("rhum");
+- Example: ```typescript const b = new BumperService("rhum");
 
       b.bump([
         {
@@ -268,9 +266,7 @@ that reflect the latest Deno version.
 #### .getModulesLatestVersion(moduleName: string)
 
 - Get the specified module's latest version.
-- Example:
-      ```typescript
-      const b = new BumperService("rhum");
+- Example: ```typescript const b = new BumperService("rhum");
 
       const latestVersionRhum = b.getModulesLatestVersion("rhum"); // returns x.x.x where x.x.x is Rhum's latest version
       const latestVersionDeno = b.getModulesLatestVersion("deno"); // returns x.x.x where x.x.x is Deno's latest version

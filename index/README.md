@@ -152,27 +152,18 @@ console.log(results);
 - Add an item to the index and lookup table and make them searchable via search
   terms.
 - Example:
-      ```typescript
-      const i = new IndexService(lookupTable);
-      i.addItem(["search", "terms"], {item to put into your lookup table});
-      ```
+  `typescript const i = new IndexService(lookupTable); i.addItem(["search", "terms"], {item to put into your lookup table});`
 
 #### .getIndex()
 
 - Gets the index.
 - Example:
-      ```typescript
-      const i = new IndexService(lookupTable);
-      i.addItem(["hello"], "world");
-      i.getIndex(); // returns Map { "hello" => [0] }
-      ```
+  `typescript const i = new IndexService(lookupTable); i.addItem(["hello"], "world"); i.getIndex(); // returns Map { "hello" => [0] }`
 
 #### .search(searchInput: string)
 
 - Search the index and get search results.
-- Example:
-      ```typescript
-      const i = new IndexService(lookupTable);
+- Example: ```typescript const i = new IndexService(lookupTable);
 
       i.addItem(["hello"], "world");
       i.addItem(["hello"], "again");

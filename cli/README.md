@@ -138,17 +138,12 @@ EXAMPLE USAGE
 #### .createHelpMenu(data: IHelpMenuData)
 
 - A `static` method to help create help menus.
-- Example:
-      ```typescript
-      const c = CliService.createHelpMenu({ ... });
-      ```
+- Example: `typescript const c = CliService.createHelpMenu({ ... });`
 
 #### .addSubcommand(command: string|string[], handler: (args: string[]) => void, options: ISubcommandOptions)
 
 - Add a subcommand (or an array of subcommands) to the CLI with a handler.
-- Example:
-      ```typescript
-      const c = CliService(Deno.args);
+- Example: ```typescript const c = CliService(Deno.args);
 
       // Add a single command
       c.addSubcommand("test", () => {
@@ -180,11 +175,7 @@ EXAMPLE USAGE
 #### .run()
 
 - Run the CLI service.
-- Example:
-      ```typescript
-      const c = CliService(Deno.args);
-      c.run();
-      ```
+- Example: `typescript const c = CliService(Deno.args); c.run();`
 
 ### Interfaces
 
