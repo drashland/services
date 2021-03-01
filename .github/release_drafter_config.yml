@@ -35,7 +35,7 @@ template: |
 
   * Import this latest release by using the following in your project(s):
     ```typescript
-    import { ... } from "https://raw.githubusercontent.com/drashland/services/v$RESOLVED_VERSION/<service>";
+    import { <services> } from "https://raw.githubusercontent.com/drashland/services/v$RESOLVED_VERSION/mod.ts";
     ```
 
   __Updates__
