@@ -8,6 +8,8 @@ A service to help build command-line interfaces (CLIs).
 
 ## Quickstart
 
+1. Create your `app.ts` file.
+
 ```
 import {
   Commander,
@@ -55,4 +57,34 @@ const service = new Commander({
 });
 
 service.run();
+```
+
+2. Install your `app.ts` file as a binary under the name `fm`.
+
+```
+$ deno install --allow-read --allow-write --name fm app.ts
+```
+
+3. Run your app.
+
+```
+$ fm
+
+File Manager - A file manager.
+
+USAGE
+
+    fm [option | [[subcommand] [args] [deno flags] [options]]
+
+OPTIONS
+
+    -h, --help    Show this menu.
+    -v, --version Show this CLI's version.
+
+SUBCOMMANDS
+
+    read
+        Read a file.
+    write
+        Write contents to a file.
 ```
