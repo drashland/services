@@ -1,5 +1,5 @@
 import { IndexService } from "../index_service.ts";
-import { serve } from "https://deno.land/std@0.74.0/http/server.ts";
+import { serve } from "../../deps.ts";
 import { dataset } from "./dataset.ts";
 
 const lt = new Map<number, string>();

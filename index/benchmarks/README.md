@@ -1,17 +1,20 @@
-
 # Benchmarks
 
 ## Table of Contents
 
-* [Benchmark Runs](#benchmark-runs)
-    * [performance.now()](#performancenow)
-    * [In An HTTP Server](#in-an-http-server)
+- [Benchmark Runs](#benchmark-runs)
+  - [performance.now()](#performancenow)
+  - [In An HTTP Server](#in-an-http-server)
 
 ## Benchmark Runs
 
 ### performance.now()
 
-The below benchmarks were run with a set number of items in each `Map`; and using `performance.now()` to check how long `.forEach()` method took to return a record. The benchmarks application searched for the last item in each `Map`. Below are the average times showing how long it took searches to complete and what method was used.
+The below benchmarks were run with a set number of items in each `Map`; and
+using `performance.now()` to check how long `.forEach()` method took to return a
+record. The benchmarks application searched for the last item in each `Map`.
+Below are the average times showing how long it took searches to complete and
+what method was used.
 
 Command used:
 
@@ -41,7 +44,10 @@ Searching took an avg of 0.00001s using IndexService.search().
 
 ### In An HTTP Server
 
-The benchmarks below show how the index service performs in an HTTP server. The dataset that was searched had 10,000,000 records. The search term used was "Happy"; and the index service had to return records that included the word "Happy". The index service returned 50,000 records per request.
+The benchmarks below show how the index service performs in an HTTP server. The
+dataset that was searched had 10,000,000 records. The search term used was
+"Happy"; and the index service had to return records that included the word
+"Happy". The index service returned 50,000 records per request.
 
 Command used:
 

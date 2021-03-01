@@ -1,4 +1,4 @@
-import * as colours from "https://deno.land/std@0.74.0/fmt/colors.ts";
+import { colors } from "../../deps.ts";
 
 let ascii = `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@##@@@@@@@@@@@
@@ -31,19 +31,19 @@ const maxHashesForRed = 33;
 n = 0;
 ascii = ascii.replace(
   /#/g,
-  (match) => n++ < maxHashesForRed ? colours.red("#") : "#",
+  (match) => n++ < maxHashesForRed ? colors.red("#") : "#",
 );
 n = 0;
 const maxAndsForRed = 53;
 ascii = ascii.replace(
   /&/g,
-  (match) => n++ < maxAndsForRed ? colours.red("&") : "&",
+  (match) => n++ < maxAndsForRed ? colors.red("&") : "&",
 );
 n = 0;
 const maxPercentForRed = 30;
 ascii = ascii.replace(
   /%/g,
-  (match) => n++ < maxPercentForRed ? colours.red("%") : "%",
+  (match) => n++ < maxPercentForRed ? colors.red("%") : "%",
 );
 
 // DO YELLOW
@@ -51,13 +51,13 @@ const maxSlashesforYellow = 44;
 n = 0;
 ascii = ascii.replace(
   /\//g,
-  (match) => n++ < maxSlashesforYellow ? colours.yellow("/") : "/",
+  (match) => n++ < maxSlashesforYellow ? colors.yellow("/") : "/",
 );
 n = 0;
 const maxBracketForYellow = 1;
 ascii = ascii.replace(
   /\(/g,
-  (match) => n++ < maxBracketForYellow ? colours.yellow("(") : "(",
+  (match) => n++ < maxBracketForYellow ? colors.yellow("(") : "(",
 );
 
 // DO BLUE
@@ -66,9 +66,7 @@ const maxSlashesForBlue = 200; // way over, but no more after so we can specify 
 ascii = ascii.replace(
   /\//g,
   (match) =>
-    n++ < maxSlashesForBlue && n > maxSlashesforYellow
-      ? colours.blue("/")
-      : "/",
+    n++ < maxSlashesForBlue && n > maxSlashesforYellow ? colors.blue("/") : "/",
 );
 n = 0;
 const maxBracketsForBlue = 82;
@@ -76,7 +74,7 @@ ascii = ascii.replace(
   /\(/g,
   (match) =>
     n++ < maxBracketsForBlue && n > maxBracketForYellow
-      ? colours.blue("(")
+      ? colors.blue("(")
       : "(",
 );
 
@@ -86,21 +84,21 @@ const maxHashesForGreen = 210;
 ascii = ascii.replace(
   /#/g,
   (match) =>
-    n++ < maxHashesForGreen && n > maxHashesForRed ? colours.green("#") : "#",
+    n++ < maxHashesForGreen && n > maxHashesForRed ? colors.green("#") : "#",
 );
 n = 0;
 const maxPercentForGreen = 200;
 ascii = ascii.replace(
   /%/g,
   (match) =>
-    n++ < maxPercentForGreen && n > maxPercentForRed ? colours.green("%") : "%",
+    n++ < maxPercentForGreen && n > maxPercentForRed ? colors.green("%") : "%",
 );
 n = 0;
 const maxAndsForGreen = 200;
 ascii = ascii.replace(
   /&/g,
   (match) =>
-    n++ < maxAndsForGreen && n > maxAndsForRed ? colours.green("&") : "&",
+    n++ < maxAndsForGreen && n > maxAndsForRed ? colors.green("&") : "&",
 );
 
 export const drashLogoInAsciiWithColour = ascii;

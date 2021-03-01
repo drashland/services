@@ -4,14 +4,14 @@ A service to index items in a `Map` with search terms.
 
 ## Table of Contents
 
-* [Quick Start](#quick-start)
-* [How It Works](#how-it-works)
-* [Guides](#guides)
-    * [Indexing A Map](#creating-an-indexed-map)
-* [API](#api)
-    * [Methods](#methods)
-    * [Interfaces](#interfaces)
-* [Benchmarks](./benchmarks)
+- [Quick Start](#quick-start)
+- [How It Works](#how-it-works)
+- [Guides](#guides)
+  - [Indexing A Map](#creating-an-indexed-map)
+- [API](#api)
+  - [Methods](#methods)
+  - [Interfaces](#interfaces)
+- [Benchmarks](./benchmarks)
 
 ## Quick Start
 
@@ -53,19 +53,25 @@ console.log(valResults);
 //   0 => { id: 0, item: "hello value", search_term: "value", search_input: "val" },
 //   1 => { id: 1, item: "world value", search_term: "value", search_input: "val" }
 // }
-
 ```
 
 ## How It Works
 
-When the `IndexService` is instantiated, it stores the lookup table you provide to it as its `lookup_table` property. When you add items to your lookup table via `.addItem()`, the `IndexService`:
+When the `IndexService` is instantiated, it stores the lookup table you provide
+to it as its `lookup_table` property. When you add items to your lookup table
+via `.addItem()`, the `IndexService`:
 
-1. Adds the first argument you provide to `.addItem()` as "search terms" and an "ID" to its `index` property (a `Map` with search terms and IDs -- the IDs are mapped to items in the lookup table); and
+1. Adds the first argument you provide to `.addItem()` as "search terms" and an
+   "ID" to its `index` property (a `Map` with search terms and IDs -- the IDs
+   are mapped to items in the lookup table); and
 2. Adds the second argument you provide to `.addItem()` to the lookup table.
 
-The search term is what you can search for in the index. If your search term matches anything in the index, the `IndexService` will take the IDs associated with the search term and use them to target items in the lookup table.
+The search term is what you can search for in the index. If your search term
+matches anything in the index, the `IndexService` will take the IDs associated
+with the search term and use them to target items in the lookup table.
 
-For example, if you call `.addItem(["hello"], "world")`, the `index` property will become the following ...
+For example, if you call `.addItem(["hello"], "world")`, the `index` property
+will become the following ...
 
 ```
 ["hello", [0]]
@@ -87,15 +93,20 @@ hell
 hello
 ```
 
-... and they will all match `["hello", [0]]` in the `index` `Map`. The ID in the `Map` (`0` in this case) is used to target the lookup table via `.get()` -- returning an item from the lookup table without having to iterate through the entire lookup table in case it has millions of items.
+... and they will all match `["hello", [0]]` in the `index` `Map`. The ID in the
+`Map` (`0` in this case) is used to target the lookup table via `.get()` --
+returning an item from the lookup table without having to iterate through the
+entire lookup table in case it has millions of items.
 
-You should note that each search is cached, so subsequent searches of the same search term are 2x (sometimes faster) faster than the first search.
+You should note that each search is cached, so subsequent searches of the same
+search term are 2x (sometimes faster) faster than the first search.
 
 ## Guides
 
 ### Creating An Indexed Map
 
-1. Instantiate the index service and pass in your lookup table (which is the service's term for a `Map`) that you want indexed.
+1. Instantiate the index service and pass in your lookup table (which is the
+   service's term for a `Map`) that you want indexed.
 
 ```typescript
 const lt = new Map<number, string>(); // Key MUST be the number type
@@ -105,7 +116,7 @@ const i = new IndexService(lt);
 2. Add items to your lookup table.
 
 ```typescript
-i.addItem(["hello"], "world");     // adds ["hello", [0]] to the index
+i.addItem(["hello"], "world"); // adds ["hello", [0]] to the index
 i.addItem(["again aga"], "again"); // adds ["again", [1]] and ["aga", [1]] to the index
 i.addItem(["hello"], "something"); // changes ["hello", [0]] to ["hello", [0,2]] in the index
 ```
@@ -138,51 +149,44 @@ console.log(results);
 
 #### .addItem(searchInput: string[], item: unknown)
 
-* Add an item to the index and lookup table and make them searchable via search terms.
-* Example:
-    ```typescript
-    const i = new IndexService(lookupTable);
-    i.addItem(["search", "terms"], {item to put into your lookup table});
-    ````
+- Add an item to the index and lookup table and make them searchable via search
+  terms.
+- Example:
+  `typescript const i = new IndexService(lookupTable); i.addItem(["search", "terms"], {item to put into your lookup table});`
+
 #### .getIndex()
 
-* Gets the index.
-* Example:
-    ```typescript
-    const i = new IndexService(lookupTable);
-    i.addItem(["hello"], "world");
-    i.getIndex(); // returns Map { "hello" => [0] }
-    ```
+- Gets the index.
+- Example:
+  `typescript const i = new IndexService(lookupTable); i.addItem(["hello"], "world"); i.getIndex(); // returns Map { "hello" => [0] }`
 
 #### .search(searchInput: string)
 
-* Search the index and get search results.
-* Example:
-    ```typescript
-    const i = new IndexService(lookupTable);
-    
-    i.addItem(["hello"], "world");
-    i.addItem(["hello"], "again");
-    i.addItem(["tests"], "something");
-    
-    const results = i.search("hel");
-    // Outputs
-    //
-    // Map {
-    //   0 => {
-    //     id: 0,
-    //     item: "world",
-    //     search_term: "hello",
-    //     search_input: "hel"
-    //   },
-    //   2 => {
-    //     id: 2,
-    //     item: "something",
-    //     search_term: "hello",
-    //     search_input: "hel"
-    //   },
-    // }
-    ```
+- Search the index and get search results.
+- Example: ```typescript const i = new IndexService(lookupTable);
+
+      i.addItem(["hello"], "world");
+      i.addItem(["hello"], "again");
+      i.addItem(["tests"], "something");
+
+      const results = i.search("hel");
+      // Outputs
+      //
+      // Map {
+      //   0 => {
+      //     id: 0,
+      //     item: "world",
+      //     search_term: "hello",
+      //     search_input: "hel"
+      //   },
+      //   2 => {
+      //     id: 2,
+      //     item: "something",
+      //     search_term: "hello",
+      //     search_input: "hel"
+      //   },
+      // }
+      ```
 
 ### Interfaces
 
