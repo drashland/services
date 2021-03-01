@@ -134,7 +134,7 @@ export class Commander {
             },
           );
           console.log(availSubcommands);
-        }
+        },
       );
     }
 
@@ -211,4 +211,3 @@ export class Commander {
     console.log(`${this.name} ${this.version}`);
   }
 }
-

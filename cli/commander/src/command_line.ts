@@ -1,7 +1,6 @@
 import { Commander, Subcommand } from "../mod.ts";
 
 export class CommandLine {
-
   public cli: Commander;
 
   public subcommand: string;

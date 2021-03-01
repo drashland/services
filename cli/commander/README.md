@@ -4,7 +4,7 @@ A service to help build command-line interfaces (CLIs).
 
 ## Table of Contents
 
-* [Quickstart](#quickstart)
+- [Quickstart](#quickstart)
 
 ## Quickstart
 
@@ -14,7 +14,7 @@ A service to help build command-line interfaces (CLIs).
 import {
   Commander,
   Subcommand,
-} from "https://raw.githubusercontent.com/drashland/services/v0.2.0/cli/commander/mod.ts";
+} from "https://raw.githubusercontent.com/drashland/services/v0.3.0/cli/commander/mod.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
