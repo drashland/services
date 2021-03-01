@@ -1,4 +1,4 @@
-import { CliService, SubcommandOption } from "./cli_service.ts";
+import { CliService, ILogger, SubcommandOption } from "./cli_service.ts";
 
 export class Subcommand {
   public cli: CliService;
@@ -11,11 +11,11 @@ export class Subcommand {
     this.cli = cli;
   }
 
-  public getArgument(argumentName: string): string|null {
+  public getArgument(argumentName: string): string | null {
     return this.cli.command_line.getArgument(argumentName);
   }
 
-  public getOption(optionName: string): string|null {
+  public getOption(optionName: string): string | null {
     const results = (this.options as SubcommandOption[])
       .filter((option: SubcommandOption) => {
         return option.name == optionName;
@@ -25,12 +25,21 @@ export class Subcommand {
 
     if (!exists) {
       this.cli.logger.error(
-        `The "${optionName}" option does not exist on "${this.name}" subcommand.`
+        `The "${optionName}" option does not exist on "${this.name}" subcommand.`,
       );
       Deno.exit(1);
     }
 
     return this.cli.command_line.getOption(optionName);
+  }
+
+  public exit(
+    code: number,
+    messageType: keyof ILogger,
+    message: string,
+    cb?: () => void,
+  ): void {
+    this.cli.exit(code, messageType, message, cb);
   }
 
   public getDenoFlags(): string[] {
@@ -49,7 +58,9 @@ export class Subcommand {
 
     (this.options as unknown as (typeof SubcommandOption)[])
       .filter((option: typeof SubcommandOption) => {
-        options.push(new option(this));
+        const o = new option(this);
+        o.name = o.signature.split(" ")[0];
+        options.push(o);
       });
 
     this.options = options;
@@ -69,9 +80,8 @@ export class Subcommand {
     (this.options as SubcommandOption[]).forEach((option: SubcommandOption) => {
       help += `    ${option.name}\n`;
       help += `        ${option.description}`;
-   });
+    });
 
     console.log(help);
   }
 }
-

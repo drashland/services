@@ -1,55 +1,24 @@
 import { ConsoleLogger } from "../loggers/console_logger.ts";
-import { TColorMethod, TLogMethod } from "./types.ts";
-import { green } from "./deps.ts";
 import { CommandLine } from "./command_line.ts";
 import { Subcommand } from "./subcommand.ts";
 import { SubcommandOption } from "./subcommand_option.ts";
+import { ICommanderConfigs, ILogger } from "./interfaces.ts";
 
-export {
-  Subcommand,
-  SubcommandOption,
-}
-
-export interface ICliServiceConfigs {
-  name: string;
-  description: string;
-  command: string;
-  subcommands: typeof Subcommand[];
-  version: string;
-}
-
-/**
- * The interface of the "single source of truth" logger for the entire CLI.
- */
-interface ILogger {
-  debug: TLogMethod;
-  error: TLogMethod;
-  info: TLogMethod;
-  warn: TLogMethod;
-}
-
-/**
- * The interface of the "single source of truth" logger for the entire CLI.
- */
-interface IColors {
-  green: TColorMethod;
-}
+export { Subcommand, SubcommandOption };
 
 /**
  * A class to help build CLIs.
  */
-export class CliService {
+export class Commander {
   /**
    * This CLI's main command (e.g., rhum).
    */
   public command: string;
 
   /**
-   * This CLI's color-er. It colors text in the console.
+   * The command line this CLI parses.
    */
-  public colors: IColors = {
-    green: green
-  }
+  public command_line: CommandLine;
 
   /**
    * This CLI's description.
@@ -57,19 +26,7 @@ export class CliService {
   public description: string;
 
   /**
-   * This CLI's name.
-   */
-  public name: string;
-
-  /**
-   * This CLI's version.
-   */
-  public version: string;
-
-  /**
-   * A "single source of truth" logger for subcommands and options in this CLI.
-   * All subcommands and options have access to this logger so they can log
-   * inside of their data members.
+   * This CLI's logger.
    */
   public logger: ILogger = {
     debug: ConsoleLogger.debug,
@@ -79,18 +36,19 @@ export class CliService {
   };
 
   /**
-   * This CLI's options. This is not to be confused with a subcommand's options.
-   * CLI options come after the main command. Subcommand options come after the
-   * subcommand.
+   * This CLI's name.
    */
-  // public options: { [key: string]: Option } = {};
+  public name: string;
 
   /**
    * This CLI's subcommands.
    */
   public subcommands: (typeof Subcommand[] | Subcommand[]) = [];
 
-  public command_line: CommandLine;
+  /**
+   * This CLI's version.
+   */
+  public version: string;
 
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
@@ -99,14 +57,14 @@ export class CliService {
   /**
    * Construct an object of this class.
    *
-   * @param name - The name of the CLI.
+   * @param configs - See ICommanderConfigs for more information.
    */
-  constructor(configs: ICliServiceConfigs) {
+  constructor(configs: ICommanderConfigs) {
     this.command = configs.command;
     this.name = configs.name;
-    this.description = configs.description,
-    this.version = configs.version;
+    this.description = configs.description, this.version = configs.version;
     this.subcommands = configs.subcommands;
+
     this.instantiateSubcommands();
 
     this.command_line = new CommandLine(this, Deno.args);
@@ -115,6 +73,28 @@ export class CliService {
   //////////////////////////////////////////////////////////////////////////////
   // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Exit the program.
+   *
+   * @param code - The exit code.
+   * @param messageType - The message type to display (e.g., error, warn, info).
+   * @param message - The message to display to the user.
+   * @param cb - The callback to execute before exiting the program. For
+   * example, show the help menu.
+   */
+  public exit(
+    code: number,
+    messageType: keyof ILogger,
+    message: string,
+    cb?: () => void,
+  ): void {
+    this.logger[messageType](`${message}\n`);
+    if (cb) {
+      cb();
+    }
+    Deno.exit(1);
+  }
 
   /**
    * Run this CLI.
@@ -128,12 +108,14 @@ export class CliService {
 
     if (!subcommand) {
       this.logger.error(
-        `Unknown subcommand "${this.command_line.subcommand}" specified.`
+        `Unknown subcommand "${this.command_line.subcommand}" specified.`,
       );
       let availSubcommands = `\nAVAILABLE SUBCOMMANDS\n\n`;
-      (this.subcommands as typeof Subcommand[]).forEach((subcommand: typeof Subcommand) => {
-        availSubcommands += `    ${subcommand.name}\n`;
-      });
+      (this.subcommands as typeof Subcommand[]).forEach(
+        (subcommand: typeof Subcommand) => {
+          availSubcommands += `    ${subcommand.name}\n`;
+        },
+      );
       console.log(availSubcommands);
       Deno.exit(1);
     }
@@ -142,12 +124,18 @@ export class CliService {
     subcommand.handle();
   }
 
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
   /**
    * Get a subcommand.
    *
+   * @param subcommandName - The name of the subcommand to get.
+   *
    * @returns The subcommand or null if not found.
    */
-  public getSubcommand(subcommandName: string): null|Subcommand {
+  protected getSubcommand(subcommandName: string): null | Subcommand {
     const results = (this.subcommands as Subcommand[])
       .filter((subcommand: Subcommand) => {
         return subcommand.name == subcommandName;
@@ -157,14 +145,14 @@ export class CliService {
   }
 
   /**
-   * Take the subcommands array and instantiate all of the Subcommand classes.
+   * Take the subcommands array and instantiate all classes inside of it.
    */
   protected instantiateSubcommands(): void {
     let subcommands: Subcommand[] = [];
 
     (this.subcommands as unknown as (typeof Subcommand)[])
       .filter((subcommand: typeof Subcommand) => {
-        const s = new subcommand(this)
+        const s = new subcommand(this);
         s.name = s.signature.split(" ")[0];
         subcommands.push(s);
       });
@@ -179,7 +167,8 @@ export class CliService {
     let help = `${this.name} - ${this.description}\n\n`;
 
     help += `USAGE\n\n`;
-    help += `    ${this.command} [option | [[subcommand] [args] [deno flags] [options]]\n`;
+    help +=
+      `    ${this.command} [option | [[subcommand] [args] [deno flags] [options]]\n`;
     help += `\n`;
 
     help += `OPTIONS\n\n`;
@@ -191,7 +180,7 @@ export class CliService {
     (this.subcommands as Subcommand[]).forEach((subcommand: Subcommand) => {
       help += `    ${subcommand.name}\n`;
       help += `        ${subcommand.description}`;
-   });
+    });
 
     console.log(help);
   }

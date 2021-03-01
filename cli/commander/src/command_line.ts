@@ -1,20 +1,33 @@
-import { Subcommand, CliService } from "./cli_service.ts";
+import { CliService, Subcommand } from "./cli_service.ts";
 
 export class CommandLine {
 
   public cli: CliService;
+
   public subcommand: string;
 
   protected deno_args: string[];
+
   protected deno_flags: string[] = [];
-  protected arguments: {[key: string]: string|undefined} = {};
-  protected options: {[key: string]: string|undefined} = {};
 
-  constructor(cli: CliService, denoArgs: string[]) {
+  protected arguments: { [key: string]: string | undefined } = {};
+
+  protected options: { [key: string]: string | undefined } = {};
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - CONSTRUCTOR /////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Construct an object of this class.
+   *
+   * @param cli - The application this command line belongs to.
+   */
+  constructor(cli: Commander) {
     this.cli = cli;
-    this.deno_args = denoArgs.slice();
+    this.deno_args = Deno.args.slice();
 
-    // The second arg is always the subcommand
+    // The second argument is always the subcommand
     this.subcommand = this.deno_args.shift() as string;
 
     this.extractDenoFlagsFromArguments();
@@ -23,6 +36,57 @@ export class CommandLine {
 
     this.matchArgumentsToNames();
   }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PUBLIC ////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get an argument taken from Deno.args.
+   *
+   * @param argumentName - The name of the argument to get. The name of the
+   * argument should match the argument's signature in a subcommand's signature
+   * property. For example, if the signature is ...
+   *
+   *     run [some-cool-arg]
+   *
+   * ... then the argument name would be "[some-cool-arg]".
+   *
+   * @returns The argument's value or null if it has no value.
+   */
+  public getArgument(argumentName: string): null | string {
+    return this.arguments[argumentName] ?? null;
+  }
+
+  /**
+   * Get the Deno flags (e.g., --allow-net) taken from Deno.args.
+   *
+   * @returns An array of Deno flags.
+   */
+  public getDenoFlags(): string[] {
+    return this.deno_flags;
+  }
+
+  /**
+   * Get an option taken from Deno.args.
+   *
+   * @param argumentName - The name of the option to get. The name of the
+   * option should match the options's signature in a subcommand's option's
+   * signature property. For example, if the signature is ...
+   *
+   *     --some-cool-option [some-cool-value]
+   *
+   * ... then the option name would be "--some-cool-option".
+   *
+   * @returns The option's value or null if it has no value.
+   */
+  public getOption(optionName: string): null | string {
+    return this.options[optionName] ?? null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // FILE MARKER - METHODS - PROTECTED /////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
   /**
    * Match all of the subcommand's argument names to their respective arguments
@@ -59,18 +123,6 @@ export class CommandLine {
           this.arguments[sigSplit[i]] = this.deno_args[i];
         }
       });
-  }
-
-  public getDenoFlags(): string[] {
-    return this.deno_flags;
-  }
-
-  public getArgument(argumentName: string): null|string {
-    return this.arguments[argumentName] ?? null;
-  }
-
-  public getOption(optionName: string): null|string {
-    return this.options[optionName] ?? null;
   }
 
   protected extractDenoFlagsFromArguments(): void {

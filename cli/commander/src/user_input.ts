@@ -62,7 +62,7 @@ export class UserInput {
    *
    * @returns The first item.
    */
-  public getItem(index: number): null|string {
+  public getItem(index: number): null | string {
     try {
       return this.deno_args[index];
     } catch (error) {
