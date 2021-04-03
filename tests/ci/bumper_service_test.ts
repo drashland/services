@@ -229,7 +229,6 @@ const data_bumpEggJson = `{
     "LICENSE"
   ]
 }
-
 `;
 
 const data_bumpMod =
