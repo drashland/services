@@ -4,7 +4,7 @@ A service to help log messages in the console or write logs to a file.
 
 ## Table of Contents
 
-- [Creating a Looger](#creating-a-logger)
+- [Creating a Logger](#creating-a-logger)
 - [Using a Logger](#using-a-logger)
 
 ## Creating a Logger
