@@ -1,39 +1,47 @@
-import { colors } from "../deps.ts";
+import { Logger } from "./logger.ts";
 
-export class ConsoleLogger {
+export class ConsoleLogger extends Logger {
   /**
    * Log a debug message.
    *
    * @param message The message to log.
+   *
+   * @returns The full message that will be logged
    */
-  public static debug(message: string): void {
-    console.log(colors.green("DEBUG") + " " + message);
+  public debug(message: string): string {
+    return this.logToConsole(message, "debug");
   }
 
   /**
    * Log an error message.
    *
    * @param message The message to log.
+   *
+   * @returns The full message that will be logged
    */
-  public static error(message: string): void {
-    console.log(colors.red("ERROR") + " " + message);
+  public error(message: string): string {
+    return this.logToConsole(message, "error");
   }
 
   /**
    * Log an info message.
    *
    * @param message The message to log.
+   *
+   * @returns The full message that will be logged
    */
-  public static info(message: string): void {
-    console.log(colors.blue("INFO") + " " + message);
+  public info(message: string): string {
+    return this.logToConsole(message, "info");
   }
 
   /**
    * Log an warning message.
    *
    * @param message The message to log.
+   *
+   * @returns The full message that will be logged
    */
-  public static warn(message: string): void {
-    console.log(colors.yellow("WARN") + " " + message);
+  public warn(message: string): string {
+    return this.logToConsole(message, "warn");
   }
 }
