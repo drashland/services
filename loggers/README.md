@@ -4,48 +4,42 @@ A service to help log messages in the console or write logs to a file.
 
 ## Table of Contents
 
-- [ConsoleLogger](#consolelogger)
-- [FileLogger](#filelogger)
+- [Creating a Looger](#creating-a-logger)
+- [Using a Logger](#using-a-logger)
 
-## ConsoleLogger
+## Creating a Logger
 
-All methods are `static`, so you do not have to instantiate the `ConsoleLogger`
-class.
+To use a logger, you must first create one:
 
-### Methods
+```ts
+import { ConsoleLogger } from "https://raw.githubusercontent.com/drashland/services/<latest version>/loggers/console_logger.ts";
+import { FileLogger } from "https://raw.githubusercontent.com/drashland/services/<latest version>/loggers/file_logger.ts";
 
-#### .debug(message: string)
+const consoleLogger = new ConsoleLogger();
+const fileLogger = new FileLogger({ file: "file.log" }); // NOTE: `file` is request here, it's the filename which logging will be sent to
+```
 
-- Log a debug message with a green DEBUG string.
-- Example:
-  `ConsoleLogger.debug("Some message.") // outputs => DEBUG Some message.`
+## Using a Logger
 
-#### .error(message: string)
+Both logger types provide the same API methods. The only difference is, one logs
+to the console, one logs to a file.
 
-- Log an error message with a red ERROR string.
-- Example:
-  `ConsoleLogger.error("Some message.") // outputs => ERROR Some message.`
+Within the constructor, you can pass in `tag_string` and `tag_string_fns`. Both
+of these allow you to pass in custom data to the message if you wish to:
 
-#### .info(message: string)
+```ts
+const logger = new ConsoleLogger({ // or FileLogger
+  tag_string: "{name} | {location} |",
+  tag_string_fns: {
+    name() {
+      return "Drashland";
+    },
+    location() {
+      return "The Moon";
+    },
+  },
+});
+```
 
-- Log an info message with a blue INFO string.
-- Example:
-  `ConsoleLogger.info("Some message.") // outputs => INFO Some message.`
-
-#### .warn(message: string)
-
-- Log a warning message with a yellow WARN string.
-- Example:
-  `ConsoleLogger.warn("Some message.") // outputs => WARN Some message.`
-
-## FileLogger
-
-The `FileLogger` should be instantiated with a target file (e.g.
-`/path/to/file.log`).
-
-### Methods
-
-#### .write(message: string)
-
-- Writes a message to the log file.
-- Example: `FileLogger.write("Some message.")`
+Then calling `logger.info("Hello")` (or any other method) will display
+`[INFO] Drashland | The Moon | Hello`

@@ -1,24 +1,57 @@
-/**
- * This logger writes log messages to a file.
- */
-export class FileLogger {
-  /**
-   * The file this logger will write log messages to.
-   */
-  protected file: string;
+import { Logger, LoggerConfigs } from "./logger.ts";
 
-  constructor(file: string = "tmp_log.log") {
-    this.file = file;
+interface FileLoggerConfigs extends LoggerConfigs {
+  file: string;
+}
+
+export class FileLogger extends Logger {
+  private filename: string;
+
+  constructor(configs: FileLoggerConfigs) {
+    super(configs);
+    this.filename = configs.file;
+  }
+  /**
+   * Log a debug message.
+   *
+   * @param message The message to log.
+   *
+   * @returns The full message that will be logged
+   */
+  public debug(message: string): string {
+    return this.logToFile(message, "debug", this.filename);
   }
 
   /**
-   * Write a log message to this.file.
+   * Log an error message.
    *
-   * @param message - The message to be logged
+   * @param message The message to log.
    *
+   * @returns The full message that will be logged
    */
-  public write(message: string): void {
-    const line = message + "\n";
-    Deno.writeTextFileSync(this.file, line, { append: true });
+  public error(message: string): string {
+    return this.logToFile(message, "error", this.filename);
+  }
+
+  /**
+   * Log an info message.
+   *
+   * @param message The message to log.
+   *
+   * @returns The full message that will be logged
+   */
+  public info(message: string): string {
+    return this.logToFile(message, "info", this.filename);
+  }
+
+  /**
+   * Log an warning message.
+   *
+   * @param message The message to log.
+   *
+   * @returns The full message that will be logged
+   */
+  public warn(message: string): string {
+    return this.logToFile(message, "warn", this.filename);
   }
 }
