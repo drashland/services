@@ -1,4 +1,4 @@
-import { Rhum } from "../../deps.ts";
+import { Rhum } from "../deps.ts";
 import { IndexService, ISearchResult } from "../../index/index_service.ts";
 
 const lookupTable: Map<number, string> = new Map();
