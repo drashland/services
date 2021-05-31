@@ -1,4 +1,4 @@
-import { Rhum } from "../../deps.ts";
+import { Rhum } from "../deps.ts";
 import { FileLogger } from "../../loggers/file_logger.ts";
 
 const file = "file_logger_test.log";
