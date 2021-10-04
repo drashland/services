@@ -46,3 +46,6 @@ jobs:
 
       - name: Formatter
         run: deno fmt --check
+
+      - name: Linter
+        run: deno lint --ignore=tests/data
