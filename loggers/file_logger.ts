@@ -15,7 +15,6 @@ export class FileLogger {
    * Write a log message to this.file.
    *
    * @param message - The message to be logged
-   *
    */
   public write(message: string): void {
     const line = message + "\n";
