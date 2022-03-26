@@ -11,6 +11,7 @@ const d = new BumperService("my-cool-module-dude-omg-yea");
 
 const latestVersions = await c.getLatestVersions();
 
+// deno-lint-ignore camelcase
 const data_bumpMaster = `name: master
 
 on:
@@ -86,6 +87,7 @@ jobs:
         run: deno fmt --check
 `;
 
+// deno-lint-ignore camelcase
 const data_bumpBumper = `name: bumper
 on:
   schedule:
@@ -121,6 +123,7 @@ jobs:
           branch: update-dependencies
 `;
 
+// deno-lint-ignore camelcase
 const data_bumpPreRelease = `name: pre-release
 
 on:
@@ -168,6 +171,7 @@ jobs:
           branch: release # Can change it to $\{{ github.ref }} to be the branch name, but then we need to figure out how to stop this worjflow running  when it creates another "release-vx.x.x" branch
 `;
 
+// deno-lint-ignore camelcase
 const data_bumpReadme = `## Importing
 
 \`\`\`
@@ -214,6 +218,7 @@ Rhum.run(); // <-- make sure to include this so that your tests run via \`deno t
 \`\`\`
 `;
 
+// deno-lint-ignore camelcase
 const data_bumpEggJson = `{
   "name": "rhum",
   "description": "A lightweight testing framework for Deno.",
@@ -231,6 +236,7 @@ const data_bumpEggJson = `{
 }
 `;
 
+// deno-lint-ignore camelcase
 const data_bumpMod =
   `import { assertions, asserts } from "./src/rhum_asserts.ts";
 import type {
@@ -290,7 +296,7 @@ const preReleaseFiles = await c.bump([
 // TESTS ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-Rhum.testPlan("Bumper Service", async () => {
+Rhum.testPlan("Bumper Service", () => {
   Rhum.testSuite("constructor()", () => {
     Rhum.testCase("sets module_name", () => {
       Rhum.asserts.assertEquals(
@@ -324,6 +330,7 @@ Rhum.testPlan("Bumper Service", async () => {
       const versions = {
         rhum: await c.getModulesLatestVersion("rhum"),
         deno: await c.getModulesLatestVersion("deno"),
+        // deno-lint-ignore camelcase
         deno_std: await c.getModulesLatestVersion("std"),
         drash: await c.getModulesLatestVersion("drash"),
       };
@@ -338,6 +345,7 @@ Rhum.testPlan("Bumper Service", async () => {
         const versions = {
           "my-cool-module-dude-omg-yea": "(Module not found)",
           deno: await c.getModulesLatestVersion("deno"),
+          // deno-lint-ignore camelcase
           deno_std: await c.getModulesLatestVersion("std"),
           drash: await c.getModulesLatestVersion("drash"),
         };
@@ -349,7 +357,7 @@ Rhum.testPlan("Bumper Service", async () => {
     );
   });
 
-  Rhum.testSuite("bump", async () => {
+  Rhum.testSuite("bump", () => {
     Rhum.testCase("bumps master.yml correctly", () => {
       const master = bumpFiles[0];
       Rhum.asserts.assertEquals(master, data_bumpMaster);
@@ -364,7 +372,7 @@ Rhum.testPlan("Bumper Service", async () => {
     });
   });
 
-  Rhum.testSuite("bump for pre-release", async () => {
+  Rhum.testSuite("bump for pre-release", () => {
     Rhum.testCase("bumps README.md correctly", () => {
       const readme = preReleaseFiles[0];
       Rhum.asserts.assertEquals(readme, data_bumpReadme);

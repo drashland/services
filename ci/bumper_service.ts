@@ -1,4 +1,4 @@
-import { ConsoleLogger } from "../loggers/console_logger.ts";
+import { consoleLogger } from "./deps.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -105,7 +105,7 @@ export class BumperService {
    * @param write - Should this method write to the filesystem? Defaults to
    * true.
    */
-  public async bump(files: File[], write: boolean = true): Promise<string[]> {
+  public async bump(files: File[], write = true): Promise<string[]> {
     this.latest_versions = await this.getLatestVersions();
     const ret: string[] = [];
 
@@ -131,7 +131,7 @@ export class BumperService {
    * @param write - Should this method write to the filesystem? Defaults to
    * true.
    */
-  public bumpForPreRelease(files: File[], write: boolean = true): string[] {
+  public bumpForPreRelease(files: File[], write = true): string[] {
     if (!this.parsed_args.branch) {
       throw new Error(
         "Tried bumping for pre-release, but a release branch was not specified.",
@@ -174,9 +174,10 @@ export class BumperService {
    * question and the value is the module's latest version.
    */
   public async getLatestVersions(): Promise<{ [key: string]: string }> {
-    let latestVersions = {
+    const latestVersions = {
       [this.module_name]: "(Module not found)",
       deno: await this.getModulesLatestVersion("deno"),
+      // deno-lint-ignore camelcase
       deno_std: await this.getModulesLatestVersion("std"),
       drash: await this.getModulesLatestVersion("drash"),
     };
@@ -185,7 +186,8 @@ export class BumperService {
       latestVersions[this.module_name] = await this.getModulesLatestVersion(
         this.module_name,
       );
-    } catch (error) {
+    } catch (_error) {
+      // do nothing
     }
 
     return latestVersions;
@@ -241,7 +243,7 @@ export class BumperService {
    * version and the value would be v1.2.3.
    */
   public getParsedArgs(): ParsedArgs {
-    let args: ParsedArgs = {};
+    const args: ParsedArgs = {};
 
     this.args.forEach((arg: string) => {
       if (arg.includes("--version")) {
@@ -261,10 +263,10 @@ export class BumperService {
    *
    * @param file - The file to write to the filesystem.
    */
-  protected writeFile(file: File, write: boolean = true): string {
+  protected writeFile(file: File, write = true): string {
     try {
       if (write) {
-        ConsoleLogger.info(`Writing file: ${file.filename}`);
+        consoleLogger.info(`Writing file: ${file.filename}`);
       }
       let fileContent = decoder.decode(Deno.readFileSync(file.filename));
       fileContent = fileContent.replace(file.replaceTheRegex, file.replaceWith);
@@ -273,7 +275,7 @@ export class BumperService {
       }
       return fileContent;
     } catch (error) {
-      ConsoleLogger.error(error.stack);
+      consoleLogger.error(error.stack);
     }
 
     return "";
