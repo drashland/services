@@ -27,7 +27,7 @@
  * that this script should convert.
  */
 
-import { copySync, emptyDirSync, ensureDirSync, walk } from "./deps.ts";
+import { copySync, emptyDirSync, ensureDirSync, walk } from "../deps.ts";
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 const args = Deno.args.slice();
