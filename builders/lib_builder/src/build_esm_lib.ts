@@ -183,4 +183,3 @@ function optionValue(option: string): boolean {
 
   return extractedOption[0].replace(option + "=", "");
 }
-
